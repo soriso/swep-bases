@@ -19,7 +19,7 @@ SWEP.m_bFiresUnderwater	= false;
 SWEP.m_fFireDuration	= 0.0;
 
 SWEP.Spawnable			= false
-SWEP.AdminSpawnable		= false
+SWEP.AdminSpawnable		= true
 
 SWEP.Primary.Reload			= Sound( "Weapon_SMG1.Reload" )
 SWEP.Primary.Empty			= Sound( "Weapon_SMG1.Empty" )

@@ -30,7 +30,7 @@ local PISTOL_ACCURACY_SHOT_PENALTY_TIME		= 0.2	// Applied amount of time each sh
 local PISTOL_ACCURACY_MAXIMUM_PENALTY_TIME	= 1.5	// Maximum penalty to deal out
 
 SWEP.Spawnable			= false
-SWEP.AdminSpawnable		= false
+SWEP.AdminSpawnable		= true
 
 SWEP.Primary.Reload			= Sound( "Weapon_Pistol.Reload" )
 SWEP.Primary.Empty			= Sound( "Weapon_Pistol.Empty" )
