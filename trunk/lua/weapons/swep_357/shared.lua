@@ -17,7 +17,7 @@ SWEP.HoldType		= "pistol"
 SWEP.Category			= "Half-Life 2"
 SWEP.m_bFiresUnderwater	= false
 
-SWEP.Spawnable			= false
+SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
 SWEP.Primary.Empty			= Sound( "Weapon_Pistol.Empty" )
