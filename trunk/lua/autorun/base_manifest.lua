@@ -8,4 +8,6 @@ AddCSLuaFile( "ballistic_physics.lua" )
 AddCSLuaFile( "base_manifest.lua" )
 AddCSLuaFile( "basecombatweapon_shared.lua" )
 AddCSLuaFile( "lua_functions.lua" )
+AddCSLuaFile( "mathlib.lua" )
+AddCSLuaFile( "vector.lua" )
 
