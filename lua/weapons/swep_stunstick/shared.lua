@@ -18,8 +18,8 @@ SWEP.Category			= "Half-Life 2"
 SWEP.activate			= Sound( "Weapon_StunStick.Activate" )
 SWEP.deactivate			= Sound( "Weapon_StunStick.Deactivate" )
 
-SWEP.Spawnable			= true
-SWEP.AdminSpawnable		= true
+SWEP.Spawnable			= false
+SWEP.AdminSpawnable		= false
 
 SWEP.Primary.Sound			= Sound( "Weapon_StunStick.Melee_Miss" )
 SWEP.Primary.Hit			= Sound( "Weapon_StunStick.Melee_Hit" )
