@@ -20,7 +20,7 @@ SWEP.m_fFireDuration	= 0.0;
 SWEP.m_nShotsFired		= 0;
 
 SWEP.Spawnable			= false
-SWEP.AdminSpawnable		= false
+SWEP.AdminSpawnable		= true
 
 SWEP.Primary.Reload			= Sound( "Weapon_AR2.Reload" )
 SWEP.Primary.Empty			= Sound( "Weapon_IRifle.Empty" )

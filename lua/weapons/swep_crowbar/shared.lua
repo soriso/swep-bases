@@ -17,7 +17,7 @@ SWEP.HoldType		= "melee"
 SWEP.Category			= "Half-Life 2"
 
 SWEP.Spawnable			= false
-SWEP.AdminSpawnable		= false
+SWEP.AdminSpawnable		= true
 
 SWEP.Primary.Sound			= Sound( "Weapon_Crowbar.Single" )
 SWEP.Primary.Hit			= Sound( "Weapon_Crowbar.Melee_Hit" )

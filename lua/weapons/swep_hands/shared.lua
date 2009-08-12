@@ -16,7 +16,7 @@ SWEP.HoldType		= "normal"
 SWEP.Category			= "Half-Life 2"
 
 SWEP.Spawnable			= false
-SWEP.AdminSpawnable		= false
+SWEP.AdminSpawnable		= true
 
 SWEP.Primary.ClipSize		= -1				// Size of a clip
 SWEP.Primary.DefaultClip	= -1				// Default number of bullets in a clip
