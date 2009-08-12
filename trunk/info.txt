@@ -1,0 +1,10 @@
+"AddonInfo"
+{
+	"name"				"Scripted Weapon Bases"
+	"version"			"SVN"
+	"up_date"			""
+	"author_name"		"Andrew McWatters"
+	"author_email"		"mcwattersandrew@gmail.com"
+	"author_url"		"http://blackcanvas.co.nr/"
+	"info"				"Adds HL2 scripted weapon bases."
+}
