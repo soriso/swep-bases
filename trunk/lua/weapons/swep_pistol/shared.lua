@@ -29,8 +29,8 @@ local PISTOL_FASTEST_DRY_REFIRE_TIME	= 0.2
 local PISTOL_ACCURACY_SHOT_PENALTY_TIME		= 0.2	// Applied amount of time each shot adds to the time we must recover from
 local PISTOL_ACCURACY_MAXIMUM_PENALTY_TIME	= 1.5	// Maximum penalty to deal out
 
-SWEP.Spawnable			= true
-SWEP.AdminSpawnable		= true
+SWEP.Spawnable			= false
+SWEP.AdminSpawnable		= false
 
 SWEP.Primary.Reload			= Sound( "Weapon_Pistol.Reload" )
 SWEP.Primary.Empty			= Sound( "Weapon_Pistol.Empty" )
