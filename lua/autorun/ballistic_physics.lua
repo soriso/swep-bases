@@ -2,7 +2,7 @@
 local meta = FindMetaTable( "Entity" )
 if (!meta) then return end
 
-meta.FireMelee	= meta.FireBullets
+meta.FireMelee	= meta.g_FireBullets || meta.FireBullets
 
 function util.ImpactTrace( traceHit, pPlayer )
 
