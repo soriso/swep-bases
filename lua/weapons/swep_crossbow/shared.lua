@@ -241,7 +241,9 @@ end
 	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 
 	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
-	self.m_flNextPrimaryAttack = self.m_flNextSecondaryAttack	= CurTime() + self.Primary.Delay;
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay );
+	self.m_flNextPrimaryAttack = CurTime() + self.Primary.Delay;
+	self.m_flNextSecondaryAttack = CurTime() + self.Primary.Delay;
 
 	// self:DoLoadEffect();
 	// self:SetChargerState( CHARGER_STATE_DISCHARGE );
