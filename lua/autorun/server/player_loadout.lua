@@ -10,7 +10,7 @@ function meta:Give( item )
 
 		"weapon_357",
 		"weapon_ar2",
-		"weapon_crossbow",
+		// "weapon_crossbow",
 		"weapon_crowbar",
 		"weapon_pistol",
 		"weapon_smg1",
