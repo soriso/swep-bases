@@ -2,8 +2,8 @@
 include('shared.lua')
 
 
-SWEP.PrintName			= "#HL2_357Handgun"		// 'Nice' Weapon name (Shown on HUD)
-SWEP.Slot				= 1						// Slot in the weapon selection menu
+SWEP.PrintName			= "#HL2_Crossbow"		// 'Nice' Weapon name (Shown on HUD)
+SWEP.Slot				= 3						// Slot in the weapon selection menu
 SWEP.SlotPos			= 1						// Position in the slot
 SWEP.DrawAmmo			= true					// Should draw the default HL2 ammo counter
 SWEP.DrawCrosshair		= true 					// Should draw the default crosshair
@@ -12,9 +12,9 @@ SWEP.BounceWeaponIcon   = false					// Should the weapon icon bounce?
 
 // Override this in your SWEP to set the icon in the weapon selection
 SWEP.WepSelectFont		= "TitleFont"
-SWEP.WepSelectLetter	= "e"
+SWEP.WepSelectLetter	= "g"
 SWEP.IconFont			= "HL2MPTypeDeath"
-SWEP.IconLetter			= "."
+SWEP.IconLetter			= "1"
 
 killicon.AddFont( string.Replace( GetScriptPath(), "weapons/", "" ), SWEP.IconFont, SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
 

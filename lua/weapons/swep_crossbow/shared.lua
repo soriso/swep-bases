@@ -9,28 +9,26 @@ SWEP.Instructions	= ""
 
 SWEP.ViewModelFOV	= 54
 SWEP.ViewModelFlip	= false
-SWEP.ViewModel		= "models/weapons/v_357.mdl"
-SWEP.WorldModel		= "models/weapons/w_357.mdl"
-SWEP.AnimPrefix		= "python"
-SWEP.HoldType		= "pistol"
+SWEP.ViewModel		= "models/weapons/v_crossbow.mdl"
+SWEP.WorldModel		= "models/weapons/w_crossbow.mdl"
+SWEP.AnimPrefix		= "bow"
+SWEP.HoldType		= "crossbow"
 
 SWEP.Category			= "Half-Life 2"
-SWEP.m_bFiresUnderwater	= false
+SWEP.m_bFiresUnderwater	= true
 
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
 
-SWEP.Primary.Empty			= Sound( "Weapon_Pistol.Empty" )
-SWEP.Primary.Sound			= Sound( "Weapon_357.Single" )
-SWEP.Primary.Damage			= 75
+SWEP.Primary.Sound			= Sound( "Weapon_Crossbow.Single" )
+SWEP.Primary.Damage			= 100
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.NumAmmo		= SWEP.Primary.NumShots
 SWEP.Primary.Cone			= vec3_origin
-SWEP.Primary.ClipSize		= 6					// Size of a clip
-SWEP.Primary.Delay			= 0.75
-SWEP.Primary.DefaultClip	= 6					// Default number of bullets in a clip
+SWEP.Primary.ClipSize		= 1					// Size of a clip
+SWEP.Primary.DefaultClip	= 5					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
-SWEP.Primary.Ammo			= "357"
+SWEP.Primary.Ammo			= "XBowBolt"
 
 SWEP.Secondary.ClipSize		= -1				// Size of a clip
 SWEP.Secondary.DefaultClip	= -1				// Default number of bullets in a clip
@@ -70,10 +68,8 @@ function SWEP:PrimaryAttack()
 
 	if ( self.Weapon:Clip1() <= 0 ) then
 		if ( self:Ammo1() > 0 ) then
-			self.Weapon:EmitSound( self.Primary.Empty );
 			self:Reload();
 		else
-			self.Weapon:EmitSound( self.Primary.Empty );
 			self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
 		end
 
