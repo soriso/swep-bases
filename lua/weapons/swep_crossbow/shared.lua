@@ -34,6 +34,8 @@ SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
 
 SWEP.Primary.Sound			= Sound( "Weapon_Crossbow.Single" )
+SWEP.Primary.Special1		= Sound( "Weapon_Crossbow.BoltElectrify" )
+SWEP.Primary.Special2		= Sound( "Weapon_Crossbow.BoltFly" )
 SWEP.Primary.Damage			= 100
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.NumAmmo		= SWEP.Primary.NumShots
@@ -63,8 +65,6 @@ function SWEP:Initialize()
 		self:SetNPCMaxBurst( 0 )
 		self:SetNPCFireRate( self.Primary.Delay )
 	end
-
-	self.Weapon:SetNWBool( "m_bInZoom", false );
 
 end
 
@@ -197,7 +197,6 @@ function SWEP:FireBolt( void )
 			self:Reload();
 		else
 			self.Weapon:SetNextPrimaryFire( CurTime() + 0.15 );
-			self.m_flNextPrimaryAttack = 0.15;
 		end
 
 		return;
@@ -218,8 +217,8 @@ if ( !CLIENT ) then
 
 	local pBolt = ents.Create( "crossbow_bolt" );
 	pBolt:SetPos( vecSrc );
-	pBolt:SetAngle( angAiming );
-	// pBolt:SetDamage( self.Primary.Damage );
+	pBolt:SetAngles( angAiming );
+	pBolt.m_iPlayerDamage = self.Primary.Damage;
 	pBolt:SetOwner( pOwner );
 	pBolt:Spawn();
 
@@ -241,12 +240,6 @@ end
 	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 
 	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
-	self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay );
-	self.m_flNextPrimaryAttack = CurTime() + self.Primary.Delay;
-	self.m_flNextSecondaryAttack = CurTime() + self.Primary.Delay;
-
-	// self:DoLoadEffect();
-	// self:SetChargerState( CHARGER_STATE_DISCHARGE );
 
 end
 
@@ -258,11 +251,9 @@ end
 ---------------------------------------------------------*/
 function SWEP:Holster( wep )
 
-	if ( self.Weapon:GetNWBool( "m_bInZoom" ) || self.m_bInZoom ) then
+	if ( self.m_bInZoom ) then
 		self:ToggleZoom();
 	end
-
-	// self:SetChargerState( CHARGER_STATE_OFF );
 
 	return self.BaseClass:Holster( wep );
 
@@ -301,18 +292,36 @@ function SWEP:ToggleZoom()
 
 if ( !CLIENT ) then
 
-	if ( self.Weapon:GetNWBool( "m_bInZoom" ) || self.m_bInZoom ) then
-		if ( pPlayer:SetFOV( 0, 0.2 ) ) then
-			self.Weapon:SetNWBool( "m_bInZoom", false )
-			self.m_bInZoom = false;
-		end
+	if ( self.m_bInZoom ) then
+		pPlayer:SetFOV( 0, 0.2 )
+		self.m_bInZoom = false;
 	else
-		if ( pPlayer:SetFOV( 20, 0.1 ) ) then
-			self.Weapon:SetNWBool( "m_bInZoom", true )
-			self.m_bInZoom = true;
-		end
+		pPlayer:SetFOV( 20, 0.1 )
+		self.m_bInZoom = true;
 	end
 end
+
+end
+
+//-----------------------------------------------------------------------------
+// Purpose:
+// Input  : skinNum -
+//-----------------------------------------------------------------------------
+function SWEP:SetSkin( skinNum )
+
+	local pOwner = self.Owner;
+
+	if ( pOwner == NULL ) then
+		return;
+	end
+
+	local pViewModel = pOwner:GetViewModel();
+
+	if ( pViewModel == NULL ) then
+		return;
+	end
+
+	pViewModel:SetSkin( skinNum );
 
 end
 
