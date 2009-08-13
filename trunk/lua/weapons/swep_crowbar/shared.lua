@@ -22,6 +22,7 @@ SWEP.AdminSpawnable		= false
 SWEP.Primary.Sound			= Sound( "Weapon_Crowbar.Single" )
 SWEP.Primary.Hit			= Sound( "Weapon_Crowbar.Melee_Hit" )
 SWEP.Primary.Damage			= 25.0
+SWEP.Primary.DamageType		= DMG_CLUB
 SWEP.Primary.Force			= 0.75
 SWEP.Primary.ClipSize		= -1				// Size of a clip
 SWEP.Primary.Delay			= 0.4
@@ -88,7 +89,7 @@ function SWEP:PrimaryAttack()
 		util.ImpactTrace( traceHit, pPlayer );
 
 		if ( SERVER ) then
-			pPlayer:TraceHullAttack( vecSrc, traceHit.HitPos, Vector( -16, -16, -16 ), Vector( 36, 36, 36 ), self.Primary.Damage, DMG_CLUB, self.Primary.Force );
+			pPlayer:TraceHullAttack( vecSrc, traceHit.HitPos, Vector( -16, -16, -16 ), Vector( 36, 36, 36 ), self.Primary.Damage, self.Primary.DamageType, self.Primary.Force );
 		end
 
 		// self:AddViewKick();
