@@ -20,6 +20,9 @@ SWEP.m_bInitialStateUpdate= false;
 SWEP.m_bHideGuiding = false;
 SWEP.m_bGuiding = false;
 
+SWEP.m_hLaserDot = NULL;
+SWEP.m_hMissile = NULL;
+
 SWEP.m_fMinRange1 = 40*12;
 SWEP.m_fMinRange2 = 40*12;
 SWEP.m_fMaxRange1 = 500*12;
@@ -65,8 +68,6 @@ function SWEP:Initialize()
 		self:SetNPCMaxBurst( 0 )
 		self:SetNPCFireRate( self.Primary.Delay )
 	end
-
-	self.m_hLaserDot = NULL;
 
 if ( !CLIENT ) then
 	if ( self.m_hLaserDot != NULL ) then
