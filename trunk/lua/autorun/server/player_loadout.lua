@@ -13,6 +13,7 @@ function meta:Give( item )
 		// "weapon_crossbow",
 		"weapon_crowbar",
 		"weapon_pistol",
+		"weapon_rpg",
 		"weapon_smg1",
 		"weapon_stunstick"
 
