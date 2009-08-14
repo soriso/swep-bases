@@ -114,6 +114,10 @@ function SWEP:PrimaryAttack()
 
 	// Can't have an active missile out
 	if ( self.m_hMissile != NULL ) then
+		if ( CLIENT ) then
+			return;
+		end
+
 		return;
 	end
 
@@ -142,15 +146,15 @@ function SWEP:PrimaryAttack()
 
 	local	vForward, vRight, vUp;
 
-	vForward = pOwner:GetAimVector();
-	vRight = pOwner:GetAimVector();
-	vUp = pOwner:GetAimVector();
+	vForward = Vector( pOwner:GetAimVector().x, 0, 0 );
+	vRight = Vector( 0, pOwner:GetAimVector().y, 0 );
+	vUp = Vector( 0, 0, pOwner:GetAimVector().z );
 
 	local	muzzlePoint = pOwner:GetShootPos() + vForward * 12.0 + vRight * 6.0 + vUp * -3.0;
 
 if ( !CLIENT ) then
 	local vecAngles;
-	vecAngles = vForward:Angle();
+	vecAngles = pPlayer:GetAimVector():Angle();
 
 	local pMissile = ents.Create( "rpg_missile" );
 	pMissile:SetPos( muzzlePoint );
