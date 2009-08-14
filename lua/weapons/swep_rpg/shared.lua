@@ -66,6 +66,8 @@ function SWEP:Initialize()
 		self:SetNPCFireRate( self.Primary.Delay )
 	end
 
+	self.m_hLaserDot = nil;
+
 if ( !CLIENT ) then
 	if ( self.m_hLaserDot != NULL ) then
 		self.m_hLaserDot:Remove();
