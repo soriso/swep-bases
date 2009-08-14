@@ -81,6 +81,7 @@ function SWEP:PrimaryAttack()
 		self.Weapon:EmitSound( self.Primary.Hit );
 
 		self.Weapon:SendWeaponAnim( ACT_VM_HITCENTER );
+		pPlayer:LagCompensation( true );
 		pPlayer:SetAnimation( PLAYER_ATTACK1 );
 
 		self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
@@ -101,6 +102,7 @@ function SWEP:PrimaryAttack()
 	self.Weapon:EmitSound( self.Primary.Sound );
 
 	self.Weapon:SendWeaponAnim( ACT_VM_MISSCENTER );
+	pPlayer:LagCompensation( false );
 	pPlayer:SetAnimation( PLAYER_ATTACK1 );
 
 	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
