@@ -129,8 +129,8 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
-	local vecOrigin = pPlayer:GetShootPos();
-	local vecForward = pPlayer:GetAimVector();
+	local vecOrigin;
+	local vecForward;
 
 	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
 
@@ -142,15 +142,15 @@ function SWEP:PrimaryAttack()
 
 	local	vForward, vRight, vUp;
 
-	vForward = Vector( pOwner:GetAimVector().x, 0, 0 );
-	vRight = Vector( 0, pOwner:GetAimVector().y, 0 );
-	vUp = Vector( 0, 0, pOwner:GetAimVector().z );
+	vForward = pOwner:GetAimVector();
+	vRight = pOwner:GetAimVector();
+	vUp = pOwner:GetAimVector();
 
 	local	muzzlePoint = pOwner:GetShootPos() + vForward * 12.0 + vRight * 6.0 + vUp * -3.0;
 
 if ( !CLIENT ) then
 	local vecAngles;
-	vecAngles = vecForward:Angle();
+	vecAngles = vForward:Angle();
 
 	local pMissile = ents.Create( "rpg_missile" );
 	pMissile:SetPos( muzzlePoint );
