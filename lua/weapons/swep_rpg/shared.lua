@@ -114,15 +114,16 @@ function SWEP:PrimaryAttack()
 
 	// Can't have an active missile out
 	if ( self.m_hMissile != NULL ) then
-		if ( CLIENT ) then
-			return;
-		end
-
 		return;
 	end
 
 	// Can't be reloading
 	if ( self.Weapon:GetActivity() == ACT_VM_RELOAD ) then
+		return;
+	end
+
+	if ( self:Ammo1() <= 0 ) then
+		self.Weapon:EmitSound( self.Primary.Empty );
 		return;
 	end
 
@@ -174,6 +175,8 @@ if ( !CLIENT ) then
 
 	self.m_hMissile = pMissile;
 end
+
+	if ( CLIENT ) then return end
 
 	self:DecrementAmmo( self.Owner );
 	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
