@@ -105,13 +105,6 @@ end
 ---------------------------------------------------------*/
 function SWEP:PrimaryAttack()
 
-	// Only the player fires this way so we can cast
-	local pPlayer = self.Owner;
-
-	if (!pPlayer) then
-		return;
-	end
-
 	// Can't have an active missile out
 	if ( self.m_hMissile != NULL ) then
 		return;
@@ -119,6 +112,32 @@ function SWEP:PrimaryAttack()
 
 	// Can't be reloading
 	if ( self.Weapon:GetActivity() == ACT_VM_RELOAD ) then
+		return;
+	end
+
+	// Only the player fires this way so we can cast
+	local pPlayer = self.Owner;
+
+	if ( !pPlayer ) then
+		return;
+	end
+
+	if ( self.Weapon:Clip1() <= 0 ) then
+		if ( self:Ammo1() > 0 ) then
+			self.Weapon:EmitSound( self.Primary.Empty );
+			self:Reload();
+		else
+			self.Weapon:EmitSound( self.Primary.Empty );
+			self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
+		end
+
+		return;
+	end
+
+	if ( self.m_bIsUnderwater && !self.m_bFiresUnderwater ) then
+		self.Weapon:EmitSound( self.Primary.Empty );
+		self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
+
 		return;
 	end
 
@@ -143,7 +162,7 @@ function SWEP:PrimaryAttack()
 
 if ( !CLIENT ) then
 	local vecAngles;
-	vecAngles = vForward:Angle();
+	vecAngles = pOwner:GetAimVector():Angle();
 
 	local pMissile = ents.Create( "rpg_missile" );
 	pMissile:SetPos( muzzlePoint );
