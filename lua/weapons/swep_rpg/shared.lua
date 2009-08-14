@@ -66,7 +66,7 @@ function SWEP:Initialize()
 		self:SetNPCFireRate( self.Primary.Delay )
 	end
 
-	self.m_hLaserDot = nil;
+	self.m_hLaserDot = NULL;
 
 if ( !CLIENT ) then
 	if ( self.m_hLaserDot != NULL ) then
