@@ -135,7 +135,9 @@ function SWEP:PrimaryAttack()
 
 	local	vForward, vRight, vUp;
 
-	vForward, vRight, vUp = pOwner:GetAimVector();
+	vForward = pOwner:GetAimVector().x;
+	vRight = pOwner:GetAimVector().y;
+	vUp = pOwner:GetAimVector().z;
 
 	local	muzzlePoint = pOwner:GetShootPos() + vForward * 12.0 + vRight * 6.0 + vUp * -3.0;
 
