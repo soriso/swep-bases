@@ -179,7 +179,7 @@ end
 	if ( CLIENT ) then return end
 
 	self:DecrementAmmo( self.Owner );
-	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
+	pPlayer:SendLua( "LocalPlayer():GetActiveWeapon():SendWeaponAnim( ACT_VM_PRIMARYATTACK );" );
 	self.Weapon:EmitSound( self.Primary.Sound );
 
 	// player "shoot" animation
