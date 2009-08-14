@@ -176,10 +176,8 @@ if ( !CLIENT ) then
 	self.m_hMissile = pMissile;
 end
 
-	if ( CLIENT ) then return end
-
 	self:DecrementAmmo( self.Owner );
-	pPlayer:SendLua( "LocalPlayer():GetActiveWeapon():SendWeaponAnim( ACT_VM_PRIMARYATTACK );" );
+	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 	self.Weapon:EmitSound( self.Primary.Sound );
 
 	// player "shoot" animation
