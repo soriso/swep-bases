@@ -105,6 +105,13 @@ end
 ---------------------------------------------------------*/
 function SWEP:PrimaryAttack()
 
+	// Only the player fires this way so we can cast
+	local pPlayer = self.Owner;
+
+	if ( !pPlayer ) then
+		return;
+	end
+
 	// Can't have an active missile out
 	if ( self.m_hMissile != NULL ) then
 		return;
@@ -112,13 +119,6 @@ function SWEP:PrimaryAttack()
 
 	// Can't be reloading
 	if ( self.Weapon:GetActivity() == ACT_VM_RELOAD ) then
-		return;
-	end
-
-	// Only the player fires this way so we can cast
-	local pPlayer = self.Owner;
-
-	if ( !pPlayer ) then
 		return;
 	end
 
@@ -198,7 +198,7 @@ end
 //-----------------------------------------------------------------------------
 function SWEP:DecrementAmmo( pOwner )
 	// Take away our primary ammo type
-	pOwner:RemoveAmmo( 1, self.Primary.Ammo );
+	self:TakePrimaryAmmo( self.Primary.NumAmmo );
 end
 
 
