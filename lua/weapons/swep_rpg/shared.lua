@@ -67,7 +67,7 @@ function SWEP:Initialize()
 	end
 
 if ( !CLIENT ) then
-	if ( m_hLaserDot != NULL ) then
+	if ( self.m_hLaserDot != NULL ) then
 		self.m_hLaserDot:Remove();
 		self.m_hLaserDot = NULL;
 	end
@@ -144,6 +144,7 @@ if ( !CLIENT ) then
 	pMissile:SetPos( muzzlePoint );
 	pMissile:SetAngles( vecAngles );
 	pMissile:SetOwner( self.Owner );
+	pMissile:Spawn();
 
 	// If the shot is clear to the player, give the missile a grace period
 	local	tr;
