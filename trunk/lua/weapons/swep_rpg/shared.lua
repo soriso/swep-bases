@@ -129,8 +129,8 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
-	local vecOrigin = pOwner:GetShootPos();
-	local vecForward = pOwner:GetAimVector();
+	local vecOrigin = pPlayer:GetShootPos();
+	local vecForward = pPlayer:GetAimVector();
 
 	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
 
