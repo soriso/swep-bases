@@ -37,8 +37,6 @@ SWEP.AdminSpawnable		= false
 
 SWEP.Primary.Empty			= Sound( "Weapon_SMG1.Empty" )
 SWEP.Primary.Sound			= Sound( "Weapon_RPG.Single" )
-SWEP.Primary.Special1		= Sound( "Weapon_RPG.LaserOn" )
-SWEP.Primary.Special2		= Sound( "Weapon_RPG.LaserOff" )
 SWEP.Primary.Damage			= 150
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.NumAmmo		= SWEP.Primary.NumShots
@@ -49,6 +47,8 @@ SWEP.Primary.DefaultClip	= 3					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= false				// Automatic/Semi Auto
 SWEP.Primary.Ammo			= "rpg_round"
 
+SWEP.Secondary.Special1		= Sound( "Weapon_RPG.LaserOn" )
+SWEP.Secondary.Special2		= Sound( "Weapon_RPG.LaserOff" )
 SWEP.Secondary.ClipSize		= -1				// Size of a clip
 SWEP.Secondary.DefaultClip	= -1				// Default number of bullets in a clip
 SWEP.Secondary.Automatic	= false				// Automatic/Semi Auto
@@ -122,18 +122,6 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
-	if ( self.Weapon:Clip1() <= 0 ) then
-		if ( self:Ammo1() > 0 ) then
-			self.Weapon:EmitSound( self.Primary.Empty );
-			self:Reload();
-		else
-			self.Weapon:EmitSound( self.Primary.Empty );
-			self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
-		end
-
-		return;
-	end
-
 	if ( self.m_bIsUnderwater && !self.m_bFiresUnderwater ) then
 		self.Weapon:EmitSound( self.Primary.Empty );
 		self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
@@ -141,8 +129,8 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
-	local vecOrigin;
-	local vecForward;
+	local vecOrigin = pOwner:GetShootPos();
+	local vecForward = pOwner:GetAimVector();
 
 	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
 
@@ -162,7 +150,7 @@ function SWEP:PrimaryAttack()
 
 if ( !CLIENT ) then
 	local vecAngles;
-	vecAngles = pOwner:GetAimVector():Angle();
+	vecAngles = vecForward:Angle();
 
 	local pMissile = ents.Create( "rpg_missile" );
 	pMissile:SetPos( muzzlePoint );
@@ -281,7 +269,7 @@ function SWEP:StartGuiding()
 	self.m_bGuiding = true;
 
 if ( !CLIENT ) then
-	self.Weapon:EmitSound(self.Primary.Special1);
+	self.Weapon:EmitSound(self.Secondary.Special1);
 
 	self:CreateLaserPointer();
 end
