@@ -14,6 +14,7 @@ function meta:Give( item )
 		"weapon_crowbar",
 		"weapon_pistol",
 		"weapon_rpg",
+		"weapon_shotgun",
 		"weapon_smg1",
 		"weapon_stunstick"
 
