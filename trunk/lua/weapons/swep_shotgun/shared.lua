@@ -111,8 +111,6 @@ function SWEP:PrimaryAttack()
 	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 
 	// Don't fire again until fire animation has completed
-	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
-	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
 	self:TakePrimaryAmmo( self.Primary.NumAmmo );
 
@@ -156,8 +154,6 @@ function SWEP:SecondaryAttack()
 	self.Weapon:SendWeaponAnim( ACT_VM_SECONDARYATTACK );
 
 	// Don't fire again until fire animation has completed
-	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
-	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
 	self:TakePrimaryAmmo( self.Secondary.NumAmmo );	// Shotgun uses same clip for primary and secondary attacks
 
