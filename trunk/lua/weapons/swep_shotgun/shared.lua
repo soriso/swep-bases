@@ -35,6 +35,8 @@ SWEP.Primary.Delay			= 0.7
 SWEP.Primary.DefaultClip	= 6					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
 SWEP.Primary.Ammo			= "Buckshot"
+SWEP.Primary.Tracer			= 4
+SWEP.Primary.TracerName		= "Tracer"
 
 SWEP.Secondary.Sound		= Sound( "Weapon_Shotgun.Double" )
 SWEP.Secondary.Damage		= SWEP.Primary.Damage
@@ -288,8 +290,10 @@ end
 //-----------------------------------------------------------------------------
 function SWEP:Reload()
 
-	// This makes the reload a semi-automatic thing rather than a continuous thing
-	if ( !self.Owner:KeyPressed( IN_RELOAD ) ) then return end
+	if ( pOwner:KeyPressed( IN_RELOAD ) && self.Primary.ClipSize != -1 && !self.m_bInReload ) then
+		// reload when reload is pressed, or if no buttons are down and weapon is empty.
+		self:StartReload();
+	end
 
 	// Check that StartReload was called first
 	if (!self.m_bInReload) then
@@ -466,8 +470,7 @@ function SWEP:Think()
 	end
 
 	if ( pOwner:KeyPressed( IN_RELOAD ) && self.Primary.ClipSize != -1 && !self.m_bInReload ) then
-		// reload when reload is pressed, or if no buttons are down and weapon is empty.
-		self:StartReload();
+		return;
 	else
 		// no fire buttons down
 		self.m_bFireOnEmpty = false;
@@ -520,8 +523,9 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 	local vecSrc		= pPlayer:GetShootPos();
 	local vecAiming		= pPlayer:GetAimVector();
 
-	local info = { Num = num_bullets, Src = vecSrc, Dir = vecAiming, Spread = aimcone, Tracer = 4, Damage = damage };
+	local info = { Num = num_bullets, Src = vecSrc, Dir = vecAiming, Spread = aimcone, Tracer = self.Primary.Tracer, Damage = damage };
 	info.Attacker = pPlayer;
+	info.TracerName = self.Primary.TracerName;
 
 	info.Callback = function( attacker, trace, dmginfo )
 		if ( self.ShootCallback ) then
