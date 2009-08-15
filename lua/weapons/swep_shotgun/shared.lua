@@ -261,7 +261,7 @@ function SWEP:FillClip()
 	if ( pOwner:GetAmmoCount( self.Primary.Ammo ) > 0 ) then
 		if ( self.Weapon:Clip1() < self.Primary.ClipSize ) then
 			self.Weapon:SetClip1( self.Weapon:Clip1() + 1 );
-			self:TakePrimaryAmmo( 1 );
+			pOwner:RemoveAmmo( 1, self.Primary.Ammo );
 		end
 	end
 
