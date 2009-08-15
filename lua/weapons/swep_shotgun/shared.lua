@@ -14,8 +14,10 @@ SWEP.WorldModel		= "models/weapons/w_shotgun.mdl"
 SWEP.AnimPrefix		= "shotgun"
 SWEP.HoldType		= "shotgun"
 
-SWEP.Category			= "Half-Life 2"
-SWEP.m_bFiresUnderwater	= false
+SWEP.Category				= "Half-Life 2"
+SWEP.m_bFiresUnderwater		= false;
+SWEP.m_flNextAttack 		= CurTime();
+SWEP.m_flNextPrimaryAttack 	= CurTime();
 
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
@@ -36,6 +38,8 @@ SWEP.Primary.Ammo			= "Buckshot"
 
 SWEP.Secondary.Sound		= Sound( "Weapon_Shotgun.Double" )
 SWEP.Secondary.Damage		= SWEP.Primary.Damage
+SWEP.Secondary.NumShots		= 12
+SWEP.Secondary.NumAmmo		= 2
 SWEP.Secondary.ClipSize		= -1				// Size of a clip
 SWEP.Secondary.DefaultClip	= -1				// Default number of bullets in a clip
 SWEP.Secondary.Automatic	= true				// Automatic/Semi Auto
@@ -90,6 +94,10 @@ function SWEP:PrimaryAttack()
 	local pPlayer = self.Owner;
 
 	if (!pPlayer) then
+		return;
+	end
+
+	if (self.m_bNeedPump) then
 		return;
 	end
 
@@ -181,14 +189,16 @@ function SWEP:Reload()
 
 	// Check that StartReload was called first
 	if (!self.m_bInReload) then
-		if ( SERVER ) then
-			ErrorNoHalt("ERROR: Shotgun Reload called incorrectly!\n");
-		end
+		Error("ERROR: Shotgun Reload called incorrectly!\n");
 	end
 
 	local pOwner  = self.Owner;
 
 	if ( pOwner == NULL ) then
+		return false;
+	end
+
+	if ( pOwner:KeyDown( IN_RELOAD ) && !pOwner:KeyPressed( IN_RELOAD ) ) then
 		return false;
 	end
 
@@ -404,7 +414,7 @@ function SWEP:Think()
 		end
 	end
 
-	if ( pOwner:KeyDown( IN_RELOAD ) && self.Primary.ClipSize != -1 && !self.m_bInReload ) then
+	if ( pOwner:KeyPressed( IN_RELOAD ) && self.Primary.ClipSize != -1 && !self.m_bInReload ) then
 		// reload when reload is pressed, or if no buttons are down and weapon is empty.
 		self:StartReload();
 	else
