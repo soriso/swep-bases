@@ -9,10 +9,10 @@ SWEP.Instructions	= ""
 
 SWEP.ViewModelFOV	= 54
 SWEP.ViewModelFlip	= false
-SWEP.ViewModel		= "models/weapons/v_357.mdl"
-SWEP.WorldModel		= "models/weapons/w_357.mdl"
-SWEP.AnimPrefix		= "python"
-SWEP.HoldType		= "pistol"
+SWEP.ViewModel		= "models/weapons/v_shotgun.mdl"
+SWEP.WorldModel		= "models/weapons/w_shotgun.mdl"
+SWEP.AnimPrefix		= "shotgun"
+SWEP.HoldType		= "shotgun"
 
 SWEP.Category			= "Half-Life 2"
 SWEP.m_bFiresUnderwater	= false
@@ -20,24 +20,35 @@ SWEP.m_bFiresUnderwater	= false
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
 
-SWEP.Primary.Empty			= Sound( "Weapon_Pistol.Empty" )
-SWEP.Primary.Sound			= Sound( "Weapon_357.Single" )
-SWEP.Primary.Damage			= 75
-SWEP.Primary.NumShots		= 1
-SWEP.Primary.NumAmmo		= SWEP.Primary.NumShots
-SWEP.Primary.Cone			= vec3_origin
+SWEP.Primary.Empty			= Sound( "Weapon_Shotgun.Empty" )
+SWEP.Primary.Sound			= Sound( "Weapon_Shotgun.Single" )
+SWEP.Primary.Reload			= Sound( "Weapon_Shotgun.Reload" )
+SWEP.Primary.Special1		= Sound( "Weapon_Shotgun.Special1" )
+SWEP.Primary.Damage			= 4
+SWEP.Primary.NumShots		= 7
+SWEP.Primary.NumAmmo		= 1
+SWEP.Primary.Cone			= VECTOR_CONE_10DEGREES
 SWEP.Primary.ClipSize		= 6					// Size of a clip
-SWEP.Primary.Delay			= 0.75
+SWEP.Primary.Delay			= 0.7
 SWEP.Primary.DefaultClip	= 6					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
-SWEP.Primary.Ammo			= "357"
+SWEP.Primary.Ammo			= "Buckshot"
 
+SWEP.Secondary.Sound		= Sound( "Weapon_Shotgun.Double" )
+SWEP.Secondary.Damage		= SWEP.Primary.Damage
 SWEP.Secondary.ClipSize		= -1				// Size of a clip
 SWEP.Secondary.DefaultClip	= -1				// Default number of bullets in a clip
-SWEP.Secondary.Automatic	= false				// Automatic/Semi Auto
+SWEP.Secondary.Automatic	= true				// Automatic/Semi Auto
 SWEP.Secondary.Ammo			= "None"
 
 
+
+function SWEP:GetBulletSpread()
+
+	local cone = self.Primary.Cone;
+	return cone;
+
+end
 
 /*---------------------------------------------------------
    Name: SWEP:Initialize( )
@@ -55,6 +66,20 @@ function SWEP:Initialize()
 end
 
 
+//-----------------------------------------------------------------------------
+// Purpose:
+//
+//
+//-----------------------------------------------------------------------------
+function SWEP:DryFire()
+
+	self.Weapon:EmitSound(self.Primary.Empty);
+	self.Weapon:SendWeaponAnim( ACT_VM_DRYFIRE );
+
+	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
+
+end
+
 /*---------------------------------------------------------
    Name: SWEP:PrimaryAttack( )
    Desc: +attack1 has been pressed
@@ -64,56 +89,32 @@ function SWEP:PrimaryAttack()
 	// Only the player fires this way so we can cast
 	local pPlayer = self.Owner;
 
-	if ( !pPlayer ) then
+	if (!pPlayer) then
 		return;
 	end
 
-	if ( self.Weapon:Clip1() <= 0 ) then
-		if ( self:Ammo1() > 0 ) then
-			self.Weapon:EmitSound( self.Primary.Empty );
-			self:Reload();
-		else
-			self.Weapon:EmitSound( self.Primary.Empty );
-			self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
-		end
+	// MUST call sound before removing a round from the clip of a CMachineGun
+	self.Weapon:EmitSound(self.Primary.Sound);
 
-		return;
-	end
-
-	if ( self.m_bIsUnderwater && !self.m_bFiresUnderwater ) then
-		self.Weapon:EmitSound( self.Primary.Empty );
-		self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
-
-		return;
-	end
-
-	self.Weapon:EmitSound( self.Primary.Sound );
 	pPlayer:MuzzleFlash();
 
 	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
+
+	// Don't fire again until fire animation has completed
+	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
+	self:TakePrimaryAmmo( self.Primary.NumAmmo );
+
+	// player "shoot" animation
 	pPlayer:SetAnimation( PLAYER_ATTACK1 );
 
-	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
-	self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay );
 
-	self:TakePrimaryAmmo( 1 );
+	self:ShootBullet( self.Primary.Damage, self.Primary.NumShots, self:GetBulletSpread() );
 
-	self:ShootBullet( self.Primary.Damage, self.Primary.NumShots, self.Primary.Cone );
+	local punch;
+	punch = Angle( math.Rand( -2, -1 ), math.Rand( -2, 2 ), 0 );
+	pPlayer:ViewPunch( punch );
 
-	//Disorient the player
-	local angles = pPlayer:EyeAngles();
-
-	angles.pitch = angles.pitch + math.random( -1, 1 );
-	angles.yaw   = angles.yaw   + math.random( -1, 1 );
-	angles.roll  = 0;
-
-	if ( pPlayer:IsNPC() ) then return end
-
-if ( !CLIENT ) then
-	pPlayer:SnapEyeAngles( angles );
-end
-
-	pPlayer:ViewPunch( Angle( -8, math.Rand( -2, 2 ), 0 ) );
+	self.m_bNeedPump = true;
 
 end
 
@@ -126,14 +127,175 @@ function SWEP:SecondaryAttack()
 	return false
 end
 
-/*---------------------------------------------------------
-   Name: SWEP:Reload( )
-   Desc: Reload is being pressed
----------------------------------------------------------*/
-function SWEP:Reload()
-	self.Weapon:DefaultReload( ACT_VM_RELOAD );
+//-----------------------------------------------------------------------------
+// Purpose: Override so only reload one shell at a time
+// Input  :
+// Output :
+//-----------------------------------------------------------------------------
+function SWEP:StartReload()
+
+	if ( self.m_bNeedPump ) then
+		return false;
+	end
+
+	local pOwner  = self.Owner;
+
+	if ( pOwner == NULL ) then
+		return false;
+	end
+
+	if (pOwner:GetAmmoCount(self.Primary.Ammo) <= 0) then
+		return false;
+	end
+
+	if (self.Weapon:Clip1() >= self.Primary.ClipSize) then
+		return false;
+	end
+
+
+	local j = math.min(1, pOwner:GetAmmoCount(self.Primary.Ammo));
+
+	if (j <= 0) then
+		return false;
+	end
+
+	self.Weapon:SendWeaponAnim( ACT_SHOTGUN_RELOAD_START );
+
+	// Make shotgun shell visible
+	self.Weapon:SetBodygroup(1,0);
+
+	self.m_flNextAttack = CurTime();
+	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
+
+	self.m_bInReload = true;
+	return true;
+
 end
 
+//-----------------------------------------------------------------------------
+// Purpose: Override so only reload one shell at a time
+// Input  :
+// Output :
+//-----------------------------------------------------------------------------
+function SWEP:Reload()
+
+	// Check that StartReload was called first
+	if (!self.m_bInReload) then
+		if ( SERVER ) then
+			ErrorNoHalt("ERROR: Shotgun Reload called incorrectly!\n");
+		end
+	end
+
+	local pOwner  = self.Owner;
+
+	if ( pOwner == NULL ) then
+		return false;
+	end
+
+	if (pOwner:GetAmmoCount(self.Primary.Ammo) <= 0) then
+		return false;
+	end
+
+	if (self.Weapon:Clip1() >= self.Primary.ClipSize) then
+		return false;
+	end
+
+	local j = math.min(1, pOwner:GetAmmoCount(self.Primary.Ammo));
+
+	if (j <= 0) then
+		return false;
+	end
+
+	self:FillClip();
+	// Play reload on different channel as otherwise steals channel away from fire sound
+	self.Weapon:EmitSound(self.Primary.Reload);
+	self.Weapon:SendWeaponAnim( ACT_VM_RELOAD );
+
+	self.m_flNextAttack = CurTime();
+	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
+
+	return true;
+
+end
+
+//-----------------------------------------------------------------------------
+// Purpose: Play finish reload anim and fill clip
+// Input  :
+// Output :
+//-----------------------------------------------------------------------------
+function SWEP:FinishReload()
+
+	// Make shotgun shell invisible
+	self.Weapon:SetBodygroup(1,1);
+
+	local pOwner  = self.Owner;
+
+	if ( pOwner == NULL ) then
+		return;
+	end
+
+	self.m_bInReload = false;
+
+	// Finish reload animation
+	self.Weapon:SendWeaponAnim( ACT_SHOTGUN_RELOAD_FINISH );
+
+	self.m_flNextAttack = CurTime();
+	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
+
+end
+
+//-----------------------------------------------------------------------------
+// Purpose: Play finish reload anim and fill clip
+// Input  :
+// Output :
+//-----------------------------------------------------------------------------
+function SWEP:FillClip()
+
+	local pOwner  = self.Owner;
+
+	if ( pOwner == NULL ) then
+		return;
+	end
+
+	// Add them to the clip
+	if ( pOwner:GetAmmoCount( self.Primary.Ammo ) > 0 ) then
+		if ( self.Weapon:Clip1() < self.Primary.ClipSize ) then
+			self.Weapon:SetClip1( self.Weapon:Clip1() + 1 );
+			self:TakePrimaryAmmo( 1 );
+		end
+	end
+
+end
+
+//-----------------------------------------------------------------------------
+// Purpose: Play weapon pump anim
+// Input  :
+// Output :
+//-----------------------------------------------------------------------------
+function SWEP:Pump()
+
+	local pOwner  = self.Owner;
+
+	if ( pOwner == NULL ) then
+		return;
+	end
+
+	self.m_bNeedPump = false;
+
+	if ( m_bDelayedReload ) then
+		self.m_bDelayedReload = false;
+		self:StartReload();
+	end
+
+	self.Weapon:EmitSound( self.Primary.Special1 );
+
+	// Finish reload animation
+	self.Weapon:SendWeaponAnim( ACT_SHOTGUN_PUMP );
+
+	self.m_flNextAttack	= CurTime() + self.Weapon:SequenceDuration();
+	self.m_flNextPrimaryAttack	= CurTime() + self.Weapon:SequenceDuration();
+
+end
 
 /*---------------------------------------------------------
    Name: SWEP:Think( )
