@@ -205,6 +205,8 @@ function SWEP:StartReload()
 	// Make shotgun shell visible
 	self.Weapon:SetBodygroup(1,0);
 
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextAttack = CurTime();
 	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
 
@@ -222,16 +224,12 @@ function SWEP:Reload()
 
 	// Check that StartReload was called first
 	if (!self.m_bInReload) then
-		Error("ERROR: Shotgun Reload called incorrectly!\n");
+		return Msg("ERROR: Shotgun Reload called incorrectly!\n");
 	end
 
 	local pOwner  = self.Owner;
 
 	if ( pOwner == NULL ) then
-		return false;
-	end
-
-	if ( self.m_bDelayedReload ) then
 		return false;
 	end
 
@@ -254,6 +252,8 @@ function SWEP:Reload()
 	self.Weapon:EmitSound(self.Primary.Reload);
 	self.Weapon:SendWeaponAnim( ACT_VM_RELOAD );
 
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextAttack = CurTime();
 	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
 
@@ -282,6 +282,8 @@ function SWEP:FinishReload()
 	// Finish reload animation
 	self.Weapon:SendWeaponAnim( ACT_SHOTGUN_RELOAD_FINISH );
 
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextAttack = CurTime();
 	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
 
@@ -436,6 +438,7 @@ function SWEP:Think()
 		elseif (pOwner:WaterLevel() == 3 && self.m_bFiresUnderwater == false) then
 			self.Weapon:EmitSound(self.Primary.Empty);
 			self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
+			self.Weapon:SetNextSecondaryFire( CurTime() + 0.2 );
 			self.m_flNextPrimaryAttack = CurTime() + 0.2;
 			return;
 		else
@@ -443,6 +446,7 @@ function SWEP:Think()
 			local pPlayer = self.Owner;
 			if ( pPlayer && pPlayer:KeyPressed( IN_ATTACK ) ) then
 				 self.Weapon:SetNextPrimaryFire( CurTime() );
+				 self.Weapon:SetNextSecondaryFire( CurTime() );
 				 self.m_flNextPrimaryAttack = CurTime();
 			end
 			self:PrimaryAttack();
