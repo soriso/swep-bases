@@ -132,7 +132,36 @@ end
    Desc: +attack2 has been pressed
 ---------------------------------------------------------*/
 function SWEP:SecondaryAttack()
-	return false
+
+	// Only the player fires this way so we can cast
+	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+
+	if (!pPlayer) then
+		return;
+	end
+
+	// MUST call sound before removing a round from the clip of a CMachineGun
+	self.Weapon:EmitSound(self.Secondary.Sound);
+
+	pPlayer:MuzzleFlash();
+
+	self.Weapon:SendWeaponAnim( ACT_VM_SECONDARYATTACK );
+
+	// Don't fire again until fire animation has completed
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
+	self:TakePrimaryAmmo( self.Secondary.NumAmmo );	// Shotgun uses same clip for primary and secondary attacks
+
+	// player "shoot" animation
+	pPlayer:SetAnimation( PLAYER_ATTACK1 );
+
+
+	self:ShootBullet( self.Secondary.Damage, self.Secondary.NumShots, self:GetBulletSpread() );
+	pPlayer:ViewPunch( Angle(math.Rand( -5, 5 ),0,0) );
+
+	self.m_bNeedPump = true;
+
 end
 
 //-----------------------------------------------------------------------------
@@ -198,7 +227,7 @@ function SWEP:Reload()
 		return false;
 	end
 
-	if ( pOwner:KeyDown( IN_RELOAD ) && !pOwner:KeyPressed( IN_RELOAD ) ) then
+	if ( !pOwner:KeyPressed( IN_RELOAD ) && pOwner:KeyDown( IN_RELOAD ) ) then
 		return false;
 	end
 
