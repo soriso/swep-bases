@@ -288,6 +288,9 @@ end
 //-----------------------------------------------------------------------------
 function SWEP:Reload()
 
+	// This makes the reload a semi-automatic thing rather than a continuous thing
+	if ( !self.Owner:KeyPressed( IN_RELOAD ) ) then return end
+
 	// Check that StartReload was called first
 	if (!self.m_bInReload) then
 		return Msg("ERROR: Shotgun Reload called incorrectly!\n");
