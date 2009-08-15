@@ -92,29 +92,32 @@ end
 ---------------------------------------------------------*/
 function SWEP:PrimaryAttack()
 
-	if ( (self.m_bDelayedFire1 || pOwner:KeyDown( IN_ATTACK )) && self.m_flNextPrimaryAttack <= CurTime()) then
-		self.m_bDelayedFire1 = false;
-		if ( (self.Weapon:Clip1() <= 0 && self.Primary.ClipSize != -1) || ( self.Primary.ClipSize == -1 && pOwner:GetAmmoCount(self.Primary.Ammo) <= 0 ) ) then
-			if (pOwner:GetAmmoCount(self.Primary.Ammo) <= 0) then
-				return self:DryFire();
-			else
-				return self:StartReload();
-			end
-		// Fire underwater?
-		elseif (pOwner:WaterLevel() == 3 && self.m_bFiresUnderwater == false) then
-			self.Weapon:EmitSound(self.Primary.Empty);
-			self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
-			self.Weapon:SetNextSecondaryFire( CurTime() + 0.2 );
-			self.m_flNextPrimaryAttack = CurTime() + 0.2;
-			return;
+	local pOwner = self.Owner;
+	if (!pOwner) then
+		return;
+	end
+
+	self.m_bDelayedFire1 = false;
+	if ( (self.Weapon:Clip1() <= 0 && self.Primary.ClipSize != -1) || ( self.Primary.ClipSize == -1 && pOwner:GetAmmoCount(self.Primary.Ammo) <= 0 ) ) then
+		if (pOwner:GetAmmoCount(self.Primary.Ammo) <= 0) then
+			return self:DryFire();
 		else
-			// If the firing button was just pressed, reset the firing time
-			local pPlayer = self.Owner;
-			if ( pPlayer && pPlayer:KeyPressed( IN_ATTACK ) ) then
-				 self.Weapon:SetNextPrimaryFire( CurTime() );
-				 self.Weapon:SetNextSecondaryFire( CurTime() );
-				 self.m_flNextPrimaryAttack = CurTime();
-			end
+			return self:StartReload();
+		end
+	// Fire underwater?
+	elseif (pOwner:WaterLevel() == 3 && self.m_bFiresUnderwater == false) then
+		self.Weapon:EmitSound(self.Primary.Empty);
+		self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
+		self.Weapon:SetNextSecondaryFire( CurTime() + 0.2 );
+		self.m_flNextPrimaryAttack = CurTime() + 0.2;
+		return;
+	else
+		// If the firing button was just pressed, reset the firing time
+		local pPlayer = self.Owner;
+		if ( pPlayer && pPlayer:KeyPressed( IN_ATTACK ) ) then
+			 self.Weapon:SetNextPrimaryFire( CurTime() );
+			 self.Weapon:SetNextSecondaryFire( CurTime() );
+			 self.m_flNextPrimaryAttack = CurTime();
 		end
 	end
 
@@ -137,6 +140,8 @@ function SWEP:PrimaryAttack()
 	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 
 	// Don't fire again until fire animation has completed
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
 	self:TakePrimaryAmmo( self.Primary.NumAmmo );
 
@@ -161,34 +166,36 @@ end
 ---------------------------------------------------------*/
 function SWEP:SecondaryAttack()
 
-	// Shotgun uses same timing and ammo for secondary attack
-	if ((self.m_bDelayedFire2 || pOwner:KeyDown( IN_ATTACK2 ))&&(self.m_flNextPrimaryAttack <= CurTime())) then
-		self.m_bDelayedFire2 = false;
+	local pOwner = self.Owner;
+	if (!pOwner) then
+		return;
+	end
 
-		if ( (self.Weapon:Clip1() <= 1 && self.Primary.ClipSize != -1)) then
-			// If only one shell is left, do a single shot instead
-			if ( self.Weapon:Clip1() == 1 ) then
-				return self:PrimaryAttack();
-			elseif (pOwner:GetAmmoCount(self.Primary.Ammo) <= 0) then
-				return self:DryFire();
-			else
-				return self:StartReload();
-			end
+	self.m_bDelayedFire2 = false;
 
-		// Fire underwater?
-		elseif (self.Owner:WaterLevel() == 3 && self.m_bFiresUnderwater == false) then
-			self.Weapon:EmitSound(self.Primary.Empty);
-			self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
-			self.Weapon:SetNextSecondaryFire( CurTime() + 0.2 );
-			self.m_flNextPrimaryAttack = CurTime() + 0.2;
-			return;
+	if ( (self.Weapon:Clip1() <= 1 && self.Primary.ClipSize != -1)) then
+		// If only one shell is left, do a single shot instead
+		if ( self.Weapon:Clip1() == 1 ) then
+			return self:PrimaryAttack();
+		elseif (pOwner:GetAmmoCount(self.Primary.Ammo) <= 0) then
+			return self:DryFire();
 		else
-			// If the firing button was just pressed, reset the firing time
-			if ( pOwner:KeyPressed( IN_ATTACK ) ) then
-				 self.Weapon:SetNextPrimaryFire( CurTime() );
-				 self.Weapon:SetNextSecondaryFire( CurTime() );
-				 self.m_flNextPrimaryAttack = CurTime();
-			end
+			return self:StartReload();
+		end
+
+	// Fire underwater?
+	elseif (self.Owner:WaterLevel() == 3 && self.m_bFiresUnderwater == false) then
+		self.Weapon:EmitSound(self.Primary.Empty);
+		self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
+		self.Weapon:SetNextSecondaryFire( CurTime() + 0.2 );
+		self.m_flNextPrimaryAttack = CurTime() + 0.2;
+		return;
+	else
+		// If the firing button was just pressed, reset the firing time
+		if ( pOwner:KeyPressed( IN_ATTACK ) ) then
+			 self.Weapon:SetNextPrimaryFire( CurTime() );
+			 self.Weapon:SetNextSecondaryFire( CurTime() );
+			 self.m_flNextPrimaryAttack = CurTime();
 		end
 	end
 
@@ -211,6 +218,8 @@ function SWEP:SecondaryAttack()
 	self.Weapon:SendWeaponAnim( ACT_VM_SECONDARYATTACK );
 
 	// Don't fire again until fire animation has completed
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
 	self:TakePrimaryAmmo( self.Secondary.NumAmmo );	// Shotgun uses same clip for primary and secondary attacks
 
