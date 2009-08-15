@@ -16,7 +16,7 @@ SWEP.AutoSwitchFrom		= true		// Auto switch from if you pick up a better weapon
 function SWEP:OnDrop()
 
 	if ( ValidEntity( self.Weapon ) ) then
-		self.Weapon:Remove()
+		// self.Weapon:Remove()
 	end
 
 end
