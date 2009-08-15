@@ -134,9 +134,13 @@ end
 function SWEP:SecondaryAttack()
 
 	// Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+	local pPlayer = self.Owner;
 
 	if (!pPlayer) then
+		return;
+	end
+
+	if (self.m_bNeedPump) then
 		return;
 	end
 
@@ -227,7 +231,7 @@ function SWEP:Reload()
 		return false;
 	end
 
-	if ( !pOwner:KeyPressed( IN_RELOAD ) && pOwner:KeyDown( IN_RELOAD ) ) then
+	if ( self.m_bDelayedReload ) then
 		return false;
 	end
 
@@ -321,7 +325,7 @@ function SWEP:Pump()
 
 	self.m_bNeedPump = false;
 
-	if ( m_bDelayedReload ) then
+	if ( self.m_bDelayedReload ) then
 		self.m_bDelayedReload = false;
 		self:StartReload();
 	end
@@ -408,12 +412,14 @@ function SWEP:Think()
 		elseif (self.Owner:WaterLevel() == 3 && self.m_bFiresUnderwater == false) then
 			self.Weapon:EmitSound(self.Primary.Empty);
 			self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
+			self.Weapon:SetNextSecondaryFire( CurTime() + 0.2 );
 			self.m_flNextPrimaryAttack = CurTime() + 0.2;
 			return;
 		else
 			// If the firing button was just pressed, reset the firing time
 			if ( pOwner:KeyPressed( IN_ATTACK ) ) then
 				 self.Weapon:SetNextPrimaryFire( CurTime() );
+				 self.Weapon:SetNextSecondaryFire( CurTime() );
 				 self.m_flNextPrimaryAttack = CurTime();
 			end
 			self:SecondaryAttack();
