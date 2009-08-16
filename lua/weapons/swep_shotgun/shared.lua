@@ -119,10 +119,12 @@ function SWEP:PrimaryAttack()
 	else
 		// If the firing button was just pressed, reset the firing time
 		local pPlayer = self.Owner;
-		if ( pPlayer && pPlayer:KeyPressed( IN_ATTACK ) ) then
-			 self.Weapon:SetNextPrimaryFire( CurTime() );
-			 self.Weapon:SetNextSecondaryFire( CurTime() );
-			 self.m_flNextPrimaryAttack = CurTime();
+		if ( !pPlayer:IsNPC() ) then
+			if ( pPlayer && pPlayer:KeyPressed( IN_ATTACK ) ) then
+				 self.Weapon:SetNextPrimaryFire( CurTime() );
+				 self.Weapon:SetNextSecondaryFire( CurTime() );
+				 self.m_flNextPrimaryAttack = CurTime();
+			end
 		end
 	end
 
