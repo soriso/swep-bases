@@ -350,10 +350,10 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 	info.Tracer = self.Primary.Tracer;
 	info.TracerName = self.Primary.TracerName;
 
-	info.ShootCallback = self.ShootCallback
+	info.ShootCallback = self.ShootCallback;
 
 	info.Callback = function( attacker, trace, dmginfo )
-		return info:ShootCallback( attacker, trace, dmginfo )
+		return info:ShootCallback( attacker, trace, dmginfo );
 	end
 
 	pPlayer:FireBullets( info );
