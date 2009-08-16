@@ -157,7 +157,9 @@ function SWEP:PrimaryAttack()
 
 	local punch;
 	punch = Angle( math.Rand( -2, -1 ), math.Rand( -2, 2 ), 0 );
-	pPlayer:ViewPunch( punch );
+	if (!pOwner:IsNPC()) then
+		pPlayer:ViewPunch( punch );
+	end
 
 	self.m_bNeedPump = true;
 
@@ -234,7 +236,9 @@ function SWEP:SecondaryAttack()
 
 
 	self:ShootBullet( self.Secondary.Damage, self.Secondary.NumShots, self:GetBulletSpread() );
-	pPlayer:ViewPunch( Angle(math.Rand( -5, 5 ),0,0) );
+	if (!pOwner:IsNPC()) then
+		pPlayer:ViewPunch( Angle(math.Rand( -5, 5 ),0,0) );
+	end
 
 	self.m_bNeedPump = true;
 
