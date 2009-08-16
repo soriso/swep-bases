@@ -265,15 +265,16 @@ end
 ---------------------------------------------------------*/
 function SWEP:Deploy()
 
-	self:SetDeploySpeed( self.Weapon:SequenceDuration() )
-
 	if ( self.Weapon:Clip1() <= 0 ) then
-		return self.Weapon:SendWeaponAnim( ACT_CROSSBOW_DRAW_UNLOADED );
+		self.Weapon:SendWeaponAnim( ACT_CROSSBOW_DRAW_UNLOADED );
+		self:SetDeploySpeed( self.Weapon:SequenceDuration() )
+		return;
 	end
 
 	self:SetSkin( BOLT_SKIN_GLOW );
 
 	self.Weapon:SendWeaponAnim( ACT_VM_DRAW )
+	self:SetDeploySpeed( self.Weapon:SequenceDuration() )
 	return self.BaseClass:Deploy();
 
 end
