@@ -116,10 +116,12 @@ function SWEP:PrimaryAttack()
 	else
 		// If the firing button was just pressed, reset the firing time
 		local pPlayer = self.Owner;
-		if ( pPlayer && pPlayer:KeyPressed( IN_ATTACK ) ) then
-			 self.Weapon:SetNextPrimaryFire( CurTime() );
-			 self.Weapon:SetNextSecondaryFire( CurTime() );
-			 self.m_flNextPrimaryAttack = CurTime();
+		if (!pOwner:IsNPC()) then
+			if ( pPlayer && pPlayer:KeyPressed( IN_ATTACK ) ) then
+				 self.Weapon:SetNextPrimaryFire( CurTime() );
+				 self.Weapon:SetNextSecondaryFire( CurTime() );
+				 self.m_flNextPrimaryAttack = CurTime();
+			end
 		end
 	end
 
@@ -194,10 +196,12 @@ function SWEP:SecondaryAttack()
 		return;
 	else
 		// If the firing button was just pressed, reset the firing time
-		if ( pOwner:KeyPressed( IN_ATTACK ) ) then
-			 self.Weapon:SetNextPrimaryFire( CurTime() );
-			 self.Weapon:SetNextSecondaryFire( CurTime() );
-			 self.m_flNextPrimaryAttack = CurTime();
+		if (!pOwner:IsNPC()) then
+			if ( pOwner:KeyPressed( IN_ATTACK ) ) then
+				 self.Weapon:SetNextPrimaryFire( CurTime() );
+				 self.Weapon:SetNextSecondaryFire( CurTime() );
+				 self.m_flNextPrimaryAttack = CurTime();
+			end
 		end
 	end
 
@@ -290,9 +294,16 @@ end
 //-----------------------------------------------------------------------------
 function SWEP:Reload()
 
-	if ( pOwner:KeyPressed( IN_RELOAD ) && self.Primary.ClipSize != -1 && !self.m_bInReload ) then
-		// reload when reload is pressed, or if no buttons are down and weapon is empty.
-		self:StartReload();
+	local pOwner = self.Owner;
+	if (!pOwner) then
+		return;
+	end
+
+	if (!pOwner:IsNPC()) then
+		if ( pOwner:KeyPressed( IN_RELOAD ) && self.Primary.ClipSize != -1 && !self.m_bInReload ) then
+			// reload when reload is pressed, or if no buttons are down and weapon is empty.
+			self:StartReload();
+		end
 	end
 
 	// Check that StartReload was called first
