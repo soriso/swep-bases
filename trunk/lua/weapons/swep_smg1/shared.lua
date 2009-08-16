@@ -355,9 +355,7 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 	info.ShootCallback = self.ShootCallback
 
 	info.Callback = function( attacker, trace, dmginfo )
-		if ( info.ShootCallback ) then
-			return info:ShootCallback( attacker, trace, dmginfo )
-		end
+		return info:ShootCallback( attacker, trace, dmginfo )
 	end
 
 	pPlayer:FireBullets( info );

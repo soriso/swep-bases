@@ -9,32 +9,40 @@ SWEP.Instructions	= ""
 
 SWEP.ViewModelFOV	= 54
 SWEP.ViewModelFlip	= false
-SWEP.ViewModel		= "models/weapons/v_357.mdl"
-SWEP.WorldModel		= "models/weapons/w_357.mdl"
-SWEP.AnimPrefix		= "python"
-SWEP.HoldType		= "pistol"
+SWEP.ViewModel		= "models/weapons/v_shotgun.mdl"
+SWEP.WorldModel		= "models/weapons/w_shotgun.mdl"
+SWEP.AnimPrefix		= "shotgun"
+SWEP.HoldType		= "shotgun"
 
 SWEP.Category			= "Half-Life 2"
-SWEP.m_bFiresUnderwater	= false
+SWEP.m_bFiresUnderwater	= false;
 
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
 
-SWEP.Primary.Empty			= Sound( "Weapon_Pistol.Empty" )
-SWEP.Primary.Sound			= Sound( "Weapon_357.Single" )
-SWEP.Primary.Damage			= 75
-SWEP.Primary.NumShots		= 1
-SWEP.Primary.NumAmmo		= SWEP.Primary.NumShots
+SWEP.Primary.Empty			= Sound( "Weapon_Shotgun.Empty" )
+SWEP.Primary.Reload			= Sound( "Weapon_Shotgun.Reload" )
+SWEP.Primary.ReloadNPC		= Sound( "Weapon_Shotgun.NPC_Reload" )
+SWEP.Primary.Special1		= Sound( "Weapon_Shotgun.Special1" )
+SWEP.Primary.Sound			= Sound( "Weapon_Shotgun.Single" )
+SWEP.Primary.SoundNPC		= Sound( "Weapon_Shotgun.NPC_Single" )
+SWEP.Primary.Damage			= 4
+SWEP.Primary.NumShots		= 7
+SWEP.Primary.NumAmmo		= 1
 SWEP.Primary.Cone			= vec3_origin
 SWEP.Primary.ClipSize		= 6					// Size of a clip
 SWEP.Primary.Delay			= 0.75
 SWEP.Primary.DefaultClip	= 6					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
-SWEP.Primary.Ammo			= "357"
+SWEP.Primary.Ammo			= "Buckshot"
 
+SWEP.Secondary.Sound		= Sound( "Weapon_Shotgun.Double" )
+SWEP.Secondary.Damage		= 4
+SWEP.Secondary.NumShots		= 12
+SWEP.Secondary.NumAmmo		= 2
 SWEP.Secondary.ClipSize		= -1				// Size of a clip
 SWEP.Secondary.DefaultClip	= -1				// Default number of bullets in a clip
-SWEP.Secondary.Automatic	= false				// Automatic/Semi Auto
+SWEP.Secondary.Automatic	= true				// Automatic/Semi Auto
 SWEP.Secondary.Ammo			= "None"
 
 
@@ -189,10 +197,10 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 	local info = { Num = num_bullets, Src = vecSrc, Dir = vecAiming, Spread = aimcone, Tracer = 4, Damage = damage };
 	info.Attacker = pPlayer;
 
-	info.ShootCallback = self.ShootCallback
-
 	info.Callback = function( attacker, trace, dmginfo )
-		return info:ShootCallback( attacker, trace, dmginfo )
+		if ( self.ShootCallback ) then
+			return self:ShootCallback( attacker, trace, dmginfo )
+		end
 	end
 
 	// Fire the bullets, and force the first shot to be perfectly accuracy
