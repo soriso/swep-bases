@@ -235,12 +235,12 @@ if ( !CLIENT ) then
 						pBall:SetPhysicsAttacker( pOwner );
 						pBall:SetPos( vecSrc );
 
-						pBall:SetVelocity( pOwner:GetVelocity() + vecVelocity );
+						pBall:SetVelocity( vecVelocity );
 						pBall:Spawn();
 
 						pBall:GetPhysicsObject():AddGameFlag( FVPHYSICS_DMG_DISSOLVE );
 						pBall:GetPhysicsObject():AddGameFlag( FVPHYSICS_WAS_THROWN );
-						pBall:GetPhysicsObject():SetVelocity( pOwner:GetVelocity() + vecVelocity );
+						pBall:GetPhysicsObject():SetVelocity( vecVelocity );
 						pBall:EmitSound( "NPC_CombineBall.Launch" );
 						pBall:SetModel( "models/Effects/combineball.mdl" );
 
