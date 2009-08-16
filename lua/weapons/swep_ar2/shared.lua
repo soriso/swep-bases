@@ -425,13 +425,9 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 
 	info.Callback = function( attacker, trace, dmginfo )
 
-		if ( info.DoImpactEffect ) then
-			info:DoImpactEffect( trace )
-		end
+		info:DoImpactEffect( trace )
 
-		if ( info.ShootCallback ) then
-			return info:ShootCallback( attacker, trace, dmginfo )
-		end
+		return info:ShootCallback( attacker, trace, dmginfo )
 
 	end
 
