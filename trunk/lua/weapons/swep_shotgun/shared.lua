@@ -276,7 +276,9 @@ function SWEP:StartReload()
 		return false;
 	end
 
-	self.Weapon:SendWeaponAnim( ACT_SHOTGUN_RELOAD_START );
+	if ( IsFirstTimePredicted() ) then
+		self.Weapon:SendWeaponAnim( ACT_SHOTGUN_RELOAD_START );
+	end
 
 	// Make shotgun shell visible
 	self.Weapon:SetBodygroup(1,0);
