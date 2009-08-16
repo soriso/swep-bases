@@ -14,7 +14,11 @@ SWEP.WorldModel		= "models/weapons/w_irifle.mdl"
 SWEP.AnimPrefix		= "ar2"
 SWEP.HoldType		= "ar2"
 
-SWEP.Category			= "Half-Life 2"
+// Note: This is how it should have worked. The base weapon would set the category
+// then all of the children would have inherited that.
+// But a lot of SWEPS have based themselves on this base (probably not on purpose)
+// So the category name is now defined in all of the child SWEPS.
+//SWEP.Category			= "Half-Life 2"
 SWEP.FiresUnderwater	= false;
 SWEP.m_fFireDuration	= 0.0;
 SWEP.m_nShotsFired		= 0;
