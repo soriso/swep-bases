@@ -21,7 +21,7 @@ SWEP.Base				= "swep_ar2"
 SWEP.Primary.Sound			= Sound( "NPC_Strider.FireMinigun" )
 SWEP.Primary.Damage			= 15
 SWEP.Primary.ClipSize		= 15
-SWEP.Primary.Delay			= 0.02
+SWEP.Primary.Delay			= 0.2
 SWEP.Primary.Ammo			= "StriderMinigun"
 
 SWEP.Secondary.Ammo			= "None"
