@@ -31,6 +31,8 @@ SWEP.Primary.Delay			= 0.75
 SWEP.Primary.DefaultClip	= 6					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
 SWEP.Primary.Ammo			= "357"
+SWEP.Primary.Tracer			= 4
+SWEP.Primary.TracerName		= "Tracer"
 
 SWEP.Secondary.ClipSize		= -1				// Size of a clip
 SWEP.Secondary.DefaultClip	= -1				// Default number of bullets in a clip
@@ -186,8 +188,9 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 	local vecSrc		= pPlayer:GetShootPos();
 	local vecAiming		= pPlayer:GetAimVector();
 
-	local info = { Num = num_bullets, Src = vecSrc, Dir = vecAiming, Spread = aimcone, Tracer = 4, Damage = damage };
+	local info = { Num = num_bullets, Src = vecSrc, Dir = vecAiming, Spread = aimcone, Tracer = self.Primary.Tracer, Damage = damage };
 	info.Attacker = pPlayer;
+	info.TracerName = self.Primary.TracerName;
 
 	info.ShootCallback = self.ShootCallback;
 

@@ -35,6 +35,8 @@ SWEP.Primary.Delay			= 0.7
 SWEP.Primary.DefaultClip	= 6					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
 SWEP.Primary.Ammo			= "Buckshot"
+SWEP.Primary.Tracer			= 4
+SWEP.Primary.TracerName		= "Tracer"
 
 SWEP.Secondary.Sound		= Sound( "Weapon_Shotgun.Double" )
 SWEP.Secondary.Damage		= 4
@@ -80,6 +82,8 @@ function SWEP:DryFire()
 	self.Weapon:EmitSound(self.Primary.Empty);
 	self.Weapon:SendWeaponAnim( ACT_VM_DRYFIRE );
 
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
 
 end
@@ -109,6 +113,8 @@ function SWEP:PrimaryAttack()
 	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 
 	// Don't fire again until fire animation has completed
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
 	self:TakePrimaryAmmo( self.Primary.NumAmmo );
 
@@ -120,7 +126,9 @@ function SWEP:PrimaryAttack()
 
 	local punch;
 	punch = Angle( math.Rand( -2, -1 ), math.Rand( -2, 2 ), 0 );
-	pPlayer:ViewPunch( punch );
+	if (!pPlayer:IsNPC()) then
+		pPlayer:ViewPunch( punch );
+	end
 
 	self.m_bNeedPump = true;
 
@@ -132,7 +140,40 @@ end
    Desc: +attack2 has been pressed
 ---------------------------------------------------------*/
 function SWEP:SecondaryAttack()
-	return false
+
+	// Only the player fires this way so we can cast
+	local pPlayer = self.Owner;
+
+	if (!pPlayer) then
+		return;
+	end
+
+	// MUST call sound before removing a round from the clip of a CMachineGun
+	if (!pPlayer:IsNPC()) then
+		self.Weapon:EmitSound(self.Secondary.Sound);
+	else
+		self.Weapon:EmitSound(self.Secondary.SoundNPC);
+	end
+
+	pPlayer:MuzzleFlash();
+
+	self.Weapon:SendWeaponAnim( ACT_VM_SECONDARYATTACK );
+
+	// Don't fire again until fire animation has completed
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
+	self:TakePrimaryAmmo( self.Secondary.NumAmmo );	// Shotgun uses same clip for primary and secondary attacks
+
+	// player "shoot" animation
+	pPlayer:SetAnimation( PLAYER_ATTACK1 );
+
+
+	self:ShootBullet( self.Secondary.Damage, self.Secondary.NumShots, self:GetBulletSpread() );
+	pPlayer:ViewPunch( Angle(math.Rand( -5, 5 ),0,0) );
+
+	self.m_bNeedPump = true;
+
 end
 
 //-----------------------------------------------------------------------------
@@ -172,6 +213,8 @@ function SWEP:StartReload()
 	// Make shotgun shell visible
 	self.Weapon:SetBodygroup(1,0);
 
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextAttack = CurTime();
 	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
 
@@ -217,6 +260,8 @@ function SWEP:Reload()
 	self.Weapon:EmitSound(self.Primary.Reload);
 	self.Weapon:SendWeaponAnim( ACT_VM_RELOAD );
 
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextAttack = CurTime();
 	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
 
@@ -245,6 +290,8 @@ function SWEP:FinishReload()
 	// Finish reload animation
 	self.Weapon:SendWeaponAnim( ACT_SHOTGUN_RELOAD_FINISH );
 
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextAttack = CurTime();
 	self.m_flNextPrimaryAttack = CurTime() + self.Weapon:SequenceDuration();
 
@@ -298,6 +345,8 @@ function SWEP:Pump()
 	// Finish reload animation
 	self.Weapon:SendWeaponAnim( ACT_SHOTGUN_PUMP );
 
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 	self.m_flNextAttack	= CurTime() + self.Weapon:SequenceDuration();
 	self.m_flNextPrimaryAttack	= CurTime() + self.Weapon:SequenceDuration();
 
@@ -354,8 +403,9 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 	local vecSrc		= pPlayer:GetShootPos();
 	local vecAiming		= pPlayer:GetAimVector();
 
-	local info = { Num = num_bullets, Src = vecSrc, Dir = vecAiming, Spread = aimcone, Tracer = 4, Damage = damage };
+	local info = { Num = num_bullets, Src = vecSrc, Dir = vecAiming, Spread = aimcone, Tracer = self.Primary.Tracer, Damage = damage };
 	info.Attacker = pPlayer;
+	info.TracerName = self.Primary.TracerName;
 
 	info.ShootCallback = self.ShootCallback;
 
@@ -388,6 +438,8 @@ function SWEP:SetDeploySpeed( speed )
 
 	self.Weapon:SetNextPrimaryFire( CurTime() + speed )
 	self.Weapon:SetNextSecondaryFire( CurTime() + speed )
+	self.m_flNextAttack	= CurTime() + speed;
+	self.m_flNextPrimaryAttack	= CurTime() + speed;
 
 end
 
