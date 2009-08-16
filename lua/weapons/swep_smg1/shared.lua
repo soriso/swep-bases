@@ -214,7 +214,7 @@ if ( !CLIENT ) then
 	local pGrenade = ents.Create( "grenade_ar2" );
 	pGrenade:SetPos( vecSrc );
 	pGrenade:SetOwner( pPlayer );
-	pGrenade:SetVelocity( vecThrow );
+	pGrenade:SetVelocity( pPlayer:GetVelocity() + vecThrow );
 
 	pGrenade:Spawn()
 	pGrenade:SetAngles( RandomAngle( -400, 400 ) );
