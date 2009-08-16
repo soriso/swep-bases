@@ -189,10 +189,10 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 	local info = { Num = num_bullets, Src = vecSrc, Dir = vecAiming, Spread = aimcone, Tracer = 4, Damage = damage };
 	info.Attacker = pPlayer;
 
-	info.ShootCallback = self.ShootCallback
+	info.ShootCallback = self.ShootCallback;
 
 	info.Callback = function( attacker, trace, dmginfo )
-		return info:ShootCallback( attacker, trace, dmginfo )
+		return info:ShootCallback( attacker, trace, dmginfo );
 	end
 
 	// Fire the bullets, and force the first shot to be perfectly accuracy
