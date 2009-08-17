@@ -20,7 +20,7 @@ end
 SWEP.Base				= "swep_smg1"
 
 SWEP.Primary.Sound			= Sound( "PropJeep.FireCannon" )
-SWEP.Primary.Damage			= 15
+SWEP.Primary.Damage			= server_settings.Int( "sk_jeep_gauss_damage", 15 )
 SWEP.Primary.Cone			= VECTOR_CONE_1DEGREES
 SWEP.Primary.Delay			= 0.2
 SWEP.Primary.Ammo			= "GaussEnergy"
