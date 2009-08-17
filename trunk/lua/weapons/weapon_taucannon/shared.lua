@@ -36,12 +36,9 @@ end
 
 function SWEP:ShootCallback( attacker, tr, dmginfo )
 
-	local data = EffectData();
+	local Pos1 = tr.HitPos + tr.HitNormal
+	local Pos2 = tr.HitPos - tr.HitNormal
 
-	data:SetOrigin( tr.HitPos + ( tr.HitNormal * 1.0 ) );
-	data:SetNormal( tr.HitNormal );
-
-	util.Effect( "ImpactJeep", data );
-	util.Decal( "RedGlowFade", data );
+	util.Decal( "RedGlowFade", Pos1, Pos2 );
 
 end
