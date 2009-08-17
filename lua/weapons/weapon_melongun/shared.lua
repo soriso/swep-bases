@@ -17,6 +17,10 @@ end
 
 
 SWEP.Base				= "swep_shotgun"
+SWEP.Category			= "SWEP Base Examples"
+
+SWEP.Spawnable			= false
+SWEP.AdminSpawnable		= true
 
 function SWEP:ShootBullet( damage, num_bullets, aimcone )
 

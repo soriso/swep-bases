@@ -17,6 +17,10 @@ end
 
 
 SWEP.Base				= "swep_ar2"
+SWEP.Category			= "SWEP Base Examples"
+
+SWEP.Spawnable			= true
+SWEP.AdminSpawnable		= true
 
 SWEP.Primary.Sound			= Sound( "NPC_Strider.FireMinigun" )
 SWEP.Primary.Damage			= 15

@@ -18,6 +18,10 @@ end
 
 
 SWEP.Base				= "swep_smg1"
+SWEP.Category			= "SWEP Base Examples"
+
+SWEP.Spawnable			= true
+SWEP.AdminSpawnable		= true
 
 SWEP.Primary.Sound			= Sound( "PropJeep.FireCannon" )
 SWEP.Primary.Damage			= GetConVarNumber( "sk_jeep_gauss_damage" )
