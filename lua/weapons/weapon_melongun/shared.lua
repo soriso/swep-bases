@@ -64,6 +64,7 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 			undo.Finish()
 
 			pPlayer:AddCleanup( "props", phys )
+			pPlayer:AddCount( "props", phys )
 
 		end
 
