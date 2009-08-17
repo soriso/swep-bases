@@ -38,6 +38,12 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 	// Fire the melons, and force the first shot to be perfectly juicy
 	for i = 1, info.Num do
 
+		if ( GAMEMODE.IsSandboxDerived ) then
+
+			if ( !pPlayer:CheckLimit( "props" ) ) then return false end
+
+		end
+
 		local Src		= info.Spread || vec3_origin
 		local Dir		= info.Dir + Vector( math.Rand( -Src.x, Src.x ), math.Rand( -Src.y, Src.y ), math.Rand( -Src.y, Src.y ) )
 		local phys		= ents.Create( "prop_physics_multiplayer" )
@@ -48,15 +54,11 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 		phys:SetModel( "models/props_junk/watermelon01.mdl" )
 		phys:SetPhysicsAttacker( pPlayer )
 
-		if ( GAMEMODE.IsSandboxDerived ) then
-
-			if ( !pPlayer:CheckLimit( "props" ) ) then return false end
-
-		end
-
 		phys:Spawn()
 
 		if ( GAMEMODE.IsSandboxDerived ) then
+
+			DoPropSpawnedEffect( phys )
 
 			undo.Create("Prop")
 				undo.AddEntity( phys )
