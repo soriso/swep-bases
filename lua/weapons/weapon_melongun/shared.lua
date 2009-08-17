@@ -46,7 +46,7 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 		phys:SetAngles( Dir:Angle() )
 
 		phys:SetModel( "models/props_junk/watermelon01.mdl" )
-		phys:SetOwner( pPlayer )
+		phys:SetPhysicsAttacker( pPlayer )
 
 		if ( GAMEMODE.IsSandboxDerived ) then
 
