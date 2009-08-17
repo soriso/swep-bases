@@ -9,10 +9,10 @@ SWEP.Instructions	= ""
 
 SWEP.ViewModelFOV	= 54
 SWEP.ViewModelFlip	= false
-SWEP.ViewModel		= "models/weapons/v_357.mdl"
-SWEP.WorldModel		= "models/weapons/w_357.mdl"
-SWEP.AnimPrefix		= "python"
-SWEP.HoldType		= "pistol"
+SWEP.ViewModel		= "models/weapons/v_grenade.mdl"
+SWEP.WorldModel		= "models/weapons/w_grenade.mdl"
+SWEP.AnimPrefix		= "Grenade"
+SWEP.HoldType		= "grenade"
 
 // Note: This is how it should have worked. The base weapon would set the category
 // then all of the children would have inherited that.
@@ -24,23 +24,22 @@ SWEP.m_bFiresUnderwater	= false
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
 
-SWEP.Primary.Empty			= Sound( "Weapon_Pistol.Empty" )
-SWEP.Primary.Sound			= Sound( "Weapon_357.Single" )
-SWEP.Primary.Damage			= 75
+SWEP.Primary.Special1		= Sound( "WeaponFrag.Roll" )
+SWEP.Primary.Sound			= Sound( "common/null.wav" )
+SWEP.Primary.Damage			= 150
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.NumAmmo		= SWEP.Primary.NumShots
 SWEP.Primary.Cone			= vec3_origin
-SWEP.Primary.ClipSize		= 6					// Size of a clip
+SWEP.Primary.ClipSize		= -1				// Size of a clip
 SWEP.Primary.Delay			= 0.75
-SWEP.Primary.DefaultClip	= 6					// Default number of bullets in a clip
+SWEP.Primary.DefaultClip	= 1					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
-SWEP.Primary.Ammo			= "357"
-SWEP.Primary.Tracer			= 4
-SWEP.Primary.TracerName		= "Tracer"
+SWEP.Primary.Ammo			= "grenade"
 
+SWEP.Secondary.Sound		= Sound( "common/null.wav" )
 SWEP.Secondary.ClipSize		= -1				// Size of a clip
 SWEP.Secondary.DefaultClip	= -1				// Default number of bullets in a clip
-SWEP.Secondary.Automatic	= false				// Automatic/Semi Auto
+SWEP.Secondary.Automatic	= true				// Automatic/Semi Auto
 SWEP.Secondary.Ammo			= "None"
 
 
