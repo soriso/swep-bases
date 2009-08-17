@@ -8,7 +8,7 @@ end
 
 if ( CLIENT ) then
 
-	SWEP.PrintName			= "Tau Cannon"
+	SWEP.PrintName			= "TAU CANNON"
 	SWEP.Author				= "Andrew McWatters"
 	SWEP.WepSelectLetter	= "h"
 
