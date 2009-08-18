@@ -24,15 +24,15 @@ SWEP.m_flNextPrimaryAttack		= CurTime();
 SWEP.m_flNextSecondaryAttack	= CurTime();
 SWEP.m_flSequenceDuration		= 0.0;
 
-local GRENADE_TIMER	= 2.5 //Seconds
+GRENADE_TIMER	= 2.5 //Seconds
 
-local GRENADE_PAUSED_NO				= 0
-local GRENADE_PAUSED_PRIMARY		= 1
-local GRENADE_PAUSED_SECONDARY		= 2
+GRENADE_PAUSED_NO			= 0
+GRENADE_PAUSED_PRIMARY		= 1
+GRENADE_PAUSED_SECONDARY	= 2
 
-local GRENADE_RADIUS	= 4.0 // inches
+GRENADE_RADIUS	= 4.0 // inches
 
-local GRENADE_DAMAGE_RADIUS = 250.0
+GRENADE_DAMAGE_RADIUS = 250.0
 
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
