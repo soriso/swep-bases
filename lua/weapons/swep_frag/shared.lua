@@ -18,8 +18,11 @@ SWEP.HoldType		= "grenade"
 // then all of the children would have inherited that.
 // But a lot of SWEPS have based themselves on this base (probably not on purpose)
 // So the category name is now defined in all of the child SWEPS.
-//SWEP.Category			= "Half-Life 2"
-SWEP.m_bFiresUnderwater	= false
+//SWEP.Category					= "Half-Life 2";
+SWEP.m_bFiresUnderwater			= false;
+SWEP.m_flNextPrimaryAttack		= CurTime();
+SWEP.m_flNextSecondaryAttack	= CurTime();
+SWEP.m_flSequenceDuration		= 0.0;
 
 local GRENADE_TIMER	= 2.5 //Seconds
 
@@ -103,10 +106,13 @@ function SWEP:Operator_HandleAnimEvent( pEvent, pOperator )
 
 		else
 			return;
+		end
 	end
 
 local RETHROW_DELAY	= self.Primary.Delay
 	if( self.fThrewGrenade ) then
+		self.Weapon:SetNextPrimaryFire( CurTime() + RETHROW_DELAY );
+		self.Weapon:SetNextSecondaryFire( CurTime() + RETHROW_DELAY );
 		self.m_flNextPrimaryAttack	= CurTime() + RETHROW_DELAY;
 		self.m_flNextSecondaryAttack	= CurTime() + RETHROW_DELAY;
 		self.m_flTimeWeaponIdle = FLT_MAX; //NOTE: This is set once the animation has finished up!
@@ -157,9 +163,11 @@ function SWEP:PrimaryAttack()
 	// Note that this is a primary attack and prepare the grenade attack to pause.
 	self.m_AttackPaused = GRENADE_PAUSED_PRIMARY;
 	self.Weapon:SendWeaponAnim( ACT_VM_PULLBACK_HIGH );
+	self.m_flSequenceDuration = CurTime() + self.Weapon:SequenceDuration();
 
 	// Put both of these off indefinitely. We do not know how long
 	// the player will hold the grenade.
+	self.Weapon:SetNextPrimaryFire( FLT_MAX );
 	self.m_flTimeWeaponIdle = FLT_MAX;
 	self.m_flNextPrimaryAttack = FLT_MAX;
 
@@ -195,8 +203,10 @@ function SWEP:SecondaryAttack()
 	// Note that this is a secondary attack and prepare the grenade attack to pause.
 	self.m_AttackPaused = GRENADE_PAUSED_SECONDARY;
 	self.Weapon:SendWeaponAnim( ACT_VM_PULLBACK_LOW );
+	self.m_flSequenceDuration = CurTime() + self.Weapon:SequenceDuration();
 
 	// Don't let weapon idle interfere in the middle of a throw!
+	self.Weapon:SetNextSecondaryFire( FLT_MAX );
 	self.m_flTimeWeaponIdle = FLT_MAX;
 	self.m_flNextSecondaryAttack	= FLT_MAX;
 
@@ -227,6 +237,8 @@ function SWEP:Reload()
 		self.Weapon:SendWeaponAnim( ACT_VM_DRAW );
 
 		//Update our times
+		self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+		self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 		self.m_flNextPrimaryAttack	= CurTime() + self.Weapon:SequenceDuration();
 		self.m_flNextSecondaryAttack	= CurTime() + self.Weapon:SequenceDuration();
 		self.m_flTimeWeaponIdle = CurTime() + self.Weapon:SequenceDuration();
@@ -246,33 +258,37 @@ end
 ---------------------------------------------------------*/
 function SWEP:Think()
 
+	if ((self.m_flSequenceDuration > CurTime())) then
+		self:Operator_HandleAnimEvent( "EVENT_WEAPON_SEQUENCE_FINISHED" );
+	end
+
 	if( self.m_fDrawbackFinished ) then
 		local pOwner = self.Owner;
 
 		if (pOwner) then
-			if( m_AttackPaused ) then
-			if m_AttackPaused == GRENADE_PAUSED_PRIMARY then
+			if( self.m_AttackPaused ) then
+			if self.m_AttackPaused == GRENADE_PAUSED_PRIMARY then
 				if( !(pOwner:KeyDown( IN_ATTACK )) ) then
 					self.Weapon:SendWeaponAnim( ACT_VM_THROW );
-					pOwner:DoAnimationEvent( "PLAYERANIMEVENT_ATTACK_PRIMARY" );
+					self:Operator_HandleAnimEvent( "EVENT_WEAPON_THROW" );
 
 					//Tony; fire the sequence
 					self.m_fDrawbackFinished = false;
 				end
 				return;
 
-			elseif m_AttackPaused == GRENADE_PAUSED_SECONDARY then
+			elseif self.m_AttackPaused == GRENADE_PAUSED_SECONDARY then
 				if( !(pOwner:KeyDown( IN_ATTACK2 )) ) then
 					//See if we're ducking
 					if ( pOwner:KeyDown( IN_DUCK ) ) then
 						//Send the weapon animation
 						self.Weapon:SendWeaponAnim( ACT_VM_SECONDARYATTACK );
+						self:Operator_HandleAnimEvent( "EVENT_WEAPON_THROW2" );
 					else
 						//Send the weapon animation
 						self.Weapon:SendWeaponAnim( ACT_VM_HAULBACK );
+						self:Operator_HandleAnimEvent( "EVENT_WEAPON_THROW3" );
 					end
-					//Tony; the grenade really should have a secondary anim. but it doesn't on the player.
-					pOwner:DoAnimationEvent( "PLAYERANIMEVENT_ATTACK_PRIMARY" );
 
 					self.m_fDrawbackFinished = false;
 				end
@@ -327,7 +343,7 @@ function SWEP:CheckThrowPosition( pPlayer, vecEye, vecSrc )
 	local tr;
 
 	tr = util.TraceHull( vecEye, vecSrc, -Vector(GRENADE_RADIUS+2,GRENADE_RADIUS+2,GRENADE_RADIUS+2), Vector(GRENADE_RADIUS+2,GRENADE_RADIUS+2,GRENADE_RADIUS+2),
-		pPlayer:PhysicsSolidMaskForEntity(), pPlayer, pPlayer:GetCollisionGroup() );
+		MASK_PLAYERSOLID, pPlayer, pPlayer:GetCollisionGroup() );
 
 	if ( tr.Hit ) then
 		vecSrc = tr.endpos;
@@ -366,7 +382,14 @@ if ( !CLIENT ) then
 	local vecThrow;
 	vecThrow = pPlayer:GetVelocity();
 	vecThrow = vecThrow + vForward * 1200;
-	local pGrenade = Fraggrenade_Create( vecSrc, vec3_angle, vecThrow, AngularImpulse(600,math.random(-1200,1200),0), pPlayer, GRENADE_TIMER, false );
+	local pGrenade = ents.Create( "npc_grenade_frag" );
+	pGrenade:SetPos( vecSrc );
+	pGrenade:SetAngles( vec3_angle );
+	pGrenade:SetOwner( pPlayer );
+	pGrenade:Fire( "SetTimer", GRENADE_TIMER );
+	pGrenade:Spawn()
+	pGrenade:GetPhysicsObject():SetVelocity( vecThrow );
+	pGrenade:GetPhysicsObject():AddAngleVelocity( Angle(600,math.random(-1200,1200),0) );
 
 	if ( pGrenade ) then
 		if ( pPlayer && !pPlayer:Alive() ) then
@@ -378,8 +401,8 @@ if ( !CLIENT ) then
 			end
 		end
 
-		pGrenade:SetDamage( self.Primary.Damage );
-		pGrenade:SetDamageRadius( GRENADE_DAMAGE_RADIUS );
+		pGrenade.Damage = self.Primary.Damage;
+		pGrenade.DamageRadius = GRENADE_DAMAGE_RADIUS;
 	end
 end
 
@@ -410,11 +433,18 @@ if ( !CLIENT ) then
 	local vecThrow;
 	vecThrow = pPlayer:GetVelocity();
 	vecThrow = vecThrow + vForward * 350 + Vector( 0, 0, 50 );
-	local pGrenade = Fraggrenade_Create( vecSrc, vec3_angle, vecThrow, AngularImpulse(200,math.random(-600,600),0), pPlayer, GRENADE_TIMER, false );
+	local pGrenade = ents.Create( "npc_grenade_frag" );
+	pGrenade:SetPos( vecSrc );
+	pGrenade:SetAngles( vec3_angle );
+	pGrenade:SetOwner( pPlayer );
+	pGrenade:Fire( "SetTimer", GRENADE_TIMER );
+	pGrenade:Spawn()
+	pGrenade:GetPhysicsObject():SetVelocity( vecThrow );
+	pGrenade:GetPhysicsObject():AddAngleVelocity( Angle(200,math.random(-600,600),0) );
 
 	if ( pGrenade ) then
-		pGrenade:SetDamage( self.Primary.Damage );
-		pGrenade:SetDamageRadius( GRENADE_DAMAGE_RADIUS );
+		pGrenade.Damage = self.Primary.Damage;
+		pGrenade.DamageRadius = GRENADE_DAMAGE_RADIUS;
 	end
 end
 
@@ -439,7 +469,7 @@ if ( !CLIENT ) then
 	vecSrc = pPlayer:CollisionProp():NormalizedToWorldSpace( Vector( 0.5, 0.5, 0.0 ) );
 	vecSrc.z = vecSrc.z + GRENADE_RADIUS;
 
-	local vecFacing = pPlayer:BodyDirection2D( );
+	local vecFacing = pPlayer:GetAngles( );
 	// no up/down direction
 	vecFacing.z = 0;
 	VectorNormalize( vecFacing );
@@ -464,8 +494,8 @@ if ( !CLIENT ) then
 	local pGrenade = Fraggrenade_Create( vecSrc, orientation, vecThrow, rotSpeed, pPlayer, GRENADE_TIMER, false );
 
 	if ( pGrenade ) then
-		pGrenade:SetDamage( self.Primary.Damage );
-		pGrenade:SetDamageRadius( GRENADE_DAMAGE_RADIUS );
+		pGrenade.Damage = self.Primary.Damage;
+		pGrenade.DamageRadius = GRENADE_DAMAGE_RADIUS;
 	end
 
 end
