@@ -27,6 +27,7 @@ SWEP.Primary.Damage			= 15
 SWEP.Primary.ClipSize		= 15
 SWEP.Primary.Delay			= 0.2
 SWEP.Primary.Ammo			= "StriderMinigun"
+SWEP.Primary.Tracer			= 1
 
 SWEP.Secondary.Ammo			= "None"
 
