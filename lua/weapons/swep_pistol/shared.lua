@@ -27,11 +27,11 @@ SWEP.m_flAccuracyPenalty		= 0.0;
 SWEP.m_flLastAttackTime			= 0.0;
 SWEP.viewPunch					= Angle( 0, 0, 0 );
 
-local PISTOL_FASTEST_REFIRE_TIME		= 0.1
-local PISTOL_FASTEST_DRY_REFIRE_TIME	= 0.2
+PISTOL_FASTEST_REFIRE_TIME		= 0.1
+PISTOL_FASTEST_DRY_REFIRE_TIME	= 0.2
 
-local PISTOL_ACCURACY_SHOT_PENALTY_TIME		= 0.2	// Applied amount of time each shot adds to the time we must recover from
-local PISTOL_ACCURACY_MAXIMUM_PENALTY_TIME	= 1.5	// Maximum penalty to deal out
+PISTOL_ACCURACY_SHOT_PENALTY_TIME		= 0.2	// Applied amount of time each shot adds to the time we must recover from
+PISTOL_ACCURACY_MAXIMUM_PENALTY_TIME	= 1.5	// Maximum penalty to deal out
 
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
