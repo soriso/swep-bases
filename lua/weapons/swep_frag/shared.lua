@@ -70,13 +70,17 @@ function SWEP:Precache()
 
 end
 
-if ( !CLIENT ) then
+//if ( !CLIENT ) then
 //-----------------------------------------------------------------------------
 // Purpose:
 // Input  : *pEvent -
 //			*pOperator -
 //-----------------------------------------------------------------------------
 function SWEP:Operator_HandleAnimEvent( pEvent, pOperator )
+
+	if ( self.fThrewGrenade ) then
+		return;
+	end
 
 	local pOwner = self.Owner;
 	self.fThrewGrenade = false;
@@ -120,7 +124,7 @@ local RETHROW_DELAY	= self.Primary.Delay
 
 end
 
-end
+//end
 
 /*---------------------------------------------------------
    Name: SWEP:Initialize( )
@@ -258,6 +262,17 @@ end
 ---------------------------------------------------------*/
 function SWEP:Think()
 
+	if ((self.fThrewGrenade && CurTime() > self.Primary.Delay)) then
+		self.fThrewGrenade = false;
+
+		//Update our times
+		self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
+		self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay );
+		self.m_flNextPrimaryAttack = CurTime() + self.Primary.Delay;
+		self.m_flNextSecondaryAttack = CurTime() + self.Primary.Delay;
+		self.m_flTimeWeaponIdle = CurTime() + self.Primary.Delay;
+	end
+
 	if ((self.m_flSequenceDuration > CurTime())) then
 		self:Operator_HandleAnimEvent( "EVENT_WEAPON_SEQUENCE_FINISHED" );
 	end
@@ -368,6 +383,10 @@ end
 //-----------------------------------------------------------------------------
 function SWEP:ThrowGrenade( pPlayer )
 
+	if ( self.m_bRedraw ) then
+		return;
+	end
+
 if ( !CLIENT ) then
 	local	vecEye = pPlayer:EyePos();
 	local	vForward, vRight;
@@ -421,6 +440,10 @@ end
 //-----------------------------------------------------------------------------
 function SWEP:LobGrenade( pPlayer )
 
+	if ( self.m_bRedraw ) then
+		return;
+	end
+
 if ( !CLIENT ) then
 	local	vecEye = pPlayer:EyePos();
 	local	vForward, vRight;
@@ -463,10 +486,15 @@ end
 //-----------------------------------------------------------------------------
 function SWEP:RollGrenade( pPlayer )
 
+	if ( self.m_bRedraw ) then
+		return;
+	end
+
 if ( !CLIENT ) then
 	// BUGBUG: Hardcoded grenade width of 4 - better not change the model :)
 	local vecSrc;
-	vecSrc = pPlayer:CollisionProp():NormalizedToWorldSpace( Vector( 0.5, 0.5, 0.0 ) );
+	vecSrc = pPlayer:EyePos()
+	// vecSrc = pPlayer:CollisionProp():NormalizedToWorldSpace( Vector( 0.5, 0.5, 0.0 ) );
 	vecSrc.z = vecSrc.z + GRENADE_RADIUS;
 
 	local vecFacing = pPlayer:GetAngles( );
@@ -491,7 +519,14 @@ if ( !CLIENT ) then
 	local orientation = Angle(0,pPlayer:GetLocalAngles().y,-90);
 	// roll it
 	local rotSpeed = Vector(0,0,720);
-	local pGrenade = Fraggrenade_Create( vecSrc, orientation, vecThrow, rotSpeed, pPlayer, GRENADE_TIMER, false );
+	local pGrenade = ents.Create( "npc_grenade_frag" );
+	pGrenade:SetPos( vecSrc );
+	pGrenade:SetAngles( orientation );
+	pGrenade:SetOwner( pPlayer );
+	pGrenade:Fire( "SetTimer", GRENADE_TIMER );
+	pGrenade:Spawn();
+	pGrenade:GetPhysicsObject():SetVelocity( vecThrow );
+	pGrenade:GetPhysicsObject():SetAngleVelocity( rotSpeed );
 
 	if ( pGrenade ) then
 		pGrenade.Damage = self.Primary.Damage;
