@@ -17,7 +17,7 @@ end
 
 
 SWEP.Base				= "swep_ar2"
-SWEP.Category			= "SWEP Base Examples"
+SWEP.Category			= "Base Examples"
 
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
