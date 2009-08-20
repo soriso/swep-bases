@@ -15,6 +15,7 @@ function meta:Give( item )
 		"weapon_357",
 		"weapon_ar2",
 		"weapon_crowbar",
+		"weapon_frag",
 		"weapon_pistol",
 		"weapon_shotgun",
 		"weapon_smg1",

@@ -284,8 +284,10 @@ function SWEP:Think()
 			if( self.m_AttackPaused ) then
 			if self.m_AttackPaused == GRENADE_PAUSED_PRIMARY then
 				if( !(pOwner:KeyDown( IN_ATTACK )) ) then
-					self.Weapon:SendWeaponAnim( ACT_VM_THROW );
-					self:Operator_HandleAnimEvent( "EVENT_WEAPON_THROW" );
+					if ( IsFirstTimePredicted() ) then
+						self.Weapon:SendWeaponAnim( ACT_VM_THROW );
+						self:Operator_HandleAnimEvent( "EVENT_WEAPON_THROW" );
+					end
 
 					//Tony; fire the sequence
 					self.m_fDrawbackFinished = false;
