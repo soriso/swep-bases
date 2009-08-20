@@ -14,11 +14,8 @@ function meta:Give( item )
 
 		"weapon_357",
 		"weapon_ar2",
-		"weapon_crossbow",
 		"weapon_crowbar",
-		"weapon_frag",
 		"weapon_pistol",
-		"weapon_rpg",
 		"weapon_shotgun",
 		"weapon_smg1",
 		"weapon_stunstick"
