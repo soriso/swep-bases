@@ -8,7 +8,7 @@ end
 
 if ( CLIENT ) then
 
-	SWEP.PrintName			= "STRIDER MINIGUN"
+	SWEP.PrintName			= "REVOLVER"
 	SWEP.Author				= "Andrew McWatters"
 
 	killicon.AddFont( string.Replace( GetScriptPath(), "weapons/", "" ), SWEP.IconFont, SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
@@ -16,7 +16,7 @@ if ( CLIENT ) then
 end
 
 
-SWEP.Base				= "swep_ar2"
+SWEP.Base				= "swep_pistol"
 SWEP.Category			= "Base Examples"
 
 SWEP.Spawnable			= true
