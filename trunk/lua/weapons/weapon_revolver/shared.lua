@@ -28,6 +28,7 @@ SWEP.ViewModel			= "models/weapons/v_357.mdl"
 SWEP.WorldModel			= "models/weapons/w_357.mdl"
 SWEP.AnimPrefix			= "python"
 
+SWEP.Primary.Reload			= Sound( "common/null.wav" )
 SWEP.Primary.Sound			= Sound( "Weapon_357.Single" )
 SWEP.Primary.Damage			= 75
 SWEP.Primary.ClipSize		= 6
