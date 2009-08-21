@@ -37,7 +37,7 @@ GRENADE_DAMAGE_RADIUS = 250.0
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
 
-SWEP.Primary.Special1		= Sound( "WeaponFrag.Roll" )
+SWEP.Primary.Special1		= Sound( "common/null.wav" )
 SWEP.Primary.Sound			= Sound( "common/null.wav" )
 SWEP.Primary.Damage			= 150
 SWEP.Primary.NumShots		= 1
