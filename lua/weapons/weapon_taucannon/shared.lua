@@ -11,8 +11,9 @@ if ( CLIENT ) then
 	SWEP.PrintName			= "TAU CANNON"
 	SWEP.Author				= "Andrew McWatters"
 	SWEP.WepSelectLetter	= "h"
+	SWEP.IconLetter			= "a"
 
-	killicon.AddFont( string.Replace( GetScriptPath(), "weapons/", "" ), SWEP.IconFont, SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
+	killicon.AddFont( string.Replace( GetScriptPath(), "weapons/", "" ), "HL2MPTypeDeath", SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
 
 end
 
