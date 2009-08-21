@@ -29,7 +29,7 @@ SWEP.Primary.Cone			= VECTOR_CONE_1DEGREES
 SWEP.Primary.Delay			= 0.2
 SWEP.Primary.Ammo			= "GaussEnergy"
 SWEP.Primary.Tracer			= 1
-SWEP.Primary.TracerName		= "GaussTracer"
+// SWEP.Primary.TracerName		= "GaussTracer"
 
 SWEP.Secondary.Sound		= Sound( "PropJeep.FireChargedCannon" )
 SWEP.Secondary.Delay		= 0.5
