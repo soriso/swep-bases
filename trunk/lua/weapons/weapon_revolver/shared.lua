@@ -34,3 +34,28 @@ SWEP.Primary.Damage			= 75
 SWEP.Primary.ClipSize		= 6
 SWEP.Primary.FastestDelay	= 0.25
 SWEP.Primary.Delay			= 0.75
+
+function SWEP:AddViewKick()
+
+	local pPlayer  = self.Owner;
+
+	if ( pPlayer == NULL ) then
+		return;
+	end
+
+	//Disorient the player
+	local angles = pPlayer:EyeAngles();
+
+	angles.pitch = angles.pitch + math.random( -1, 1 );
+	angles.yaw   = angles.yaw   + math.random( -1, 1 );
+	angles.roll  = 0;
+
+	if ( pPlayer:IsNPC() ) then return end
+
+if ( !CLIENT ) then
+	pPlayer:SnapEyeAngles( angles );
+end
+
+	pPlayer:ViewPunch( Angle( -8, math.Rand( -2, 2 ), 0 ) );
+
+end
