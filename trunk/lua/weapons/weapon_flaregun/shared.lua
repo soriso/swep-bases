@@ -2,7 +2,7 @@
 
 // Variables that are used on both client and server
 
-SWEP.Author			= ""
+SWEP.Author			= "VALVe"
 SWEP.Contact		= ""
 SWEP.Purpose		= ""
 SWEP.Instructions	= ""
