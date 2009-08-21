@@ -283,11 +283,9 @@ function SWEP:Think()
 		if (pOwner) then
 			if( self.m_AttackPaused ) then
 			if self.m_AttackPaused == GRENADE_PAUSED_PRIMARY then
-				if( !(pOwner:KeyDown( IN_ATTACK )) ) then
-					if ( IsFirstTimePredicted() ) then
-						self.Weapon:SendWeaponAnim( ACT_VM_THROW );
-						self:Operator_HandleAnimEvent( "EVENT_WEAPON_THROW" );
-					end
+				if( !(pOwner:KeyDown( IN_ATTACK ) && !pOwner:KeyPressed( IN_ATTACK )) ) then
+					self.Weapon:SendWeaponAnim( ACT_VM_THROW );
+					self:Operator_HandleAnimEvent( "EVENT_WEAPON_THROW" );
 
 					//Tony; fire the sequence
 					self.m_fDrawbackFinished = false;
@@ -295,7 +293,7 @@ function SWEP:Think()
 				return;
 
 			elseif self.m_AttackPaused == GRENADE_PAUSED_SECONDARY then
-				if( !(pOwner:KeyDown( IN_ATTACK2 )) ) then
+				if( !(pOwner:KeyDown( IN_ATTACK2 ) && !pOwner:KeyPressed( IN_ATTACK2 )) ) then
 					//See if we're ducking
 					if ( pOwner:KeyDown( IN_DUCK ) ) then
 						//Send the weapon animation
@@ -397,8 +395,8 @@ if ( !CLIENT ) then
 	vRight = pPlayer:GetAimVector();
 	local vecSrc = vecEye + vForward * 18.0 + vRight * 8.0;
 	self:CheckThrowPosition( pPlayer, vecEye, vecSrc );
-//	vForward[0] += 0.1f;
-	vForward.y = vForward.y + 0.1;
+//	vForward.x = vForward.x + 0.1;
+//	vForward.y = vForward.y + 0.1;
 
 	local vecThrow;
 	vecThrow = pPlayer:GetVelocity();
@@ -508,11 +506,11 @@ if ( !CLIENT ) then
 	if ( tr.fraction != 1.0 ) then
 		// compute forward vec parallel to floor plane and roll grenade along that
 		local tangent;
-		CrossProduct( vecFacing, tr.plane.normal, tangent );
-		CrossProduct( tr.plane.normal, tangent, vecFacing );
+		tangent = CrossProduct( vecFacing, tr.plane.normal );
+		vecFacing = CrossProduct( tr.plane.normal, tangent );
 	end
 	vecSrc = vecSrc + (vecFacing * 18.0);
-	self:CheckThrowPosition( pPlayer, pPlayer:WorldSpaceCenter(), vecSrc );
+	self:CheckThrowPosition( pPlayer, pPlayer:GetPos(), vecSrc );
 
 	local vecThrow;
 	vecThrow = pPlayer:GetVelocity();

@@ -48,6 +48,29 @@ function VectorScale ( input, scale, result )
 	return VectorMultiply( input, scale, result );
 end
 
+//-----------------------------------------------------------------------------
+// Normalization
+//-----------------------------------------------------------------------------
+
+// FIXME: Can't use until we're un-macroed in mathlib.h
+function VectorNormalize( v )
+	local l = v.Length();
+	if (l != 0.0) then
+		v = v / l;
+	else
+		// FIXME:
+		// Just copying the existing implemenation; shouldn't res.z == 0?
+		v.x = 0.0;
+		v.y = 0.0; v.z = 1.0;
+	end
+	return l;
+end
+
+
+function CrossProduct(a, b)
+	return Vector( a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x );
+end
+
 function RandomAngle( minVal, maxVal )
 	local random = vec3_angle;
 	random.pitch = math.Rand( minVal, maxVal );
