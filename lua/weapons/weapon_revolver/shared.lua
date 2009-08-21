@@ -9,6 +9,8 @@ end
 if ( CLIENT ) then
 
 	SWEP.PrintName			= "REVOLVER"
+	SWEP.Slot				= 1
+	SWEP.SlotPos			= 1
 	SWEP.Author				= "Andrew McWatters"
 	SWEP.WepSelectLetter	= "e"
 	SWEP.IconLetter			= "."
@@ -34,6 +36,7 @@ SWEP.Primary.Damage			= 75
 SWEP.Primary.ClipSize		= 6
 SWEP.Primary.FastestDelay	= 0.25
 SWEP.Primary.Delay			= 0.75
+SWEP.Primary.Ammo			= "357"
 
 function SWEP:AddViewKick()
 
