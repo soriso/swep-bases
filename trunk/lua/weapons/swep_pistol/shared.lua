@@ -43,6 +43,7 @@ SWEP.Primary.Damage			= 12
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.NumAmmo		= SWEP.Primary.NumShots
 SWEP.Primary.ClipSize		= 18				// Size of a clip
+SWEP.Primary.FastestDelay	= PISTOL_FASTEST_REFIRE_TIME
 SWEP.Primary.Delay			= 0.5
 SWEP.Primary.DefaultClip	= 18				// Default number of bullets in a clip
 SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
@@ -97,7 +98,7 @@ end
 function SWEP:PrimaryAttack()
 
 	self.m_flLastAttackTime = CurTime();
-	self.m_flSoonestPrimaryAttack = CurTime() + PISTOL_FASTEST_REFIRE_TIME;
+	self.m_flSoonestPrimaryAttack = CurTime() + self.Primary.FastestDelay;
 
 	local pOwner = self.Owner;
 
@@ -275,10 +276,10 @@ function SWEP:Think()
 	end
 
 	if ( pOwner:KeyDown( IN_ATTACK2 ) ) then
-		self.m_flLastAttackTime = CurTime() + PISTOL_FASTEST_REFIRE_TIME;
-		self.m_flSoonestPrimaryAttack = CurTime() + PISTOL_FASTEST_REFIRE_TIME;
-		self.Weapon:SetNextPrimaryFire( CurTime() + PISTOL_FASTEST_REFIRE_TIME );
-		self.Weapon:SetNextSecondaryFire( CurTime() + PISTOL_FASTEST_REFIRE_TIME );
+		self.m_flLastAttackTime = CurTime() + self.Primary.FastestDelay;
+		self.m_flSoonestPrimaryAttack = CurTime() + self.Primary.FastestDelay;
+		self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.FastestDelay );
+		self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.FastestDelay );
 	end
 
 	//Allow a refire as fast as the player can click
