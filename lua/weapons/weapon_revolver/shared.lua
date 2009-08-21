@@ -22,14 +22,11 @@ SWEP.Category			= "Base Examples"
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
-SWEP.Primary.Sound			= Sound( "NPC_Strider.FireMinigun" )
-SWEP.Primary.Damage			= 15
-SWEP.Primary.ClipSize		= 15
-SWEP.Primary.Delay			= 0.2
-SWEP.Primary.Ammo			= "StriderMinigun"
-SWEP.Primary.Tracer			= 1
+SWEP.ViewModel			= "models/weapons/v_357.mdl"
+SWEP.WorldModel			= "models/weapons/w_357.mdl"
+SWEP.AnimPrefix			= "python"
 
-SWEP.Secondary.Ammo			= "None"
-
-function SWEP:SecondaryAttack()
-end
+SWEP.Primary.Sound			= Sound( "Weapon_357.Single" )
+SWEP.Primary.Damage			= 75
+SWEP.Primary.ClipSize		= 6
+SWEP.Primary.Delay			= 0.75
