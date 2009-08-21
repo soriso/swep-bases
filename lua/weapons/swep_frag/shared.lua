@@ -48,6 +48,7 @@ SWEP.Primary.Delay			= 0.5
 SWEP.Primary.DefaultClip	= 1					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= false				// Automatic/Semi Auto
 SWEP.Primary.Ammo			= "grenade"
+SWEP.Primary.AmmoType		= "npc_grenade_frag"
 
 SWEP.Secondary.Sound		= Sound( "common/null.wav" )
 SWEP.Secondary.ClipSize		= -1				// Size of a clip
@@ -275,6 +276,7 @@ function SWEP:Think()
 
 	if ((self.m_flSequenceDuration > CurTime())) then
 		self:Operator_HandleAnimEvent( "EVENT_WEAPON_SEQUENCE_FINISHED" );
+		self.m_flSequenceDuration = CurTime();
 	end
 
 	if( self.m_fDrawbackFinished ) then
@@ -283,7 +285,7 @@ function SWEP:Think()
 		if (pOwner) then
 			if( self.m_AttackPaused ) then
 			if self.m_AttackPaused == GRENADE_PAUSED_PRIMARY then
-				if( !(pOwner:KeyDown( IN_ATTACK ) && !pOwner:KeyPressed( IN_ATTACK )) ) then
+				if( !(pOwner:KeyDown( IN_ATTACK )) ) then
 					self.Weapon:SendWeaponAnim( ACT_VM_THROW );
 					self:Operator_HandleAnimEvent( "EVENT_WEAPON_THROW" );
 
@@ -293,7 +295,7 @@ function SWEP:Think()
 				return;
 
 			elseif self.m_AttackPaused == GRENADE_PAUSED_SECONDARY then
-				if( !(pOwner:KeyDown( IN_ATTACK2 ) && !pOwner:KeyPressed( IN_ATTACK2 )) ) then
+				if( !(pOwner:KeyDown( IN_ATTACK2 )) ) then
 					//See if we're ducking
 					if ( pOwner:KeyDown( IN_DUCK ) ) then
 						//Send the weapon animation
@@ -401,7 +403,7 @@ if ( !CLIENT ) then
 	local vecThrow;
 	vecThrow = pPlayer:GetVelocity();
 	vecThrow = vecThrow + vForward * 1200;
-	local pGrenade = ents.Create( "npc_grenade_frag" );
+	local pGrenade = ents.Create( self.Primary.AmmoType );
 	pGrenade:SetPos( vecSrc );
 	pGrenade:SetAngles( vec3_angle );
 	pGrenade:SetOwner( pPlayer );
@@ -456,7 +458,7 @@ if ( !CLIENT ) then
 	local vecThrow;
 	vecThrow = pPlayer:GetVelocity();
 	vecThrow = vecThrow + vForward * 350 + Vector( 0, 0, 50 );
-	local pGrenade = ents.Create( "npc_grenade_frag" );
+	local pGrenade = ents.Create( self.Primary.AmmoType );
 	pGrenade:SetPos( vecSrc );
 	pGrenade:SetAngles( vec3_angle );
 	pGrenade:SetOwner( pPlayer );
@@ -493,21 +495,26 @@ function SWEP:RollGrenade( pPlayer )
 if ( !CLIENT ) then
 	// BUGBUG: Hardcoded grenade width of 4 - better not change the model :)
 	local vecSrc;
-	vecSrc = pPlayer:EyePos()
-	// vecSrc = pPlayer:CollisionProp():NormalizedToWorldSpace( Vector( 0.5, 0.5, 0.0 ) );
+	vecSrc = pPlayer:GetPos();
 	vecSrc.z = vecSrc.z + GRENADE_RADIUS;
 
-	local vecFacing = pPlayer:GetAngles( );
+	local vecFacing = pPlayer:GetAimVector( );
 	// no up/down direction
 	vecFacing.z = 0;
 	VectorNormalize( vecFacing );
 	local tr;
-	tr = util.QuickTrace( vecSrc, vecSrc - Vector(0,0,16), MASK_PLAYERSOLID, pPlayer, COLLISION_GROUP_NONE );
-	if ( tr.fraction != 1.0 ) then
+	tr = {};
+	tr.startpos = vecSrc;
+	tr.endpos = vecSrc - Vector(0,0,16);
+	tr.mask = MASK_PLAYERSOLID;
+	tr.filter = pPlayer;
+	tr.collision = COLLISION_GROUP_NONE;
+	tr = util.TraceLine( tr );
+	if ( tr.Fraction != 1.0 ) then
 		// compute forward vec parallel to floor plane and roll grenade along that
 		local tangent;
-		tangent = CrossProduct( vecFacing, tr.plane.normal );
-		vecFacing = CrossProduct( tr.plane.normal, tangent );
+		tangent = CrossProduct( vecFacing, tr.HitNormal );
+		vecFacing = CrossProduct( tr.HitNormal, tangent );
 	end
 	vecSrc = vecSrc + (vecFacing * 18.0);
 	self:CheckThrowPosition( pPlayer, pPlayer:GetPos(), vecSrc );
@@ -519,14 +526,14 @@ if ( !CLIENT ) then
 	local orientation = Angle(0,pPlayer:GetLocalAngles().y,-90);
 	// roll it
 	local rotSpeed = Vector(0,0,720);
-	local pGrenade = ents.Create( "npc_grenade_frag" );
+	local pGrenade = ents.Create( self.Primary.AmmoType );
 	pGrenade:SetPos( vecSrc );
 	pGrenade:SetAngles( orientation );
 	pGrenade:SetOwner( pPlayer );
 	pGrenade:Fire( "SetTimer", GRENADE_TIMER );
 	pGrenade:Spawn();
 	pGrenade:GetPhysicsObject():SetVelocity( vecThrow );
-	pGrenade:GetPhysicsObject():SetAngleVelocity( rotSpeed );
+	pGrenade:GetPhysicsObject():AddAngleVelocity( rotSpeed );
 
 	if ( pGrenade ) then
 		pGrenade.Damage = self.Primary.Damage;
