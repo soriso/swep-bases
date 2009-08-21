@@ -54,7 +54,7 @@ end
 
 // FIXME: Can't use until we're un-macroed in mathlib.h
 function VectorNormalize( v )
-	local l = v.Length();
+	local l = v:Length();
 	if (l != 0.0) then
 		v = v / l;
 	else
