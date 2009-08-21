@@ -165,6 +165,12 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
+	if ( self.m_bIsUnderwater && !self.m_bFiresUnderwater ) then
+		self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
+
+		return;
+	end
+
 	// Note that this is a primary attack and prepare the grenade attack to pause.
 	self.m_AttackPaused = GRENADE_PAUSED_PRIMARY;
 	self.Weapon:SendWeaponAnim( ACT_VM_PULLBACK_HIGH );
@@ -207,6 +213,12 @@ function SWEP:SecondaryAttack()
 	local pPlayer = self.Owner;
 
 	if ( pPlayer == NULL ) then
+		return;
+	end
+
+	if ( self.m_bIsUnderwater && !self.m_bFiresUnderwater ) then
+		self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
+
 		return;
 	end
 
