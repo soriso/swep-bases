@@ -28,7 +28,7 @@ SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
 SWEP.Primary.Sound			= Sound( "Weapon_FlareGun.Single" )
-SWEP.Primary.ClipSize		= 1					// Size of a clip
+SWEP.Primary.ClipSize		= 6					// Size of a clip
 SWEP.Primary.DefaultClip	= 6					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
 SWEP.Primary.Ammo			= "357"
