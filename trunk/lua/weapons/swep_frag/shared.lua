@@ -235,6 +235,11 @@ function SWEP:DecrementAmmo( pOwner )
 
 	pOwner:RemoveAmmo( 1, self.Primary.Ammo );
 
+	// If I'm now out of ammo, switch away
+	if ( self:Ammo1() <= 0 ) then
+		pPlayer:GetActiveWeapon():Remove();
+	end
+
 end
 
 /*---------------------------------------------------------
