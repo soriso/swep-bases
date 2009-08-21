@@ -12,7 +12,7 @@ if ( CLIENT ) then
 	SWEP.Author				= "Andrew McWatters"
 	SWEP.WepSelectLetter	= "h"
 
-	killicon.AddFont( string.Replace( GetScriptPath(), "weapons/", "" ), "HL2MPTypeDeath", "/", Color( 255, 80, 0, 255 ) )
+	killicon.AddFont( string.Replace( GetScriptPath(), "weapons/", "" ), SWEP.IconFont, SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
 
 end
 
