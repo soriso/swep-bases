@@ -176,6 +176,11 @@ function SWEP:PrimaryAttack()
 	self.m_flTimeWeaponIdle = FLT_MAX;
 	self.m_flNextPrimaryAttack = FLT_MAX;
 
+	// If I'm now out of ammo, switch away
+	if ( self:Ammo1() <= 0 ) then
+		pPlayer:GetActiveWeapon():Remove();
+	end
+
 end
 
 
@@ -214,6 +219,11 @@ function SWEP:SecondaryAttack()
 	self.Weapon:SetNextSecondaryFire( FLT_MAX );
 	self.m_flTimeWeaponIdle = FLT_MAX;
 	self.m_flNextSecondaryAttack	= FLT_MAX;
+
+	// If I'm now out of ammo, switch away
+	if ( self:Ammo1() <= 0 ) then
+		pPlayer:GetActiveWeapon():Remove();
+	end
 
 end
 
@@ -501,7 +511,7 @@ if ( !CLIENT ) then
 	local vecFacing = pPlayer:GetAimVector( );
 	// no up/down direction
 	vecFacing.z = 0;
-	VectorNormalize( vecFacing );
+	// vecFacing = VectorNormalize( vecFacing );
 	local tr;
 	tr = {};
 	tr.startpos = vecSrc;
