@@ -217,7 +217,9 @@ end
 
 	self:TakePrimaryAmmo( self.Primary.NumAmmo );
 
-	pOwner:ViewPunch( Angle( -2, 0, 0 ) );
+	if ( !pOwner:IsNPC() ) then
+		pOwner:ViewPunch( Angle( -2, 0, 0 ) );
+	end
 
 	self.Weapon:EmitSound( self.Primary.Sound );
 	self.Weapon:EmitSound( self.Primary.Special2 );
