@@ -90,7 +90,7 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
-	if ( self.IsUnderwater && !self.m_bFiresUnderwater ) then
+	if ( self.m_bIsUnderwater && !self.m_bFiresUnderwater ) then
 		self.Weapon:EmitSound( self.Primary.Empty );
 		self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
 
@@ -301,9 +301,9 @@ function SWEP:Think()
 	end
 
 	if ( pPlayer:WaterLevel() >= 3 ) then
-		self.IsUnderwater = true;
+		self.m_bIsUnderwater = true;
 	else
-		self.IsUnderwater = false;
+		self.m_bIsUnderwater = false;
 	end
 
 	if ( pPlayer:KeyDown( IN_ATTACK ) ) then

@@ -217,7 +217,7 @@ function SWEP:SecondaryAttack()
 	end
 
 	if ( self.m_bIsUnderwater && !self.m_bFiresUnderwater ) then
-		self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
+		self.Weapon:SetNextSecondaryFire( CurTime() + 0.2 );
 
 		return;
 	end
