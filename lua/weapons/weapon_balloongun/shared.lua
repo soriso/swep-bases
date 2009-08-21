@@ -23,6 +23,64 @@ SWEP.Category			= "Base Examples"
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
+function SWEP:SecondaryAttack()
+
+	// Only the player fires this way so we can cast
+	local pPlayer = self.Owner;
+
+	if ( pPlayer == NULL ) then
+		return;
+	end
+
+	//Must have ammo
+	if ( ( pPlayer:GetAmmoCount( self.Primary.Ammo ) <= 0 ) ) then
+		self.Weapon:SendWeaponAnim( ACT_VM_DRYFIRE );
+		self.Weapon:EmitSound( self.Primary.Empty );
+		self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay );
+		return;
+	end
+
+	// MUST call sound before removing a round from the clip of a CMachineGun
+	self.Weapon:EmitSound( self.Primary.Sound );
+
+	local vecSrc = pPlayer:GetShootPos();
+	local	vecThrow;
+	// Don't autoaim on balloon tosses
+	vecThrow = pPlayer:GetAimVector();
+	vecThrow = vecThrow * 1000.0;
+
+if ( !CLIENT ) then
+	//Create the balloon
+	local pGrenade = ents.Create( "gmod_balloon" );
+	pGrenade:SetPos( vecSrc );
+	pGrenade:SetOwner( pPlayer );
+	pGrenade:SetVelocity( vecThrow );
+
+	pGrenade:Spawn()
+	pGrenade:SetAngles( RandomAngle( -400, 400 ) );
+	//pGrenade:SetAngleVelocity( RandomAngle( -400, 400 ) );
+	pGrenade:SetMoveType( MOVETYPE_FLYGRAVITY );
+	pGrenade:SetMoveCollide( MOVECOLLIDE_FLY_BOUNCE );
+	pGrenade:SetOwner( self.Owner );
+end
+
+	self.Weapon:SendWeaponAnim( ACT_VM_SECONDARYATTACK );
+
+	// player "shoot" animation
+	pPlayer:SetAnimation( PLAYER_ATTACK1 );
+
+
+	// Decrease ammo
+	pPlayer:RemoveAmmo( 1, self.Secondary.Ammo );
+
+	// Can shoot again immediately
+	self.Weapon:SetNextPrimaryFire( CurTime() + 0.5 );
+
+	// Can blow up after a short delay (so have time to release mouse button)
+	self.Weapon:SetNextSecondaryFire( CurTime() + 1.0 );
+
+end
+
 function SWEP:ShootCallback( attacker, trace, dmginfo )
 
 	if (!GAMEMODE.IsSandboxDerived) then return true end
