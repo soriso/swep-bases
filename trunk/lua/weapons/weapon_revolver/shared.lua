@@ -32,5 +32,5 @@ SWEP.Primary.Reload			= Sound( "common/null.wav" )
 SWEP.Primary.Sound			= Sound( "Weapon_357.Single" )
 SWEP.Primary.Damage			= 75
 SWEP.Primary.ClipSize		= 6
-SWEP.Primary.FastestDelay	= 0.5
+SWEP.Primary.FastestDelay	= 0.25
 SWEP.Primary.Delay			= 0.75
