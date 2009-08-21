@@ -27,8 +27,9 @@ FLARE_BLIND_TIME	= 6.0
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
+SWEP.Primary.Empty			= Sound( "Weapon_Pistol.Empty" )
 SWEP.Primary.Sound			= Sound( "Weapon_FlareGun.Single" )
-SWEP.Primary.ClipSize		= 6					// Size of a clip
+SWEP.Primary.ClipSize		= 1					// Size of a clip
 SWEP.Primary.DefaultClip	= 6					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
 SWEP.Primary.Ammo			= "357"
@@ -84,9 +85,16 @@ function SWEP:PrimaryAttack()
 	end
 
 	if ( self.Weapon:Clip1() <= 0 ) then
-		self.Weapon:SendWeaponAnim( ACT_VM_DRYFIRE );
-		self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
-		self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
+		if ( self:Ammo1() > 0 ) then
+			self.Weapon:EmitSound( self.Primary.Empty );
+			self:Reload();
+		else
+			self.Weapon:EmitSound( self.Primary.Empty );
+			self.Weapon:SendWeaponAnim( ACT_VM_DRYFIRE );
+			self.Weapon:SetNextPrimaryFire( CurTime() + self.Weapon:SequenceDuration() );
+			self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
+		end
+
 		return;
 	end
 
