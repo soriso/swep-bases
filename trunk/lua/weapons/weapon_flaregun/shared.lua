@@ -35,7 +35,7 @@ SWEP.Primary.Ammo			= "357"
 
 SWEP.Secondary.ClipSize		= -1				// Size of a clip
 SWEP.Secondary.DefaultClip	= -1				// Default number of bullets in a clip
-SWEP.Secondary.Automatic	= false				// Automatic/Semi Auto
+SWEP.Secondary.Automatic	= true				// Automatic/Semi Auto
 SWEP.Secondary.Ammo			= "None"
 
 
@@ -96,23 +96,27 @@ function SWEP:PrimaryAttack()
 	self.Weapon:SetNextPrimaryFire( CurTime() + 1 );
 	self.Weapon:SetNextSecondaryFire( CurTime() + 1 );
 
-	if ( CLIENT ) then return end
+	if ( !CLIENT ) then
 
-	local pFlare = ents.Create( "env_flare" );
-	pFlare:SetPos( pOwner:GetShootPos() );
-	pFlare:SetAngles( pOwner:EyeAngles() );
-	pFlare:SetOwner( pOwner );
-	pFlare:SetKeyValue( "duration", FLARE_DURATION );
-	pFlare:Spawn();
+		local pFlare = ents.Create( "env_flare" );
+		pFlare:SetPos( pOwner:GetShootPos() );
+		pFlare:SetAngles( pOwner:EyeAngles() );
+		pFlare:SetOwner( pOwner );
+		pFlare:SetKeyValue( "duration", FLARE_DURATION );
+		pFlare:Spawn();
 
-	if ( pFlare == NULL ) then
-		return;
+		if ( pFlare == NULL ) then
+			return;
+		end
+
+		local forward;
+		forward = pOwner:GetAimVector();
+
+		pFlare:SetVelocity( forward * 1500 );
+		pFlare:SetMoveType( MOVETYPE_FLYGRAVITY );
+		pFlare:SetMoveCollide( MOVECOLLIDE_FLY_BOUNCE );
+
 	end
-
-	local forward;
-	forward = pOwner:GetAimVector();
-
-	pFlare:SetVelocity( forward * 1500 );
 
 	self.Weapon:EmitSound( self.Primary.Sound );
 
@@ -144,27 +148,29 @@ function SWEP:SecondaryAttack()
 	self.Weapon:SetNextPrimaryFire( CurTime() + 1 );
 	self.Weapon:SetNextSecondaryFire( CurTime() + 1 );
 
-	if ( CLIENT ) then return end
+	if ( !CLIENT ) then
 
-	local pFlare = ents.Create( "env_flare" );
-	pFlare:SetPos( pOwner:GetShootPos() );
-	pFlare:SetAngles( pOwner:EyeAngles() );
-	pFlare:SetOwner( pOwner );
-	pFlare:SetKeyValue( "duration", FLARE_DURATION );
-	pFlare:Spawn();
+		local pFlare = ents.Create( "env_flare" );
+		pFlare:SetPos( pOwner:GetShootPos() );
+		pFlare:SetAngles( pOwner:EyeAngles() );
+		pFlare:SetOwner( pOwner );
+		pFlare:SetKeyValue( "duration", FLARE_DURATION );
+		pFlare:Spawn();
 
-	if ( pFlare == NULL ) then
-		return;
+		if ( pFlare == NULL ) then
+			return;
+		end
+
+		local forward;
+		forward = pOwner:GetAimVector();
+
+		pFlare:SetVelocity( forward * 500 );
+		pFlare:SetGravity(1.0);
+		pFlare:SetFriction( 0.85 );
+		pFlare:SetMoveType( MOVETYPE_FLYGRAVITY );
+		pFlare:SetMoveCollide( MOVECOLLIDE_FLY_BOUNCE );
+
 	end
-
-	local forward;
-	forward = pOwner:GetAimVector();
-
-	pFlare:SetVelocity( forward * 500 );
-	pFlare:SetGravity(1.0);
-	pFlare:SetFriction( 0.85 );
-	pFlare:SetMoveType( MOVETYPE_FLYGRAVITY );
-	pFlare:SetMoveCollide( MOVECOLLIDE_FLY_BOUNCE );
 
 	self.Weapon:EmitSound( self.Primary.Sound );
 
