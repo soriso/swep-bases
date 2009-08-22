@@ -111,6 +111,7 @@ function SWEP:PrimaryAttack()
 		pFlare:SetOwner( pOwner );
 		pFlare:SetKeyValue( "duration", FLARE_DURATION );
 		pFlare:Spawn();
+		pFlare:EmitSound( "Weapon_FlareGun.Burn" );
 
 		if ( pFlare == NULL ) then
 			return;
@@ -169,6 +170,7 @@ function SWEP:SecondaryAttack()
 		pFlare:SetOwner( pOwner );
 		pFlare:SetKeyValue( "duration", FLARE_DURATION );
 		pFlare:Spawn();
+		pFlare:EmitSound( "Weapon_FlareGun.Burn" );
 
 		if ( pFlare == NULL ) then
 			return;
