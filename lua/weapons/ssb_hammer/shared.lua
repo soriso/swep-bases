@@ -73,14 +73,6 @@ function SWEP:Swing()
 		util.ImpactTrace( traceHit, pPlayer );
 
 		if ( SERVER ) then
-			if ( traceHit.Entity && traceHit.Entity:IsPlayer() ) then
-
-				local ent	= traceHit.Entity
-
-				ent:SetVelocity( Vector( 0, 0, self.Primary.Force * traceHit.Entity:Health() ) )
-
-			end
-
 			pPlayer:TraceHullAttack( vecSrc, traceHit.HitPos, Vector( -16, -16, -40 ), Vector( 16, 16, 16 ), traceHit.Entity:Health(), self.Primary.DamageType, self.Primary.Force * traceHit.Entity:Health(), false );
 		end
 
