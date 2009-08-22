@@ -26,7 +26,13 @@ SWEP.AdminSpawnable		= true
 
 SWEP.Primary.Delay			= 0.4
 
-function SWEP:PrimaryAttack( m_bInAttack )
+function SWEP:PrimaryAttack()
+end
+
+function SWEP:SecondaryAttack()
+end
+
+function SWEP:Swing( m_bInAttack )
 
 	// Only the player fires this way so we can cast
 	local pPlayer		= self.Owner;
@@ -51,14 +57,19 @@ function SWEP:PrimaryAttack( m_bInAttack )
 
 	if ( traceHit.Hit ) then
 
+		if ( traceHit.Entity && traceHit.Entity:IsPlayer() ) then
+
+			local ply = traceHit.Entity
+
+			ply:SetArmor( 0 )
+
+		end
+
 		self.Weapon:EmitSound( self.Primary.Hit );
 
 		self.Weapon:SendWeaponAnim( ACT_VM_HITCENTER );
 		pPlayer:LagCompensation( true );
 		pPlayer:SetAnimation( PLAYER_ATTACK1 );
-
-		self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
-		self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay );
 
 		self.m_flNextAttack = CurTime() + self.Primary.Delay;
 
@@ -80,18 +91,15 @@ function SWEP:PrimaryAttack( m_bInAttack )
 	pPlayer:LagCompensation( false );
 	pPlayer:SetAnimation( PLAYER_ATTACK1 );
 
-	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
-	self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay );
-
 	self.m_flNextAttack = CurTime() + self.Primary.Delay;
 
 end
 
 function SWEP:Think()
 
-	if ((self.m_flNextAttack > CurTime())) then
-		self:PrimaryAttack( true );
-		self.m_flNextAttack = CurTime();
+	if ((self.m_flNextAttack < CurTime())) then
+		self:Swing( true );
+		self.m_flNextAttack = CurTime() + self.Primary.Delay;
 	end
 
 end
