@@ -4,6 +4,8 @@ if ( SERVER ) then
 
 	AddCSLuaFile( "shared.lua" )
 
+	resource.AddFile( "sound/76_-_hammer.mp3" )
+
 end
 
 if ( CLIENT ) then
@@ -24,6 +26,7 @@ SWEP.m_flNextAttack		= CurTime()
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= true
 
+SWEP.Primary.Loop			= Sound( "76_-_hammer.mp3" )
 SWEP.Primary.Force			= 65535
 SWEP.Primary.Delay			= 0.4
 
@@ -128,12 +131,40 @@ function SWEP:ImpactEffect( traceHit )
 
 end
 
+function SWEP:Holster( wep )
+
+	self.Sound:Stop()
+
+	return true
+
+end
+
 function SWEP:Deploy()
 
 	self.Weapon:SendWeaponAnim( ACT_VM_DRAW )
 	self:SetDeploySpeed( self.Weapon:SequenceDuration() )
 
 	self.m_flNextAttack = CurTime() + self.Weapon:SequenceDuration();
+
+	self.Sound = CreateSound( self.Weapon, self.Primary.Loop )
+	self.Sound:Play()
+
+	timer.Simple( 23, function()
+
+		local Weapon = self.Weapon
+		local pOwner = self.Owner
+
+		if (!Weapon) then return end
+		if (!Weapon:IsValid()) then return end
+
+		if ( !pOwner ) then
+			return;
+		end
+
+		Weapon:Remove()
+		pOwner:ConCommand( "lastinv" )
+
+	end )
 
 	return true
 
