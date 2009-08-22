@@ -132,7 +132,7 @@ function SWEP:Deploy()
 	self.m_flNextAttack = CurTime() + self.Weapon:SequenceDuration();
 
 	if (!self.Sound) then
-		self.Sound = CreateSound( self.Weapon, Weapon_Sound )
+		self.Sound = CreateSound( self.Owner, Weapon_Sound )
 	end
 
 	self.Sound:Play()
