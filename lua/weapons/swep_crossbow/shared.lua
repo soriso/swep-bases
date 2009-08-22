@@ -114,7 +114,7 @@ end
    Desc: +attack2 has been pressed
 ---------------------------------------------------------*/
 function SWEP:SecondaryAttack()
-	//NOTENOTE: The zooming is handled by the post/busy frames
+	self:ToggleZoom();
 end
 
 /*---------------------------------------------------------
@@ -151,8 +151,8 @@ end
 ---------------------------------------------------------*/
 function SWEP:Think()
 
-	// Allow zoom toggling
-	self:CheckZoomToggle();
+	// Disallow zoom toggling
+	// self:CheckZoomToggle();
 
 	if ( self.m_bMustReload ) then
 		self:Reload();
