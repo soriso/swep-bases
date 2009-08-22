@@ -23,29 +23,20 @@ SWEP.Base				= "swep_stunstick"
 SWEP.Category			= "Base Examples"
 SWEP.m_flNextAttack		= CurTime()
 
+local Weapon_Sound		= Sound( "76_-_hammer.mp3" )
+
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= true
 
-SWEP.Primary.Loop			= Sound( "76_-_hammer.mp3" )
 SWEP.Primary.Force			= 65535
 SWEP.Primary.Delay			= 0.4
 
-function SWEP:PrimaryAttack()
-end
-
-function SWEP:SecondaryAttack()
-end
-
-function SWEP:Swing( m_bInAttack )
+function SWEP:Swing()
 
 	// Only the player fires this way so we can cast
 	local pPlayer		= self.Owner;
 
 	if ( !pPlayer ) then
-		return;
-	end
-
-	if (!m_bInAttack) then
 		return;
 	end
 
@@ -109,10 +100,16 @@ function SWEP:Swing( m_bInAttack )
 
 end
 
+function SWEP:PrimaryAttack()
+end
+
+function SWEP:SecondaryAttack()
+end
+
 function SWEP:Think()
 
 	if ((self.m_flNextAttack < CurTime())) then
-		self:Swing( true );
+		self:Swing();
 		self.m_flNextAttack = CurTime() + self.Primary.Delay;
 	end
 
@@ -132,11 +129,7 @@ function SWEP:ImpactEffect( traceHit )
 end
 
 function SWEP:Holster( wep )
-
-	self.Sound:Stop()
-
-	return true
-
+	return false
 end
 
 function SWEP:Deploy()
@@ -146,7 +139,10 @@ function SWEP:Deploy()
 
 	self.m_flNextAttack = CurTime() + self.Weapon:SequenceDuration();
 
-	self.Sound = CreateSound( self.Weapon, self.Primary.Loop )
+	if (!self.Sound) then
+		self.Sound = CreateSound( self.Weapon, Weapon_Sound )
+	end
+
 	self.Sound:Play()
 
 	timer.Simple( 23, function()
@@ -167,5 +163,17 @@ function SWEP:Deploy()
 	end )
 
 	return true
+
+end
+
+function SWEP:OnRemove()
+	self.Sound:Stop()
+end
+
+function SWEP:OnDrop()
+
+	if ( ValidEntity( self.Weapon ) ) then
+		self.Weapon:Remove()
+	end
 
 end
