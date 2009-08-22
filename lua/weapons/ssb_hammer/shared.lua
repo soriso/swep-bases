@@ -19,18 +19,23 @@ end
 
 SWEP.Base				= "swep_stunstick"
 SWEP.Category			= "Base Examples"
+SWEP.m_flNextAttack		= CurTime()
 
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= true
 
 SWEP.Primary.Delay			= 0.4
 
-function SWEP:PrimaryAttack()
+function SWEP:PrimaryAttack( m_bInAttack )
 
 	// Only the player fires this way so we can cast
 	local pPlayer		= self.Owner;
 
 	if ( !pPlayer ) then
+		return;
+	end
+
+	if (!m_bInAttack) then
 		return;
 	end
 
@@ -79,5 +84,25 @@ function SWEP:PrimaryAttack()
 	self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay );
 
 	self.m_flNextAttack = CurTime() + self.Primary.Delay;
+
+end
+
+function SWEP:Think()
+
+	if ((self.m_flNextAttack > CurTime())) then
+		self:PrimaryAttack( true );
+		self.m_flNextAttack = CurTime();
+	end
+
+end
+
+function SWEP:Deploy()
+
+	self.Weapon:SendWeaponAnim( ACT_VM_DRAW )
+	self:SetDeploySpeed( self.Weapon:SequenceDuration() )
+
+	self.m_flNextAttack = CurTime() + self.Weapon:SequenceDuration();
+
+	return true
 
 end
