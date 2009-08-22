@@ -4,6 +4,8 @@ if ( SERVER ) then
 
 	AddCSLuaFile( "shared.lua" )
 
+	SWEP.AutoSwitchTo		= false
+
 	resource.AddFile( "sound/76_-_hammer.mp3" )
 
 end
