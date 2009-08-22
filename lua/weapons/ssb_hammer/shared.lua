@@ -24,6 +24,7 @@ SWEP.m_flNextAttack		= CurTime()
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= true
 
+SWEP.Primary.Force			= 65535
 SWEP.Primary.Delay			= 0.4
 
 function SWEP:PrimaryAttack()
@@ -77,6 +78,14 @@ function SWEP:Swing( m_bInAttack )
 
 		if ( SERVER ) then
 			pPlayer:TraceHullAttack( vecSrc, traceHit.HitPos, Vector( -16, -16, -40 ), Vector( 16, 16, 16 ), traceHit.Entity:Health(), self.Primary.DamageType, self.Primary.Force * traceHit.Entity:Health(), false );
+
+			if ( traceHit.Entity ) then
+
+				local ent = traceHit.Entity
+
+				ent:SetVelocity( Vector( 0, 0, self.Primary.Force * traceHit.Entity:Health() ) )
+
+			end
 		end
 
 		self:ImpactEffect( traceHit );
@@ -101,6 +110,19 @@ function SWEP:Think()
 		self:Swing( true );
 		self.m_flNextAttack = CurTime() + self.Primary.Delay;
 	end
+
+end
+
+function SWEP:ImpactEffect( traceHit )
+
+	self.BaseClass:ImpactEffect( traceHit )
+
+	local data = EffectData()
+			data:SetNormal( traceHit.HitNormal )
+			data:SetOrigin( traceHit.HitPos + ( traceHit.HitNormal * 1.0 ) )
+	if (!traceHit.Entity) then return end
+	if (!traceHit.Entity:IsValid()) then return end
+	util.Effect( "HelicopterMegaBomb", data )
 
 end
 
