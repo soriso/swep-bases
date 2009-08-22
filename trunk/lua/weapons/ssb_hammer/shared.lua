@@ -167,7 +167,11 @@ function SWEP:Deploy()
 end
 
 function SWEP:OnRemove()
-	self.Sound:Stop()
+
+	if (self.Sound) then
+		self.Sound:Stop()
+	end
+
 end
 
 function SWEP:OnDrop()
