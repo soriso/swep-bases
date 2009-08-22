@@ -76,7 +76,7 @@ function SWEP:Swing( m_bInAttack )
 		util.ImpactTrace( traceHit, pPlayer );
 
 		if ( SERVER ) then
-			pPlayer:TraceHullAttack( vecSrc, traceHit.HitPos, Vector( -16, -16, -40 ), Vector( 16, 16, 16 ), traceHit.Entity:Health(), self.Primary.DamageType, self.Primary.Force ^ traceHit.Entity:Health(), false );
+			pPlayer:TraceHullAttack( vecSrc, traceHit.HitPos, Vector( -16, -16, -40 ), Vector( 16, 16, 16 ), traceHit.Entity:Health(), self.Primary.DamageType, self.Primary.Force * traceHit.Entity:Health(), false );
 		end
 
 		self:ImpactEffect( traceHit );
