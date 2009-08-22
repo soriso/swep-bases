@@ -20,7 +20,7 @@ end
 SWEP.Base				= "swep_pistol"
 SWEP.Category			= "Base Examples"
 
-SWEP.Spawnable			= true
+SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= true
 
 function SWEP:ShootCallback( attacker, trace, dmginfo )

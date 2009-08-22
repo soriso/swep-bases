@@ -149,7 +149,9 @@ function SWEP:Deploy()
 			return;
 		end
 
-		Weapon:Remove()
+		if ( !CLIENT ) then
+			Weapon:Remove()
+		end
 		pOwner:ConCommand( "lastinv" )
 
 	end )
