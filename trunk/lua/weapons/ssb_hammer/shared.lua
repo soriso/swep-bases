@@ -28,9 +28,6 @@ local Weapon_Sound		= Sound( "76_-_hammer.mp3" )
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= true
 
-SWEP.AutoSwitchTo		= false
-SWEP.AutoSwitchFrom		= false
-
 SWEP.Primary.Force			= 65535
 SWEP.Primary.Delay			= 0.4
 
