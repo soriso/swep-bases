@@ -58,12 +58,14 @@ function SWEP:Swing( m_bInAttack )
 
 	if ( traceHit.Hit ) then
 
-		if ( traceHit.Entity && traceHit.Entity:IsPlayer() ) then
+		if ( SERVER ) then
+			if ( traceHit.Entity && traceHit.Entity:IsPlayer() ) then
 
-			local ply = traceHit.Entity
+				local ply = traceHit.Entity
 
-			ply:SetArmor( 0 )
+				ply:SetArmor( 0 )
 
+			end
 		end
 
 		self.Weapon:EmitSound( self.Primary.Hit );
@@ -77,15 +79,15 @@ function SWEP:Swing( m_bInAttack )
 		util.ImpactTrace( traceHit, pPlayer );
 
 		if ( SERVER ) then
-			pPlayer:TraceHullAttack( vecSrc, traceHit.HitPos, Vector( -16, -16, -40 ), Vector( 16, 16, 16 ), traceHit.Entity:Health(), self.Primary.DamageType, self.Primary.Force * traceHit.Entity:Health(), false );
+			if ( traceHit.Entity && traceHit.Entity:IsPlayer() ) then
 
-			if ( traceHit.Entity ) then
-
-				local ent = traceHit.Entity
+				local ent	= traceHit.Entity
 
 				ent:SetVelocity( Vector( 0, 0, self.Primary.Force * traceHit.Entity:Health() ) )
 
 			end
+
+			pPlayer:TraceHullAttack( vecSrc, traceHit.HitPos, Vector( -16, -16, -40 ), Vector( 16, 16, 16 ), traceHit.Entity:Health(), self.Primary.DamageType, self.Primary.Force * traceHit.Entity:Health(), false );
 		end
 
 		self:ImpactEffect( traceHit );
