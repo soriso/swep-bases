@@ -1,4 +1,5 @@
 
+ENT.Trail				= {}
 ENT.Trail.Color			= Color( 255, 0, 0, 255 )
 ENT.Trail.Material		= "sprites/bluelaser1.vmt"
 ENT.Trail.StartWidth	= 8.0
