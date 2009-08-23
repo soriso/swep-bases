@@ -8,11 +8,11 @@ end
 
 if ( CLIENT ) then
 
-	SWEP.PrintName			= "FRAG GRENADE"
+	SWEP.PrintName			= "MELONNADE"
 	SWEP.Author				= "Andrew McWatters"
 	SWEP.IconLetter			= "4"
 
-	killicon.AddFont( "sent_grenade_frag", "HL2MPTypeDeath", SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
+	killicon.AddFont( string.Replace( GetScriptPath(), "weapons/", "" ), "HL2MPTypeDeath", SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
 
 end
 
@@ -23,4 +23,4 @@ SWEP.Category			= "Base Examples"
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= true
 
-SWEP.Primary.AmmoType		= "sent_grenade_frag"
+SWEP.Primary.AmmoType		= "sent_melonnade"
