@@ -290,7 +290,7 @@ function ENT:OnTakeDamage( dmginfo )
 	self.Entity:TakePhysicsDamage( dmginfo );
 
 	// Grenades only suffer blast damage and burn damage.
-	if( !(dmginfo:GetDamageType() == (DMG_BLAST|DMG_BURN) ) )
+	if( !(dmginfo:GetDamageType() == (DMG_BLAST|DMG_BURN) ) ) then
 		return 0;
 	end
 
