@@ -108,6 +108,50 @@ end
 
 end
 
+function ENT:Initialize()
+
+	self.m_hThrower			= NULL;
+	self.m_hOriginalThrower	= NULL;
+	self.m_bIsLive			= false;
+	self.m_DmgRadius		= 100;
+	self.m_flDetonateTime	= CurTime() + GRENADE_TIMER;
+	self.m_flWarnAITime		= CurTime() + GRENADE_TIMER - FRAG_GRENADE_WARN_TIME;
+	self.m_bHasWarnedAI		= false;
+
+	self:Precache( );
+
+	self.Entity:SetModel( GRENADE_MODEL );
+
+	if( self.Owner && self.Owner:IsPlayer() ) then
+		self.m_flDamage		= sk_plr_dmg_fraggrenade;
+		self.m_DmgRadius	= sk_fraggrenade_radius;
+	else
+		self.m_flDamage		= sk_npc_dmg_fraggrenade;
+		self.m_DmgRadius	= sk_fraggrenade_radius;
+	end
+
+	self.m_takedamage	= DAMAGE_YES;
+	self.m_iHealth		= 1;
+
+	self.Entity:SetCollisionBounds( -Vector(4,4,4), Vector(4,4,4) );
+	self:CreateVPhysics();
+
+	self:BlipSound();
+	self.m_flNextBlipTime = CurTime() + FRAG_GRENADE_BLIP_FREQUENCY;
+
+	self.m_combineSpawned	= false;
+	self.m_punted			= false;
+
+	if( self.Owner && self.Owner:IsPlayer() ) then
+		self.Weapon = self.Owner:GetActiveWeapon()
+	end
+
+	self:CreateEffects();
+
+	self.BaseClass:Initialize();
+
+end
+
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------

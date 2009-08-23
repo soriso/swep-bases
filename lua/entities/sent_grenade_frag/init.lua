@@ -154,7 +154,6 @@ function ENT:Initialize()
 	self.m_flDetonateTime	= CurTime() + GRENADE_TIMER;
 	self.m_flWarnAITime		= CurTime() + GRENADE_TIMER - FRAG_GRENADE_WARN_TIME;
 	self.m_bHasWarnedAI		= false;
-	self.Owner				= self.Entity:GetOwner() || self.Entity;
 
 	self:Precache( );
 
@@ -172,7 +171,6 @@ function ENT:Initialize()
 	self.m_iHealth		= 1;
 
 	self.Entity:SetCollisionBounds( -Vector(4,4,4), Vector(4,4,4) );
-	// self.Entity:SetCollisionGroup( COLLISION_GROUP_WEAPON );
 	self:CreateVPhysics();
 
 	self:BlipSound();
@@ -273,13 +271,30 @@ function ENT:Think()
 
 end
 
+function ENT:SetVelocity( velocity, angVelocity )
+
+	local pPhysicsObject = self:GetPhysicsObject();
+	if ( pPhysicsObject ) then
+		pPhysicsObject:AddVelocity( velocity );
+		pPhysicsObject:AddAngleVelocity( angVelocity );
+	end
+
+end
+
 /*---------------------------------------------------------
    Name: OnTakeDamage
 ---------------------------------------------------------*/
 function ENT:OnTakeDamage( dmginfo )
 
-	// React physically when shot/getting blown
-	self.Entity:TakePhysicsDamage( dmginfo )
+	// Manually apply vphysics because BaseCombatCharacter takedamage doesn't call back to CBaseEntity OnTakeDamage
+	self.Entity:TakePhysicsDamage( dmginfo );
+
+	// Grenades only suffer blast damage and burn damage.
+	if( !(dmginfo:GetDamageType() == (DMG_BLAST|DMG_BURN) ) )
+		return 0;
+	end
+
+	return self.BaseClass:OnTakeDamage( dmginfo );
 
 end
 
