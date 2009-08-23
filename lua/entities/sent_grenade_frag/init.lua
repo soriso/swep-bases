@@ -155,7 +155,7 @@ function ENT:Initialize()
 	self.m_flWarnAITime		= CurTime() + GRENADE_TIMER - FRAG_GRENADE_WARN_TIME;
 	self.m_bHasWarnedAI		= false;
 
-	self.Weapon = self:GetOwner():GetActiveWeapon()
+	self.Weapon = self.Owner:GetActiveWeapon()
 	self:Precache( );
 
 	self.Entity:SetModel( GRENADE_MODEL );
