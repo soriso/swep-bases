@@ -17,6 +17,7 @@ SWEP.IconFont			= "HL2MPTypeDeath"
 SWEP.IconLetter			= "4"
 
 killicon.AddFont( string.Replace( GetScriptPath(), "weapons/", "" ), SWEP.IconFont, SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
+killicon.AddFont( "sent_grenade_frag", SWEP.IconFont, SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
 
 /*---------------------------------------------------------
 	Checks the objects before any action is taken
