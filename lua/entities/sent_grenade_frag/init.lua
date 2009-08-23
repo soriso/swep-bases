@@ -45,6 +45,13 @@ end
 
 function	ENT:BlipSound() self.Entity:EmitSound( "Grenade.Blip" ); end
 
+/*---------------------------------------------------------
+   Name: OnExplode
+   Desc: The grenade has just exploded.
+---------------------------------------------------------*/
+function ENT:OnExplode()
+end
+
 // UNDONE: temporary scorching for PreAlpha - find a less sleazy permenant solution.
 function ENT:Explode( pTrace, bitsDamageType )
 
@@ -142,13 +149,6 @@ function ENT:Detonate()
 		util.ScreenShake( self.Entity:GetPos(), self:GetShakeAmplitude(), 150.0, 1.0, self:GetShakeRadius() );
 	end
 
-end
-
-/*---------------------------------------------------------
-   Name: OnExplode
-   Desc: The grenade has just exploded.
----------------------------------------------------------*/
-function ENT:OnExplode()
 end
 
 /*---------------------------------------------------------

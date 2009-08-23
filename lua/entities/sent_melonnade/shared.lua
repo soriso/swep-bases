@@ -1,7 +1,7 @@
 
 
 ENT.Type 			= "anim"
-ENT.Base 			= "sent_grenade_frag"
+ENT.Base 			= "base_anim"
 ENT.PrintName		= ""
 ENT.Author			= ""
 
