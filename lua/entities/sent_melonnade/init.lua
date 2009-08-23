@@ -1,7 +1,7 @@
 
-AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 include( 'shared.lua' )
+include( 'outputs.lua' )
 
 
 local sk_plr_dmg_fraggrenade	= server_settings.Int( "sk_plr_dmg_fraggrenade","0" );
@@ -12,56 +12,28 @@ local sk_fraggrenade_radius		= server_settings.Int( "sk_fraggrenade_radius", "0"
 function		ENT:GetShakeAmplitude() return 25.0; end
 function		ENT:GetShakeRadius() return 750.0; end
 
-function	ENT:BlipSound() self.Entity:EmitSound( "Grenade.Blip" ); end
-
-/*---------------------------------------------------------
-   Name: OnExplode
-   Desc: The grenade has just exploded.
----------------------------------------------------------*/
-function ENT:OnExplode()
-
-	for i = 1, 12 do
-
-		if ( GAMEMODE.IsSandboxDerived ) then
-
-			if ( !self:GetOwner():CheckLimit( "props" ) ) then return false end
-
-		end
-
-		local Src		= VECTOR_CONE_10DEGREES
-		local Dir		= self.Entity:GetUp() + Vector( math.Rand( -Src.x, Src.x ), math.Rand( -Src.y, Src.y ), math.Rand( -Src.y, Src.y ) )
-		local phys		= ents.Create( "prop_physics_multiplayer" )
-
-		phys:SetPos( self.Entity:GetPos() + ( Dir * 32 ) )
-		phys:SetAngles( Dir:Angle() )
-
-		phys:SetModel( "models/props_junk/watermelon01.mdl" )
-		phys:SetPhysicsAttacker( self:GetOwner() )
-
-		phys:Spawn()
-
-		if ( GAMEMODE.IsSandboxDerived ) then
-
-			DoPropSpawnedEffect( phys )
-
-			undo.Create("Prop")
-				undo.AddEntity( phys )
-				undo.SetPlayer( self:GetOwner() )
-			undo.Finish()
-
-			self:GetOwner():AddCleanup( "props", phys )
-			self:GetOwner():AddCount( "props", phys )
-
-		end
-
-		phys:SetPos( self.Entity:GetPos() + ( Dir * phys:BoundingRadius() ) )
-		phys:GetPhysicsObject():AddGameFlag( FVPHYSICS_WAS_THROWN )
-		phys:GetPhysicsObject():SetMass( phys:GetPhysicsObject():GetMass() * self.m_flMass )
-		phys:GetPhysicsObject():SetVelocity( Vector( math.Rand( -Src.x, Src.x ), math.Rand( -Src.y, Src.y ), math.Rand( -Src.y, Src.y ) ) * 1500 )
-
-	end
-
+// Damage accessors.
+function ENT:GetDamage()
+	return self.m_flDamage;
 end
+function ENT:GetDamageRadius()
+	return self.m_DmgRadius;
+end
+
+function ENT:SetDamage(flDamage)
+	self.m_flDamage = flDamage;
+end
+
+function ENT:SetDamageRadius(flDamageRadius)
+	self.m_DmgRadius = flDamageRadius;
+end
+
+// Bounce sound accessors.
+function ENT:SetBounceSound( pszBounceSound )
+	self.m_iszBounceSound = tostring( pszBounceSound );
+end
+
+function	ENT:BlipSound() self.Entity:EmitSound( "Grenade.Blip" ); end
 
 // UNDONE: temporary scorching for PreAlpha - find a less sleazy permenant solution.
 function ENT:Explode( pTrace, bitsDamageType )
@@ -167,7 +139,6 @@ end
 ---------------------------------------------------------*/
 function ENT:Initialize()
 
-	self.m_flMass			= self:GetOwner():GetActiveWeapon().Primary.Damage
 	self.m_hThrower			= NULL;
 	self.m_hOriginalThrower	= NULL;
 	self.m_bIsLive			= false;
@@ -202,6 +173,7 @@ function ENT:Initialize()
 
 	self:CreateEffects();
 
+	self:OnInitialize();
 	self.BaseClass:Initialize();
 
 end
@@ -228,7 +200,7 @@ function ENT:CreateEffects()
 	local	nAttachment = self.Entity:LookupAttachment( "fuse" );
 
 	// Start up the eye trail
-	self.m_pGlowTrail	= util.SpriteTrail( self.Entity, nAttachment, Color( 0, 255, 0, 255 ), true, 8.0, 1.0, 0.5, 1 / ( 8.0 + 1.0 ) * 0.5, "sprites/bluelaser1.vmt" );
+	self.m_pGlowTrail	= util.SpriteTrail( self.Entity, nAttachment, self.Trail.Color, true, self.Trail.StartWidth, self.Trail.EndWidth, self.Trail.LifeTime, 1 / ( self.Trail.StartWidth + self.Trail.EndWidth ) * 0.5, self.Trail.Material );
 
 end
 
@@ -237,6 +209,29 @@ function ENT:CreateVPhysics()
 	// Create the object in the physics system
 	self.Entity:PhysicsInit( SOLID_VPHYSICS, 0, false );
 	return true;
+
+end
+
+function ENT:Precache()
+
+	util.PrecacheModel( GRENADE_MODEL );
+
+	util.PrecacheSound( "Grenade.Blip" );
+
+	util.PrecacheModel( "sprites/redglow1.vmt" );
+	util.PrecacheModel( "sprites/bluelaser1.vmt" );
+
+	util.PrecacheSound( "BaseGrenade.Explode" );
+
+end
+
+function ENT:SetTimer( detonateDelay, warnDelay )
+
+	self.m_flDetonateTime = CurTime() + detonateDelay;
+	self.m_flWarnAITime = CurTime() + warnDelay;
+	self.Entity:NextThink( CurTime() );
+
+	self:CreateEffects();
 
 end
 
@@ -262,6 +257,16 @@ function ENT:Think()
 	end
 
 	self.Entity:NextThink( CurTime() + 0.1 );
+
+end
+
+function ENT:SetVelocity( velocity, angVelocity )
+
+	local pPhysicsObject = self:GetPhysicsObject();
+	if ( pPhysicsObject ) then
+		pPhysicsObject:AddVelocity( velocity );
+		pPhysicsObject:AddAngleVelocity( angVelocity );
+	end
 
 end
 
