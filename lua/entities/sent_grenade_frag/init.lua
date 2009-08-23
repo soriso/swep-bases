@@ -155,9 +155,6 @@ function ENT:Initialize()
 	self.m_flWarnAITime		= CurTime() + GRENADE_TIMER - FRAG_GRENADE_WARN_TIME;
 	self.m_bHasWarnedAI		= false;
 
-	if( self.Owner && self.Owner:IsPlayer() ) then
-		self.Weapon = self.Owner:GetActiveWeapon()
-	end
 	self:Precache( );
 
 	self.Entity:SetModel( GRENADE_MODEL );
@@ -183,7 +180,12 @@ function ENT:Initialize()
 	self.m_combineSpawned	= false;
 	self.m_punted			= false;
 
+	if( self.Owner && self.Owner:IsPlayer() ) then
+		self.Weapon = self.Owner:GetActiveWeapon()
+	end
+
 	self:CreateEffects();
+
 	self.BaseClass:Initialize();
 
 end
