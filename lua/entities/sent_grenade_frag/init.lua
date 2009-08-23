@@ -46,8 +46,6 @@ end
 
 function	ENT:BlipSound() self.Entity:EmitSound( "Grenade.Blip" ); end
 
-ENT.Trail = {}
-
 // UNDONE: temporary scorching for PreAlpha - find a less sleazy permenant solution.
 function ENT:Explode( pTrace, bitsDamageType )
 
