@@ -81,6 +81,8 @@ if !( CLIENT ) then
 
 	util.Effect( "Explosion", info );
 
+	self:OnExplode();
+
 	local Pos1 = Vector( self.Entity:GetPos().x, self.Entity:GetPos().y, pTrace.HitPos.z ) + pTrace.HitNormal
 	local Pos2 = Vector( self.Entity:GetPos().x, self.Entity:GetPos().y, pTrace.HitPos.z ) - pTrace.HitNormal
 
@@ -140,6 +142,13 @@ function ENT:Detonate()
 		util.ScreenShake( self.Entity:GetPos(), self:GetShakeAmplitude(), 150.0, 1.0, self:GetShakeRadius() );
 	end
 
+end
+
+/*---------------------------------------------------------
+   Name: OnExplode
+   Desc: The grenade has just exploded.
+---------------------------------------------------------*/
+function ENT:OnExplode()
 end
 
 /*---------------------------------------------------------
