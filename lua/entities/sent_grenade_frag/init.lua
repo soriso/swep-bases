@@ -62,13 +62,13 @@ if !( CLIENT ) then
 		local vecNormal = pTrace.HitNormal;
 		local pdata = pTrace.MatType;
 
-		util.BlastDamage( self.Weapon, // don't apply cl_interp delay
+		util.BlastDamage( self.Entity, // don't apply cl_interp delay
 			self:GetOwner(),
 			self.Entity:GetPos(),
 			self.m_DmgRadius,
 			self.m_flDamage );
 	else
-		util.BlastDamage( self.Weapon, // don't apply cl_interp delay
+		util.BlastDamage( self.Entity, // don't apply cl_interp delay
 			self:GetOwner(),
 			self.Entity:GetPos(),
 			self.m_DmgRadius,
@@ -178,10 +178,6 @@ function ENT:Initialize()
 
 	self.m_combineSpawned	= false;
 	self.m_punted			= false;
-
-	if( self:GetOwner() && self:GetOwner():IsPlayer() ) then
-		self.Weapon = self:GetOwner():GetActiveWeapon()
-	end
 
 	self:CreateEffects();
 

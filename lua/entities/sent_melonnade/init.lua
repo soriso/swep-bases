@@ -52,13 +52,13 @@ if !( CLIENT ) then
 		local vecNormal = pTrace.HitNormal;
 		local pdata = pTrace.MatType;
 
-		util.BlastDamage( self.Weapon, // don't apply cl_interp delay
+		util.BlastDamage( self.Entity, // don't apply cl_interp delay
 			self:GetOwner(),
 			self.Entity:GetPos(),
 			self.m_DmgRadius,
 			self.m_flDamage );
 	else
-		util.BlastDamage( self.Weapon, // don't apply cl_interp delay
+		util.BlastDamage( self.Entity, // don't apply cl_interp delay
 			self:GetOwner(),
 			self.Entity:GetPos(),
 			self.m_DmgRadius,
@@ -107,7 +107,7 @@ if !( CLIENT ) then
 
 		phys:SetPos( self.Entity:GetPos() + ( Dir * phys:BoundingRadius() ) )
 		phys:GetPhysicsObject():AddGameFlag( FVPHYSICS_WAS_THROWN )
-		phys:GetPhysicsObject():SetMass( phys:GetPhysicsObject():GetMass() * self.Weapon.Primary.Damage )
+		phys:GetPhysicsObject():SetMass( phys:GetPhysicsObject():GetMass() * self.m_flMass )
 		phys:GetPhysicsObject():SetVelocity( Vector( math.Rand( -Src.x, Src.x ), math.Rand( -Src.y, Src.y ), math.Rand( -Src.y, Src.y ) ) * 1500 )
 
 	end
@@ -178,6 +178,7 @@ end
 ---------------------------------------------------------*/
 function ENT:Initialize()
 
+	self.m_flMass			= self:GetOwner():GetActiveWeapon().Primary.Damage
 	self.m_hThrower			= NULL;
 	self.m_hOriginalThrower	= NULL;
 	self.m_bIsLive			= false;
@@ -185,6 +186,7 @@ function ENT:Initialize()
 	self.m_flDetonateTime	= CurTime() + GRENADE_TIMER;
 	self.m_flWarnAITime		= CurTime() + GRENADE_TIMER - FRAG_GRENADE_WARN_TIME;
 	self.m_bHasWarnedAI		= false;
+
 
 	self:Precache( );
 
@@ -209,10 +211,6 @@ function ENT:Initialize()
 
 	self.m_combineSpawned	= false;
 	self.m_punted			= false;
-
-	if( self:GetOwner() && self:GetOwner():IsPlayer() ) then
-		self.Weapon = self:GetOwner():GetActiveWeapon()
-	end
 
 	self:CreateEffects();
 
