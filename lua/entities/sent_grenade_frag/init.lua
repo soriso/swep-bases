@@ -159,7 +159,7 @@ function ENT:Initialize()
 
 	self.Entity:SetModel( GRENADE_MODEL );
 
-	if( self.Owner && self.Owner:IsPlayer() ) then
+	if( self:GetOwner() && self:GetOwner():IsPlayer() ) then
 		self.m_flDamage		= sk_plr_dmg_fraggrenade;
 		self.m_DmgRadius	= sk_fraggrenade_radius;
 	else
@@ -179,8 +179,8 @@ function ENT:Initialize()
 	self.m_combineSpawned	= false;
 	self.m_punted			= false;
 
-	if( self.Owner && self.Owner:IsPlayer() ) then
-		self.Weapon = self.Owner:GetActiveWeapon()
+	if( self:GetOwner() && self:GetOwner():IsPlayer() ) then
+		self.Weapon = self:GetOwner():GetActiveWeapon()
 	end
 
 	self:CreateEffects();
