@@ -74,7 +74,7 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
-	if ( self.Weapon:Clip1() <= 0 ) then
+	if ( self.Weapon:Clip1() <= 0 && self.Primary.ClipSize > -1 ) then
 		if ( self:Ammo1() > 0 ) then
 			self.Weapon:EmitSound( self.Primary.Empty );
 			self:Reload();
