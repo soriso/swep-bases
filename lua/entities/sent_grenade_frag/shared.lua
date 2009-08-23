@@ -2,10 +2,8 @@
 
 ENT.Type 			= "anim"
 ENT.Base 			= "base_anim"
-ENT.PrintName		= "Bouncy Ball"
-ENT.Author			= "Garry Newman"
-ENT.Information		= "An edible bouncy ball"
-ENT.Category		= "Fun + Games"
+ENT.PrintName		= ""
+ENT.Author			= ""
 
-ENT.Spawnable			= true
-ENT.AdminSpawnable		= true
+ENT.Spawnable			= false
+ENT.AdminSpawnable		= false

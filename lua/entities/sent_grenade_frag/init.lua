@@ -4,72 +4,281 @@ AddCSLuaFile( "shared.lua" )
 include( 'shared.lua' )
 
 
-// This is the spawn function. It's called when a client calls the entity to be spawned.
-// If you want to make your SENT spawnable you need one of these functions to properly create the entity
-//
-// ply is the name of the player that is spawning it
-// tr is the trace from the player's eyes 
-//
-function ENT:SpawnFunction( ply, tr )
+FRAG_GRENADE_BLIP_FREQUENCY			= 1.0
+FRAG_GRENADE_BLIP_FAST_FREQUENCY	= 0.3
 
-	if ( !tr.Hit ) then return end
-	
-	local SpawnPos = tr.HitPos + tr.HitNormal * 16
-	
-	local ent = ents.Create( "sent_ball" )
-		ent:SetPos( SpawnPos )
-	ent:Spawn()
-	ent:Activate()
-	
-	return ent
-	
+FRAG_GRENADE_GRACE_TIME_AFTER_PICKUP = 1.5
+FRAG_GRENADE_WARN_TIME = 1.5
+
+GRENADE_COEFFICIENT_OF_RESTITUTION = 0.2;
+
+local sk_plr_dmg_fraggrenade	= server_settings.Int( "sk_plr_dmg_fraggrenade","0" );
+local sk_npc_dmg_fraggrenade	= server_settings.Int( "sk_npc_dmg_fraggrenade","0" );
+local sk_fraggrenade_radius		= server_settings.Int( "sk_fraggrenade_radius", "0" );
+
+GRENADE_MODEL = "models/Weapons/w_grenade.mdl"
+
+
+function		ENT:GetShakeAmplitude() return 25.0; end
+function		ENT:GetShakeRadius() return 750.0; end
+
+// Damage accessors.
+function ENT:GetDamage()
+	return self.m_flDamage;
+end
+function ENT:GetDamageRadius()
+	return self.m_DmgRadius;
 end
 
+function ENT:SetDamage(flDamage)
+	self.m_flDamage = flDamage;
+end
+
+function ENT:SetDamageRadius(flDamageRadius)
+	self.m_DmgRadius = flDamageRadius;
+end
+
+// Bounce sound accessors.
+function ENT:SetBounceSound( pszBounceSound )
+	self.m_iszBounceSound = tostring( pszBounceSound );
+end
+
+function	ENT:BlipSound() self.Entity:EmitSound( "Grenade.Blip" ); end
+
+// UNDONE: temporary scorching for PreAlpha - find a less sleazy permenant solution.
+function ENT:Explode( pTrace, bitsDamageType )
+
+if !( CLIENT ) then
+
+	self.Entity:SetModel( "" );//invisible
+	self.Entity:SetSolid( SOLID_NONE );
+
+	self.m_takedamage = DAMAGE_NO;
+
+	// Pull out of the wall a bit
+	if ( pTrace.Fraction != 1.0 ) then
+		self.Entity:SetPos( pTrace.HitPos + (pTrace.HitNormal * 0.6) );
+	end
+
+	local vecAbsOrigin = self.Entity:GetPos();
+	local contents = util.PointContents ( vecAbsOrigin );
+
+	if ( pTrace.Fraction != 1.0 ) then
+		local vecNormal = pTrace.HitNormal;
+		local pdata = pTrace.MatType;
+
+		util.BlastDamage( self:GetOwner():GetActiveWeapon(), // don't apply cl_interp delay
+			self:GetOwner(),
+			self.Entity:GetPos(),
+			self.m_DmgRadius,
+			self.m_flDamage );
+	else
+		util.BlastDamage( self:GetOwner():GetActiveWeapon(), // don't apply cl_interp delay
+			self:GetOwner(),
+			self.Entity:GetPos(),
+			self.m_DmgRadius,
+			self.m_flDamage );
+	end
+
+if !( CLIENT ) then
+	// CSoundEnt::InsertSound ( SOUND_COMBAT, GetAbsOrigin(), BASEGRENADE_EXPLOSION_VOLUME, 3.0 );
+end
+
+	local info = EffectData();
+	info:SetEntity( self.Entity );
+	info:SetOrigin( self.Entity:GetPos() );
+
+	util.Effect( "Explosion", info );
+
+	util.Decal( "Scorch", pTrace.HitPos + pTrace.HitNormal, pTrace.HitPos - pTrace.HitNormal );
+
+	self.Entity:EmitSound( "BaseGrenade.Explode" );
+
+	self.Touch = NULL;
+	self.Entity:SetSolid( SOLID_NONE );
+
+	self.Entity:SetVelocity( vec3_origin );
+
+	// Because the grenade is zipped out of the world instantly, the EXPLOSION sound that it makes for
+	// the AI is also immediately destroyed. For this reason, we now make the grenade entity inert and
+	// throw it away in 1/10th of a second instead of right away. Removing the grenade instantly causes
+	// intermittent bugs with env_microphones who are listening for explosions. They will 'randomly' not
+	// hear explosion sounds when the grenade is removed and the SoundEnt thinks (and removes the sound)
+	// before the env_microphone thinks and hears the sound.
+	self.Entity:SetNextThink( CurTime() + 0.1 );
+
+end
+
+end
+
+function ENT:Detonate()
+
+	local		tr;
+	local		vecSpot;// trace starts here!
+
+	self.Think = NULL;
+
+	vecSpot = self.Entity:GetPos() + Vector ( 0 , 0 , 8 );
+	tr = {};
+	tr.startpos = vecSpot;
+	tr.endpos = vecSpot + Vector ( 0, 0, -32 );
+	tr.mask = MASK_SHOT_HULL;
+	tr.filter = self.Entity;
+	tr.collision = COLLISION_GROUP_NONE;
+	tr = util.TraceLine ( tr);
+
+	if( tr.StartSolid ) then
+		// Since we blindly moved the explosion origin vertically, we may have inadvertently moved the explosion into a solid,
+		// in which case nothing is going to be harmed by the grenade's explosion because all subsequent traces will startsolid.
+		// If this is the case, we do the downward trace again from the actual origin of the grenade. (sjb) 3/8/2007  (for ep2_outland_09)
+		tr = {};
+		tr.startpos = self.Entity:GetPos();
+		tr.endpos = self.Entity:GetPos() + Vector( 0, 0, -32);
+		tr.mask = MASK_SHOT_HULL;
+		tr.filter = self.Entity;
+		tr.collision = COLLISION_GROUP_NONE;
+		tr = util.TraceLine( tr );
+	end
+
+	tr = self:Explode( tr, DMG_BLAST );
+
+	if ( self:GetShakeAmplitude() ) then
+		util.ScreenShake( self.Entity:GetPos(), self:GetShakeAmplitude(), 150.0, 1.0, self:GetShakeRadius(), SHAKE_START );
+	end
+
+end
 
 /*---------------------------------------------------------
    Name: Initialize
 ---------------------------------------------------------*/
 function ENT:Initialize()
 
-	// Use the helibomb model just for the shadow (because it's about the same size)
-	self.Entity:SetModel( "models/Combine_Helicopter/helicopter_bomb01.mdl" )
-	
-	// Don't use the model's physics - create a sphere instead
-	self.Entity:PhysicsInitSphere( 16, "metal_bouncy" )
-	
-	// Wake the physics object up. It's time to have fun!
-	local phys = self.Entity:GetPhysicsObject()
-	if (phys:IsValid()) then
-		phys:Wake()
+	self.m_hThrower			= NULL;
+	self.m_hOriginalThrower	= NULL;
+	self.m_bIsLive			= false;
+	self.m_DmgRadius		= 100;
+	self.m_flDetonateTime	= 0;
+	self.m_bHasWarnedAI		= false;
+
+	self:Precache( );
+
+	self.Entity:SetModel( GRENADE_MODEL );
+
+	if( self.Owner && self.Owner:IsPlayer() ) then
+		self.m_flDamage		= sk_plr_dmg_fraggrenade;
+		self.m_DmgRadius	= sk_fraggrenade_radius;
+	else
+		self.m_flDamage		= sk_npc_dmg_fraggrenade;
+		self.m_DmgRadius	= sk_fraggrenade_radius;
 	end
-	
-	// Set collision bounds exactly
-	self.Entity:SetCollisionBounds( Vector( -16, -16, -16 ), Vector( 16, 16, 16 ) )
-	
+
+	self.m_takedamage	= DAMAGE_YES;
+	self.m_iHealth		= 1;
+
+	self.Entity:SetCollisionBounds( -Vector(4,4,4), Vector(4,4,4) );
+	self.Entity:SetCollisionGroup( COLLISION_GROUP_WEAPON );
+	self:CreateVPhysics();
+
+	self:BlipSound();
+	self.m_flNextBlipTime = CurTime() + FRAG_GRENADE_BLIP_FREQUENCY;
+
+	self.m_combineSpawned	= false;
+	self.m_punted			= false;
+
+	self.BaseClass:Initialize();
+
 end
 
-
 /*---------------------------------------------------------
-   Name: PhysicsCollide
+   Name: KeyValue
+   Desc: Called when a keyvalue is added to us
 ---------------------------------------------------------*/
-function ENT:PhysicsCollide( data, physobj )
-	
-	// Play sound on bounce
-	if (data.Speed > 80 && data.DeltaTime > 0.2 ) then
-		self.Entity:EmitSound( "Rubber.BulletImpact" )
+function ENT:KeyValue( key, value )
+end
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+function ENT:OnRestore()
+
+	// If we were primed and ready to detonate, put FX on us.
+	if (self.m_flDetonateTime > 0) then
+		self:CreateEffects();
 	end
-	
-	// Bounce like a crazy bitch
-	local LastSpeed = math.max( data.OurOldVelocity:Length(), data.Speed )
-	local NewVelocity = physobj:GetVelocity()
-	NewVelocity:Normalize()
-	
-	LastSpeed = math.max( NewVelocity:Length(), LastSpeed )
-	
-	local TargetVelocity = NewVelocity * LastSpeed * 0.9
-	
-	physobj:SetVelocity( TargetVelocity )
-	
+
+	self.BaseClass:OnRestore();
+
+end
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+function ENT:CreateEffects()
+
+	local	nAttachment = self.Entity:LookupAttachment( "fuse" );
+
+	// Start up the eye trail
+	self.m_pGlowTrail	= util.SpriteTrail( self.Entity, nAttachment, Color( 255, 0, 0, 255 ), true, 8.0, 1.0, 0.5, 1 / ( 8.0 + 1.0 ) * 0.5, "sprites/bluelaser1.vmt" );
+
+end
+
+function ENT:CreateVPhysics()
+
+	// Create the object in the physics system
+	self.Entity:PhysicsInit( SOLID_VPHYSICS, 0, false );
+	return true;
+
+end
+
+function ENT:Precache()
+
+	util.PrecacheModel( GRENADE_MODEL );
+
+	util.PrecacheSound( "Grenade.Blip" );
+
+	util.PrecacheModel( "sprites/redglow1.vmt" );
+	util.PrecacheModel( "sprites/bluelaser1.vmt" );
+
+	util.PrecacheSound( "BaseGrenade.Explode" );
+
+end
+
+function ENT:SetTimer( detonateDelay, warnDelay )
+
+	self.m_flDetonateTime = CurTime() + detonateDelay;
+	self.m_flWarnAITime = CurTime() + warnDelay;
+	self.Entity:SetNextThink( CurTime() );
+
+	self:CreateEffects();
+
+end
+
+function ENT:Think()
+
+	if( CurTime() > self.m_flDetonateTime ) then
+		self:Detonate();
+		return;
+	end
+
+	if( !self.m_bHasWarnedAI && CurTime() >= self.m_flWarnAITime ) then
+if !( CLIENT ) then
+		// CSoundEnt::InsertSound ( SOUND_DANGER, GetAbsOrigin(), 400, 1.5, this );
+end
+		self.m_bHasWarnedAI = true;
+	end
+
+	if( CurTime() > self.m_flNextBlipTime ) then
+		self:BlipSound();
+
+		if( self.m_bHasWarnedAI ) then
+			self.m_flNextBlipTime = CurTime() + FRAG_GRENADE_BLIP_FAST_FREQUENCY;
+		else
+			self.m_flNextBlipTime = CurTime() + FRAG_GRENADE_BLIP_FREQUENCY;
+		end
+	end
+
+	self.Entity:SetNextThink( CurTime() + 0.1 );
+
 end
 
 /*---------------------------------------------------------
@@ -79,24 +288,6 @@ function ENT:OnTakeDamage( dmginfo )
 
 	// React physically when shot/getting blown
 	self.Entity:TakePhysicsDamage( dmginfo )
-	
-end
-
-
-/*---------------------------------------------------------
-   Name: Use
----------------------------------------------------------*/
-function ENT:Use( activator, caller )
-
-	self.Entity:Remove()
-	
-	if ( activator:IsPlayer() ) then
-	
-		// Give the collecting player some free health
-		local health = activator:Health()
-		activator:SetHealth( health + 5 )
-		
-	end
 
 end
 
