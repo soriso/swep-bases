@@ -103,7 +103,7 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 		phys:SetPos( info.Src + ( Dir * phys:BoundingRadius() ) )
 		phys:GetPhysicsObject():AddGameFlag( FVPHYSICS_WAS_THROWN )
 		phys:GetPhysicsObject():SetMass( phys:GetPhysicsObject():GetMass() * info.Damage )
-		phys:GetPhysicsObject():SetVelocity( vecAiming * 1500 )
+		phys:GetPhysicsObject():SetVelocity( Dir * 1500 )
 
 	end
 
