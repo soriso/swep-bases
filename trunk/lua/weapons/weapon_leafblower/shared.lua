@@ -26,6 +26,7 @@ SWEP.Primary.NumAmmo		= 0
 SWEP.Primary.ClipSize		= -1
 SWEP.Primary.Delay			= 0
 SWEP.Primary.DefaultClip	= -1
+SWEP.Primary.Ammo			= "None"
 
 SWEP.Secondary.Ammo			= "None"
 
@@ -44,7 +45,7 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 
 			local phys = trace.Entity:GetPhysicsObject()		// The physics object
 			local direction = trace.StartPos - trace.HitPos		// The direction of the force
-			local force = 32					// The ideal amount of force
+			local force = 96					// An industrial strength amount of force
 			local distance = direction:Length()			// The distance the phys object is from the gun
 			local maxdistance = 512					// The max distance the gun should reach
 
