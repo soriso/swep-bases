@@ -55,11 +55,6 @@ if !( CLIENT ) then
 
 	self.m_takedamage = DAMAGE_NO;
 
-	// Pull out of the wall a bit
-	if ( pTrace.Fraction != 1.0 ) then
-		self.Entity:SetPos( pTrace.HitPos + (pTrace.HitNormal * 0.6) );
-	end
-
 	local vecAbsOrigin = self.Entity:GetPos();
 	local contents = util.PointContents ( vecAbsOrigin );
 
@@ -67,22 +62,18 @@ if !( CLIENT ) then
 		local vecNormal = pTrace.HitNormal;
 		local pdata = pTrace.MatType;
 
-		util.BlastDamage( self:GetOwner():GetActiveWeapon(), // don't apply cl_interp delay
+		util.BlastDamage( self.Weapon, // don't apply cl_interp delay
 			self:GetOwner(),
 			self.Entity:GetPos(),
 			self.m_DmgRadius,
 			self.m_flDamage );
 	else
-		util.BlastDamage( self:GetOwner():GetActiveWeapon(), // don't apply cl_interp delay
+		util.BlastDamage( self.Weapon, // don't apply cl_interp delay
 			self:GetOwner(),
 			self.Entity:GetPos(),
 			self.m_DmgRadius,
 			self.m_flDamage );
 	end
-
-if !( CLIENT ) then
-	// CSoundEnt::InsertSound ( SOUND_COMBAT, GetAbsOrigin(), BASEGRENADE_EXPLOSION_VOLUME, 3.0 );
-end
 
 	local info = EffectData();
 	info:SetEntity( self.Entity );
@@ -90,7 +81,10 @@ end
 
 	util.Effect( "Explosion", info );
 
-	util.Decal( "Scorch", pTrace.HitPos + pTrace.HitNormal, pTrace.HitPos - pTrace.HitNormal );
+	local Pos1 = Vector( self.Entity:GetPos().x, self.Entity:GetPos().y, pTrace.HitPos.z ) + pTrace.HitNormal
+	local Pos2 = Vector( self.Entity:GetPos().x, self.Entity:GetPos().y, pTrace.HitPos.z ) - pTrace.HitNormal
+
+ 	util.Decal( "Scorch", Pos1, Pos2 );
 
 	self.Entity:EmitSound( "BaseGrenade.Explode" );
 
@@ -105,7 +99,7 @@ end
 	// intermittent bugs with env_microphones who are listening for explosions. They will 'randomly' not
 	// hear explosion sounds when the grenade is removed and the SoundEnt thinks (and removes the sound)
 	// before the env_microphone thinks and hears the sound.
-	self.Entity:SetNextThink( CurTime() + 0.1 );
+	SafeRemoveEntityDelayed( self.Entity, 0.1 );
 
 end
 
@@ -143,7 +137,7 @@ function ENT:Detonate()
 	tr = self:Explode( tr, DMG_BLAST );
 
 	if ( self:GetShakeAmplitude() ) then
-		util.ScreenShake( self.Entity:GetPos(), self:GetShakeAmplitude(), 150.0, 1.0, self:GetShakeRadius(), SHAKE_START );
+		util.ScreenShake( self.Entity:GetPos(), self:GetShakeAmplitude(), 150.0, 1.0, self:GetShakeRadius() );
 	end
 
 end
@@ -157,9 +151,11 @@ function ENT:Initialize()
 	self.m_hOriginalThrower	= NULL;
 	self.m_bIsLive			= false;
 	self.m_DmgRadius		= 100;
-	self.m_flDetonateTime	= 0;
+	self.m_flDetonateTime	= CurTime() + GRENADE_TIMER;
+	self.m_flWarnAITime		= CurTime() + GRENADE_TIMER - FRAG_GRENADE_WARN_TIME;
 	self.m_bHasWarnedAI		= false;
 
+	self.Weapon = self:GetOwner():GetActiveWeapon()
 	self:Precache( );
 
 	self.Entity:SetModel( GRENADE_MODEL );
@@ -176,7 +172,7 @@ function ENT:Initialize()
 	self.m_iHealth		= 1;
 
 	self.Entity:SetCollisionBounds( -Vector(4,4,4), Vector(4,4,4) );
-	self.Entity:SetCollisionGroup( COLLISION_GROUP_WEAPON );
+	// self.Entity:SetCollisionGroup( COLLISION_GROUP_WEAPON );
 	self:CreateVPhysics();
 
 	self:BlipSound();
@@ -185,15 +181,9 @@ function ENT:Initialize()
 	self.m_combineSpawned	= false;
 	self.m_punted			= false;
 
+	self:CreateEffects();
 	self.BaseClass:Initialize();
 
-end
-
-/*---------------------------------------------------------
-   Name: KeyValue
-   Desc: Called when a keyvalue is added to us
----------------------------------------------------------*/
-function ENT:KeyValue( key, value )
 end
 
 //-----------------------------------------------------------------------------
@@ -247,7 +237,7 @@ function ENT:SetTimer( detonateDelay, warnDelay )
 
 	self.m_flDetonateTime = CurTime() + detonateDelay;
 	self.m_flWarnAITime = CurTime() + warnDelay;
-	self.Entity:SetNextThink( CurTime() );
+	self.Entity:NextThink( CurTime() );
 
 	self:CreateEffects();
 
@@ -261,9 +251,6 @@ function ENT:Think()
 	end
 
 	if( !self.m_bHasWarnedAI && CurTime() >= self.m_flWarnAITime ) then
-if !( CLIENT ) then
-		// CSoundEnt::InsertSound ( SOUND_DANGER, GetAbsOrigin(), 400, 1.5, this );
-end
 		self.m_bHasWarnedAI = true;
 	end
 
@@ -277,7 +264,7 @@ end
 		end
 	end
 
-	self.Entity:SetNextThink( CurTime() + 0.1 );
+	self.Entity:NextThink( CurTime() + 0.1 );
 
 end
 
