@@ -2,6 +2,7 @@
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 include( 'shared.lua' )
+include( 'outputs.lua' )
 
 
 FRAG_GRENADE_BLIP_FREQUENCY			= 1.0
@@ -45,12 +46,7 @@ end
 
 function	ENT:BlipSound() self.Entity:EmitSound( "Grenade.Blip" ); end
 
-/*---------------------------------------------------------
-   Name: OnExplode
-   Desc: The grenade has just exploded.
----------------------------------------------------------*/
-function ENT:OnExplode()
-end
+ENT.Trail = {}
 
 // UNDONE: temporary scorching for PreAlpha - find a less sleazy permenant solution.
 function ENT:Explode( pTrace, bitsDamageType )
@@ -190,6 +186,7 @@ function ENT:Initialize()
 
 	self:CreateEffects();
 
+	self:OnInitialize();
 	self.BaseClass:Initialize();
 
 end
@@ -216,7 +213,7 @@ function ENT:CreateEffects()
 	local	nAttachment = self.Entity:LookupAttachment( "fuse" );
 
 	// Start up the eye trail
-	self.m_pGlowTrail	= util.SpriteTrail( self.Entity, nAttachment, Color( 255, 0, 0, 255 ), true, 8.0, 1.0, 0.5, 1 / ( 8.0 + 1.0 ) * 0.5, "sprites/bluelaser1.vmt" );
+	self.m_pGlowTrail	= util.SpriteTrail( self.Entity, nAttachment, self.Trail.Color, true, self.Trail.StartWidth, self.Trail.EndWidth, self.Trail.LifeTime, 1 / ( self.Trail.StartWidth + self.Trail.EndWidth ) * 0.5, self.Trail.Material );
 
 end
 
