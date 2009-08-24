@@ -21,6 +21,10 @@ SWEP.HoldType		= "rpg"
 //SWEP.Category			= "Half-Life 2"
 SWEP.m_bFiresUnderwater	= false
 
+RPG_BEAM_SPRITE		= "effects/laser1.vmt"
+RPG_BEAM_SPRITE_NOZ	= "effects/laser1_noz.vmt"
+RPG_LASER_SPRITE	= "sprites/redglow1.vmt"
+
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
 
@@ -63,6 +67,26 @@ end
 
 
 /*---------------------------------------------------------
+   Name: SWEP:Precache( )
+   Desc: Use this function to precache stuff
+---------------------------------------------------------*/
+function SWEP:Precache()
+
+	self.BaseClass:Precache();
+
+	util.PrecacheSound( "Missile.Ignite" );
+	util.PrecacheSound( "Missile.Accelerate" );
+
+	// Laser dot...
+	util.PrecacheModel( "sprites/redglow1.vmt" );
+	util.PrecacheModel( RPG_LASER_SPRITE );
+	util.PrecacheModel( RPG_BEAM_SPRITE );
+	util.PrecacheModel( RPG_BEAM_SPRITE_NOZ );
+
+end
+
+
+/*---------------------------------------------------------
    Name: SWEP:PrimaryAttack( )
    Desc: +attack1 has been pressed
 ---------------------------------------------------------*/
@@ -71,56 +95,77 @@ function SWEP:PrimaryAttack()
 	// Only the player fires this way so we can cast
 	local pPlayer = self.Owner;
 
-	if ( !pPlayer ) then
+	if (!pPlayer) then
 		return;
 	end
 
-	if ( self.Weapon:Clip1() <= 0 && self.Primary.ClipSize > -1 ) then
-		if ( self:Ammo1() > 0 ) then
-			self.Weapon:EmitSound( self.Primary.Empty );
-			self:Reload();
-		else
-			self.Weapon:EmitSound( self.Primary.Empty );
-			self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
-		end
-
+	// Can't have an active missile out
+	if ( self.m_hMissile != NULL ) then
 		return;
 	end
 
-	if ( self.m_bIsUnderwater && !self.m_bFiresUnderwater ) then
-		self.Weapon:EmitSound( self.Primary.Empty );
-		self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
-
+	// Can't be reloading
+	if ( self.Weapon:GetActivity() == ACT_VM_RELOAD ) then
 		return;
 	end
 
-	self.Weapon:EmitSound( self.Primary.Sound );
-	pPlayer:MuzzleFlash();
+	local vecOrigin;
+	local vecForward;
 
-	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
-	pPlayer:SetAnimation( PLAYER_ATTACK1 );
+	self.Weapon:SetNextPrimaryFire( CurTime() + 0.5 );
 
-	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
-	self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay );
+	local pOwner = self.Owner;
 
-	self:TakePrimaryAmmo( 1 );
+	if ( pOwner == NULL ) then
+		return;
+	end
 
-	self:ShootBullet( self.Primary.Damage, self.Primary.NumShots, self.Primary.Cone );
+	local	vForward, vRight, vUp;
 
-	//Disorient the player
-	local angles = pPlayer:EyeAngles();
+	vForward = Vector( pOwner:GetAimVector().x, 0, 0 );
+	vRight = Vector( 0, pOwner:GetAimVector().y, 0 );
+	vUp = Vector( 0, 0, pOwner:GetAimVector().z );
 
-	angles.pitch = angles.pitch + math.random( -1, 1 );
-	angles.yaw   = angles.yaw   + math.random( -1, 1 );
-	angles.roll  = 0;
-
-	if ( pPlayer:IsNPC() ) then return end
+	local	muzzlePoint = pOwner:GetShootPos() + vForward * 12.0 + vRight * 6.0 + vUp * -3.0;
 
 if ( !CLIENT ) then
-	pPlayer:SnapEyeAngles( angles );
+	local vecAngles;
+	vecAngles = vForward:Angle();
+
+	local pMissile = ents.Create( "rpg_missile" );
+	pMissile:SetPos( muzzlePoint );
+	pMissile:SetAngles( vecAngles );
+	pMissile:SetOwner( self.Owner );
+
+	// If the shot is clear to the player, give the missile a grace period
+	local	tr;
+	local vecEye = pOwner:EyePos();
+	tr = {}
+	tr.startpos = vecEye
+	tr.endpos = vecEye + vForward * 128
+	tr.mask = MASK_SHOT
+	tr.filter = self.Weapon
+	tr.collision = COLLISION_GROUP_NONE
+	tr = util.TraceLine( tr );
+	if ( tr.Fraction == 1.0 ) then
+		pMissile->SetGracePeriod( 0.3 );
+	end
+
+	pMissile.Damage = self.Primary.Damage;
+
+	self.m_hMissile = pMissile;
 end
 
-	pPlayer:ViewPunch( Angle( -8, math.Rand( -2, 2 ), 0 ) );
+	self:DecrementAmmo( self.Owner );
+	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
+	if ( !self.Owner:IsNPC() ) then
+		self.Weapon:EmitSound( self.Primary.Sound );
+	else
+		self.Weapon:EmitSound( self.Primary.SoundNPC );
+	end
+
+	// player "shoot" animation
+	pPlayer:SetAnimation( PLAYER_ATTACK1 );
 
 end
 
@@ -171,6 +216,19 @@ function SWEP:Deploy()
 
 	self.Weapon:SendWeaponAnim( ACT_VM_DRAW )
 	self:SetDeploySpeed( self.Weapon:SequenceDuration() )
+
+	// Restore the laser pointer after transition
+	if ( self.m_bGuiding ) then
+		local pOwner = self.Owner;
+
+		if ( pOwner == NULL ) then
+			return;
+		end
+
+		if ( pOwner:GetActiveWeapon() == self.Weapon ) then
+			self:StartGuiding();
+		end
+	end
 
 	return true
 

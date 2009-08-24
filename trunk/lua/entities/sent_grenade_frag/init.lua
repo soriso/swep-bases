@@ -248,6 +248,8 @@ end
 
 function ENT:Think()
 
+	self:OnThink()
+
 	if( CurTime() > self.m_flDetonateTime ) then
 		self:Detonate();
 		return;
