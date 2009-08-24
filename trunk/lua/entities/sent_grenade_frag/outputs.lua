@@ -1,6 +1,4 @@
 
-ENT.Model				= GRENADE_MODEL
-
 ENT.Explosion			= {}
 ENT.Explosion.Damage	= ENT.Damage
 ENT.Explosion.Effect	= "Explosion"
