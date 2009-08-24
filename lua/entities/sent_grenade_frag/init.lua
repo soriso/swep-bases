@@ -151,7 +151,7 @@ function ENT:Initialize()
 
 	self:Precache( );
 
-	self.Entity:SetModel( self.Model );
+	self.Entity:SetModel( GRENADE_MODEL );
 
 	if( self:GetOwner() && self:GetOwner():IsPlayer() ) then
 		self.m_flDamage		= sk_plr_dmg_fraggrenade;
@@ -216,7 +216,7 @@ end
 
 function ENT:Precache()
 
-	util.PrecacheModel( self.Model );
+	util.PrecacheModel( GRENADE_MODEL );
 
 	util.PrecacheSound( self.Sound.Blip );
 
