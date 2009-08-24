@@ -28,7 +28,7 @@ local Weapon_Sound		= Sound( "76_-_hammer.mp3" )
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= true
 
-SWEP.Primary.Force			= FLT_MAX
+SWEP.Primary.Force			= 16384
 SWEP.Primary.Delay			= 0.4
 
 function SWEP:Swing()
@@ -70,17 +70,7 @@ function SWEP:Swing()
 
 		self.m_flNextAttack = CurTime() + self.Primary.Delay;
 
-		if ( traceHit.MatType != MAT_GRATE ) then
-			local info			= {};
-			info.Src			= vecSrc;
-			info.Dir			= vecDirection;
-			info.Num			= 1;
-			info.Damage			= 0;
-			info.Force			= self.Primary.Force;
-			info.Tracer			= 0;
-
-			pPlayer:FireMelee( info );
-		end
+		util.ImpactTrace( traceHit, pPlayer );
 
 		if ( SERVER ) then
 			pPlayer:TraceHullAttack( vecSrc, traceHit.HitPos, Vector( -16, -16, -40 ), Vector( 16, 16, 16 ), traceHit.Entity:Health(), self.Primary.DamageType, self.Primary.Force, false );
