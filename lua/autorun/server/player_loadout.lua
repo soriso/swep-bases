@@ -13,7 +13,7 @@ function meta:Give( item )
 	local wep = {
 
 		"weapon_357",
-		// "weapon_ar2",
+		"weapon_ar2",
 		// "weapon_crossbow",
 		"weapon_crowbar",
 		"weapon_frag",
