@@ -20,10 +20,29 @@ SWEP.HoldType		= "rpg"
 // So the category name is now defined in all of the child SWEPS.
 //SWEP.Category			= "Half-Life 2"
 SWEP.m_bFiresUnderwater	= false
+SWEP.m_bInitialStateUpdate= false;
+SWEP.m_bHideGuiding = false;
+SWEP.m_bGuiding = false;
+SWEP.m_hLaserDot = NULL;
+SWEP.m_hMissile = NULL;
+
+SWEP.m_fMinRange1 = 40*12;
+SWEP.m_fMinRange2 = 40*12;
+SWEP.m_fMaxRange1 = 500*12;
+SWEP.m_fMaxRange2 = 500*12;
 
 RPG_BEAM_SPRITE		= "effects/laser1.vmt"
 RPG_BEAM_SPRITE_NOZ	= "effects/laser1_noz.vmt"
 RPG_LASER_SPRITE	= "sprites/redglow1.vmt"
+
+RPG_MUZZLE_ATTACHMENT		= 1
+RPG_GUIDE_ATTACHMENT		= 2
+RPG_GUIDE_TARGET_ATTACHMENT	= 3
+
+RPG_GUIDE_ATTACHMENT_3RD		= 4
+RPG_GUIDE_TARGET_ATTACHMENT_3RD	= 5
+
+RPG_LASER_BEAM_LENGTH	= 128
 
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
@@ -38,7 +57,7 @@ SWEP.Primary.Cone			= vec3_origin
 SWEP.Primary.ClipSize		= -1				// Size of a clip
 SWEP.Primary.Delay			= 0.75
 SWEP.Primary.DefaultClip	= 3					// Default number of bullets in a clip
-SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
+SWEP.Primary.Automatic		= false				// Automatic/Semi Auto
 SWEP.Primary.Ammo			= "rpg_round"
 
 SWEP.Secondary.Special1		= Sound( "Weapon_RPG.LaserOn" )
@@ -99,8 +118,15 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
+	if ( self.m_bIsUnderwater && !self.m_bFiresUnderwater ) then
+		self.Weapon:EmitSound( self.Primary.Empty );
+		self.Weapon:SetNextPrimaryFire( CurTime() + 0.2 );
+
+		return;
+	end
+
 	// Can't have an active missile out
-	if ( self.m_hMissile != NULL ) then
+	if ( self.Weapon:GetNetworkedEntity( "m_hMissile" ) != NULL ) then
 		return;
 	end
 
@@ -130,12 +156,13 @@ function SWEP:PrimaryAttack()
 
 if ( !CLIENT ) then
 	local vecAngles;
-	vecAngles = vForward:Angle();
+	vecAngles = pOwner:GetAimVector():Angle();
 
 	local pMissile = ents.Create( "rpg_missile" );
 	pMissile:SetPos( muzzlePoint );
 	pMissile:SetAngles( vecAngles );
 	pMissile:SetOwner( self.Owner );
+	pMissile:Spawn();
 
 	// If the shot is clear to the player, give the missile a grace period
 	local	tr;
@@ -148,11 +175,12 @@ if ( !CLIENT ) then
 	tr.collision = COLLISION_GROUP_NONE
 	tr = util.TraceLine( tr );
 	if ( tr.Fraction == 1.0 ) then
-		pMissile->SetGracePeriod( 0.3 );
+		pMissile.GracePeriod = 0.3;
 	end
 
 	pMissile.Damage = self.Primary.Damage;
 
+	self.Weapon:SetNetworkedEntity( "m_hMissile", pMissile );
 	self.m_hMissile = pMissile;
 end
 
@@ -169,6 +197,39 @@ end
 
 end
 
+//-----------------------------------------------------------------------------
+// Purpose:
+// Input  : *pOwner -
+//-----------------------------------------------------------------------------
+function SWEP:DecrementAmmo( pOwner )
+
+	// Take away our primary ammo type
+	pOwner:RemoveAmmo( 1, self.Primary.Ammo );
+
+end
+
+//-----------------------------------------------------------------------------
+// Purpose:
+// Input  : state -
+//-----------------------------------------------------------------------------
+function SWEP:SuppressGuiding( state )
+
+	self.m_bHideGuiding = state;
+
+if ( !CLIENT ) then
+
+	if ( self.m_hLaserDot == NULL ) then
+		self:StartGuiding();
+
+		//STILL!?
+		if ( self.m_hLaserDot == NULL ) then
+			 return;
+		end
+	end
+
+end
+
+end
 
 /*---------------------------------------------------------
    Name: SWEP:SecondaryAttack( )
@@ -183,7 +244,23 @@ end
    Desc: Reload is being pressed
 ---------------------------------------------------------*/
 function SWEP:Reload()
-	self.Weapon:DefaultReload( ACT_VM_RELOAD );
+
+	local pOwner = self.Owner;
+
+	if ( pOwner == NULL ) then
+		return false;
+	end
+
+	if ( pOwner:GetAmmoCount(self.Primary.Ammo) <= 0 ) then
+		return false;
+	end
+
+	self.Weapon:EmitSound( self.Primary.Reload );
+
+	self.Weapon:SendWeaponAnim( ACT_VM_RELOAD );
+
+	return true;
+
 end
 
 
@@ -205,14 +282,94 @@ function SWEP:Think()
 		self.m_bIsUnderwater = false;
 	end
 
+	local pPlayer = self.Owner;
+
+	if ( pPlayer == NULL ) then
+		return;
+	end
+
+	//If we're pulling the weapon out for the first time, wait to draw the laser
+	if ( ( self.m_bInitialStateUpdate ) && ( self.Weapon:GetActivity() != ACT_VM_DRAW ) ) then
+		self:StartGuiding();
+		self.m_bInitialStateUpdate = false;
+	end
+
+	// Supress our guiding effects if we're lowered
+	if ( self.Weapon:GetActivity() == ACT_VM_IDLE_LOWERED ) then
+		self:SuppressGuiding();
+	else
+		self:SuppressGuiding( false );
+	end
+
+	//Move the laser
+	self:UpdateLaserPosition();
+
+	if ( pPlayer:GetAmmoCount(self.Primary.Ammo) <= 0 && self.m_hMissile == NULL ) then
+		self:StopGuiding();
+	end
+
 end
 
+//-----------------------------------------------------------------------------
+// Purpose:
+// Output : Vector
+//-----------------------------------------------------------------------------
+function SWEP:GetLaserPosition()
+
+if ( !CLIENT ) then
+	self:CreateLaserPointer();
+
+	if ( self.m_hLaserDot != NULL ) then
+		return self.m_hLaserDot:GetPos();
+	end
+
+	//FIXME: The laser dot sprite is not active, this code should not be allowed!
+	assert(0);
+end
+	return vec3_origin;
+
+end
+
+//-----------------------------------------------------------------------------
+// Purpose: NPC RPG users cheat and directly set the laser pointer's origin
+// Input  : &vecTarget -
+//-----------------------------------------------------------------------------
+function SWEP:UpdateNPCLaserPosition( vecTarget )
+
+end
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+function SWEP:SetNPCLaserPosition( vecTarget )
+end
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+function SWEP:GetNPCLaserPosition()
+
+	return vec3_origin;
+
+end
+
+//-----------------------------------------------------------------------------
+// Purpose:
+// Output : Returns true if the rocket is being guided, false if it's dumb
+//-----------------------------------------------------------------------------
+function SWEP:IsGuiding()
+
+	return self.m_bGuiding;
+
+end
 
 /*---------------------------------------------------------
    Name: SWEP:Deploy( )
    Desc: Whip it out
 ---------------------------------------------------------*/
 function SWEP:Deploy()
+
+	self.m_bInitialStateUpdate = true;
 
 	self.Weapon:SendWeaponAnim( ACT_VM_DRAW )
 	self:SetDeploySpeed( self.Weapon:SequenceDuration() )
@@ -234,46 +391,206 @@ function SWEP:Deploy()
 
 end
 
-
 /*---------------------------------------------------------
-   Name: SWEP:ShootBullet( )
-   Desc: A convenience function to shoot bullets
+   Name: SWEP:Holster( weapon_to_swap_to )
+   Desc: Weapon wants to holster
+   RetV: Return true to allow the weapon to holster
 ---------------------------------------------------------*/
-function SWEP:ShootBullet( damage, num_bullets, aimcone )
+function SWEP:Holster( wep )
 
-	// Only the player fires this way so we can cast
-	local pPlayer = self.Owner;
+	//Can't have an active missile out
+	if ( self.m_hMissile != NULL ) then
+		return false;
+	end
 
-	if ( !pPlayer ) then
+	self:StopGuiding();
+
+	self.BaseClass:Holster( wep )
+
+end
+
+//-----------------------------------------------------------------------------
+// Purpose: Turn on the guiding laser
+//-----------------------------------------------------------------------------
+function SWEP:StartGuiding()
+
+	// Don't start back up if we're overriding this
+	if ( self.m_bHideGuiding ) then
 		return;
 	end
 
-	local vecSrc		= pPlayer:GetShootPos();
-	local vecAiming		= pPlayer:GetAimVector();
+	self.m_bGuiding = true;
 
-	local info = { Num = num_bullets, Src = vecSrc, Dir = vecAiming, Spread = aimcone, Tracer = self.Primary.Tracer, Damage = damage };
-	info.Attacker = pPlayer;
-	info.TracerName = self.Primary.TracerName;
+if ( !CLIENT ) then
+	self.Weapon:EmitSound(self.Secondary.Special1);
 
-	info.ShootCallback = self.ShootCallback;
+	self:CreateLaserPointer();
+end
 
-	info.Callback = function( attacker, trace, dmginfo )
-		return info:ShootCallback( attacker, trace, dmginfo );
+end
+
+//-----------------------------------------------------------------------------
+// Purpose: Turn off the guiding laser
+//-----------------------------------------------------------------------------
+function SWEP:StopGuiding()
+
+	self.m_bGuiding = false;
+
+if ( !CLIENT ) then
+
+	self.Weapon:EmitSound( self.Secondary.Special2 );
+
+	// Kill the dot completely
+	if ( self.m_hLaserDot != NULL ) then
+		self.m_hLaserDot:Remove();
+		self.m_hLaserDot = NULL;
+	end
+else
+	if ( self.m_pBeam ) then
+		//Tell it to die right away and let the beam code free it.
+		self.m_pBeam.brightness = 0.0;
+		self.m_pBeam.flags = self.m_pBeam.flags + !FBEAM_FOREVER;
+		self.m_pBeam.die = CurTime() - 0.1;
+		self.m_pBeam = NULL;
+	end
+end
+
+end
+
+//-----------------------------------------------------------------------------
+// Purpose: Toggle the guiding laser
+//-----------------------------------------------------------------------------
+function SWEP:ToggleGuiding()
+
+	if ( self:IsGuiding() ) then
+		self:StopGuiding();
+	else
+		self:StartGuiding();
 	end
 
-	// Fire the bullets, and force the first shot to be perfectly accuracy
-	pPlayer:FireBullets( info );
+end
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+function SWEP:UpdateLaserPosition( vecMuzzlePos, vecEndPos )
+
+if ( !CLIENT ) then
+	if ( vecMuzzlePos == vec3_origin || vecEndPos == vec3_origin ) then
+		local pPlayer = self.Owner;
+		if ( !pPlayer ) then
+			return;
+		end
+
+		vecMuzzlePos = pPlayer:GetShootPos();
+		local	forward;
+		forward = pPlayer:GetAimVector();
+		vecEndPos = vecMuzzlePos + ( forward * MAX_TRACE_LENGTH );
+	end
+
+	//Move the laser dot, if active
+	local	tr;
+
+	// Trace out for the endpoint
+	tr = {}
+	tr.startpos = vecMuzzlePos
+	tr.endpos = vecEndPos
+	tr.mask = MASK_SHOT
+	tr.owner = self.Owner
+	tr.collision = COLLISION_GROUP_NONE
+	tr = util.TraceLine( tr );
+
+	// Move the laser sprite
+	if ( self.m_hLaserDot != NULL ) then
+		local	laserPos = tr.HitPos;
+		self.m_hLaserDot:SetPos( laserPos );
+		self.m_hLaserDot:SetAngles( self.Owner:GetAimVector() + ( tr.HitNormal * 1.0 ) );
+
+		if ( tr.Entity ) then
+			local pHit = tr.Entity;
+
+			if ( ( pHit != NULL ) && ( pHit.m_takedamage ) ) then
+				self.m_hLaserDot:SetTargetEntity( pHit );
+			end
+		else
+			self.m_hLaserDot:SetTargetEntity( NULL );
+		end
+	end
+end
 
 end
 
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+function SWEP:CreateLaserPointer()
 
-/*---------------------------------------------------------
-   Name: SWEP:ShootCallback( )
-   Desc: A convenience function to shoot bullets
----------------------------------------------------------*/
-function SWEP:ShootCallback( attacker, trace, dmginfo )
+if ( !CLIENT ) then
+	if ( self.m_hLaserDot != NULL ) then
+		return;
+	end
+
+	local pOwner = self.Owner;
+
+	if ( pOwner == NULL ) then
+		return;
+	end
+
+	if ( pOwner:GetAmmoCount(self.Primary.Ammo) <= 0 ) then
+		return;
+	end
+
+	self.m_hLaserDot = ents.Create( "env_laserdot" );
+	self.m_hLaserDot:SetPos( self.Weapon:GetPos() );
+	self.m_hLaserDot:SetOwner( self.Owner );
+	self.m_hLaserDot:Spawn();
+
+	self:UpdateLaserPosition();
 end
 
+end
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+function SWEP:NotifyRocketDied()
+
+	self.m_hMissile = NULL;
+
+	if ( self.Weapon:GetActivity() == ACT_VM_RELOAD ) then
+		return;
+	end
+
+	self:Reload();
+
+end
+
+//-----------------------------------------------------------------------------
+// Purpose: Returns the attachment point on either the world or viewmodel
+//			This should really be worked into the CBaseCombatWeapon class!
+//-----------------------------------------------------------------------------
+function SWEP:GetWeaponAttachment( attachmentId, outVector, dir /*= NULL*/ )
+
+	local	angles;
+
+	//Tony; third person attachment
+	if ( self.Owner:GetActiveWeapon() == self.Weapon && GetViewEntity() == self.Owner) then
+		local pOwner = self.Owner;
+
+		if ( pOwner != NULL ) then
+			pOwner:GetViewModel():GetAttachment( attachmentId );
+		end
+	else
+		// We offset the IDs to make them correct for our world model
+		self.Weapon:GetAttachment( attachmentId );
+	end
+
+	// Supply the direction, if requested
+	if ( dir != NULL ) then
+		angles = dir:Angle();
+	end
+
+end
 
 /*---------------------------------------------------------
    Name: SetDeploySpeed

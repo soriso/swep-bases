@@ -48,7 +48,7 @@ SWEP.Primary.Delay			= 0.5
 SWEP.Primary.DefaultClip	= 1					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= false				// Automatic/Semi Auto
 SWEP.Primary.Ammo			= "grenade"
-SWEP.Primary.AmmoType		= "npc_grenade_frag"
+SWEP.Primary.AmmoType		= "sent_grenade_frag"
 
 SWEP.Secondary.Sound		= Sound( "common/null.wav" )
 SWEP.Secondary.ClipSize		= -1				// Size of a clip
