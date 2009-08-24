@@ -44,7 +44,7 @@ function ENT:SetBounceSound( pszBounceSound )
 	self.m_iszBounceSound = tostring( pszBounceSound );
 end
 
-function	ENT:BlipSound() self.Entity:EmitSound( "Grenade.Blip" ); end
+function	ENT:BlipSound() self.Entity:EmitSound( self.Sound.Blip ); end
 
 // UNDONE: temporary scorching for PreAlpha - find a less sleazy permenant solution.
 function ENT:Explode( pTrace, bitsDamageType )
@@ -76,20 +76,11 @@ if !( CLIENT ) then
 			self.m_flDamage );
 	end
 
-	local info = EffectData();
-	info:SetEntity( self.Entity );
-	info:SetOrigin( self.Entity:GetPos() );
+	self:DoExplodeEffect();
 
-	util.Effect( "Explosion", info );
+	self:OnExplode( pTrace );
 
-	self:OnExplode();
-
-	local Pos1 = Vector( self.Entity:GetPos().x, self.Entity:GetPos().y, pTrace.HitPos.z ) + pTrace.HitNormal
-	local Pos2 = Vector( self.Entity:GetPos().x, self.Entity:GetPos().y, pTrace.HitPos.z ) - pTrace.HitNormal
-
- 	util.Decal( "Scorch", Pos1, Pos2 );
-
-	self.Entity:EmitSound( "BaseGrenade.Explode" );
+	self.Entity:EmitSound( self.Sound.Explode );
 
 	self.Touch = NULL;
 	self.Entity:SetSolid( SOLID_NONE );
@@ -160,7 +151,7 @@ function ENT:Initialize()
 
 	self:Precache( );
 
-	self.Entity:SetModel( GRENADE_MODEL );
+	self.Entity:SetModel( self.Model );
 
 	if( self:GetOwner() && self:GetOwner():IsPlayer() ) then
 		self.m_flDamage		= sk_plr_dmg_fraggrenade;
@@ -225,14 +216,14 @@ end
 
 function ENT:Precache()
 
-	util.PrecacheModel( GRENADE_MODEL );
+	util.PrecacheModel( self.Model );
 
-	util.PrecacheSound( "Grenade.Blip" );
+	util.PrecacheSound( self.Sound.Blip );
 
 	util.PrecacheModel( "sprites/redglow1.vmt" );
-	util.PrecacheModel( "sprites/bluelaser1.vmt" );
+	util.PrecacheModel( self.Trail.Material );
 
-	util.PrecacheSound( "BaseGrenade.Explode" );
+	util.PrecacheSound( self.Sound.Explode );
 
 end
 
