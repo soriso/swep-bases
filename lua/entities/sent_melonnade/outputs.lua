@@ -50,7 +50,7 @@ function ENT:OnExplode()
 
 		phys:SetPos( self.Entity:GetPos() + ( Dir * phys:BoundingRadius() ) )
 		phys:GetPhysicsObject():AddGameFlag( FVPHYSICS_WAS_THROWN )
-		phys:GetPhysicsObject():SetMass( phys:GetPhysicsObject():GetMass() * self.m_flMass )
+		phys:GetPhysicsObject():SetMass( phys:GetPhysicsObject():GetMass() * self.Damage )
 		phys:GetPhysicsObject():SetVelocity( Vector( math.Rand( -Src.x, Src.x ), math.Rand( -Src.y, Src.y ), math.Rand( -Src.y, Src.y ) ) * 1500 )
 
 	end
@@ -61,7 +61,10 @@ end
    Name: OnInitialize
 ---------------------------------------------------------*/
 function ENT:OnInitialize()
+end
 
-	self.m_flMass			= self:GetOwner():GetActiveWeapon().Primary.Damage
-
+/*---------------------------------------------------------
+   Name: OnThink
+---------------------------------------------------------*/
+function ENT:OnThink()
 end
