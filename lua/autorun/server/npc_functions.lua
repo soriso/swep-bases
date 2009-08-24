@@ -8,7 +8,11 @@ if (!meta) then return end
 
 meta.g_Give				= meta.Give
 
+local lua_weapons		= GetConVar( "lua_weapons" )
+
 function meta:Give( item )
+
+	if ( !lua_weapons:GetBool() ) then return self:g_Give( item ) end
 
 	local wep = {
 
