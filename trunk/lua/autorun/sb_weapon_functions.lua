@@ -15,6 +15,8 @@ HL2_WEAPONS = {
 
 }
 
+if (GARRYSMOD_PLUS) then return end
+
 local meta = FindMetaTable( "Weapon" )
 if (!meta) then return end
 
