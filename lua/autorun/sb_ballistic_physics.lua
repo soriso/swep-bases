@@ -1,6 +1,7 @@
 
 local meta = FindMetaTable( "Entity" )
 if (!meta) then return end
+if (meta.g_FireBullets && meta.FireMelee) then return end
 
 meta.g_FireBullets		= meta.FireBullets
 meta.FireMelee			= meta.FireBullets
