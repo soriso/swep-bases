@@ -17,6 +17,7 @@ HL2_WEAPONS = {
 
 local meta = FindMetaTable( "Weapon" )
 if (!meta) then return end
+if (meta.g_SetNextPrimaryFire && meta.g_SetNextSecondaryFire) then return end
 
 // In this file we're adding functions to the weapon meta table.
 // This means you'll be able to call functions here straight from the weapon object
