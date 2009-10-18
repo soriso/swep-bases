@@ -1,6 +1,4 @@
 
-if (GARRYSMOD_PLUS) then return end
-
 local string = string
 if (!string) then return end
 
