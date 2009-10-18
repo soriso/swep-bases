@@ -1,6 +1,4 @@
 
-if (GARRYSMOD_PLUS) then return end
-
 local meta = FindMetaTable( "Entity" )
 if (!meta) then return end
 
