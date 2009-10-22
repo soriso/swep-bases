@@ -6,7 +6,7 @@ if (!meta) then return end
 
 meta.g_Give			= meta.Give
 
-local lua_weapons	= CreateConVar( "lua_weapons",	1, { FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED } )
+local lua_weapons	= CreateConVar( "lua_weapons",	0, { FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED } )
 
 function meta:Give( item )
 
