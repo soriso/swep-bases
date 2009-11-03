@@ -6,61 +6,6 @@ if (meta.g_FireBullets && meta.FireMelee) then return end
 meta.g_FireBullets		= meta.FireBullets
 meta.FireMelee			= meta.FireBullets
 
-local phys_bullets		= CreateConVar( "phys_bullets", 0, { FCVAR_REPLICATED } )
-
-function meta:FireBullets( data )
-
-	if ( !phys_bullets:GetBool() ) then return self:g_FireBullets( data ) end
-	if ( CLIENT ) then return end
-
-	if ( !data.Num ) then
-		data.Num = 1
-	end
-
-	for i = 1, data.Num do
-
-		local Src		= data.Spread || vec3_origin
-		local Dir		= data.Dir + Vector( math.Rand( -Src.x, Src.x ), math.Rand( -Src.y, Src.y ), math.Rand( -Src.y, Src.y ) )
-		local info		= ents.Create( "prop_bullet" )
-
-		info:SetPos( data.Src + ( Dir * 32 ) )
-		info:SetAngles( Dir:Angle() )
-
-		info.Attacker	= data.Attacker
-		info.Dir		= Dir
-		info.Damage		= data.Damage
-		info.Force		= data.Force
-		info.Callback	= data.Callback
-		info.Num		= data.Num
-		info.Owner		= self
-
-		info:Spawn()
-
-		local phys = info:GetPhysicsObject()
-		if (phys:IsValid()) then
-			phys:SetVelocity( info:GetForward() * server_settings.Int( "bulletspeed", 6000 ) )
-		end
-
-	end
-
-end
-
-local function phys_bullets_clear( player )
-
-	if ( !player:IsAdmin() ) then return end
-
-	if ( CLIENT ) then return end
-
-	for k, v in pairs( ents.FindByClass( "prop_bullet" ) ) do
-
-		v:Remove()
-
-	end
-
-end
-
-concommand.Add( "phys_bullets_clear", phys_bullets_clear )
-
 function meta:FirePenetratingBullets( attacker, trace, dmginfo )
 
 	/*
