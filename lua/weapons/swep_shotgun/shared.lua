@@ -314,13 +314,13 @@ end
 //-----------------------------------------------------------------------------
 function SWEP:Reload( m_bInReload )
 
+	if (!m_bInReload) then
+		return;
+	end
+
 	// Check that StartReload was called first
 	if (!self.m_bInReload) then
 		Error("ERROR: Shotgun Reload called incorrectly!\n");
-	end
-
-	if (!m_bInReload) then
-		return;
 	end
 
 	local pOwner  = self.Owner;
