@@ -5,6 +5,6 @@
 	"up_date"			""
 	"author_name"		"Andrew McWatters"
 	"author_email"		"mcwattersandrew@gmail.com"
-	"author_url"		"http://blackcanvas.co.nr/"
+	"author_url"		"http://www.andrewmcwatters.com/"
 	"info"				"Adds HL2 scripted weapon bases."
 }
