@@ -393,7 +393,7 @@ function ENT:SeekThink()
 	// If we have a grace period, go solid when it ends
 	if ( self.m_flGracePeriodEndsAt ) then
 		if ( self.m_flGracePeriodEndsAt < CurTime() ) then
-			self.Entity:RemoveSolidFlags( FSOLID_NOT_SOLID );
+			self.Entity:SetSolid( SOLID_NONE );
 			self.m_flGracePeriodEndsAt = 0;
 		end
 	end
