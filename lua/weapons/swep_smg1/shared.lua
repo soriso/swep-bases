@@ -218,11 +218,10 @@ if ( !CLIENT ) then
 	local pGrenade = ents.Create( self.Secondary.AmmoType );
 	pGrenade:SetPos( vecSrc );
 	pGrenade:SetOwner( pPlayer );
-	pGrenade:SetVelocity( vecThrow );
 
 	pGrenade:Spawn()
-	pGrenade:SetAngles( RandomAngle( -400, 400 ) );
-	pGrenade:GetPhysicsObject():AddAngleVelocity( RandomAngle( -400, 400 ) );
+	pGrenade:GetPhysicsObject():SetVelocity( vecThrow );
+	pGrenade:GetPhysicsObject():SetAngleVelocity( RandomAngle( -400, 400 ) );
 	pGrenade:SetOwner( self.Owner );
 end
 
