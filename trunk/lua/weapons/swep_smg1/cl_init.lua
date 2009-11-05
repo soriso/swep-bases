@@ -17,7 +17,8 @@ SWEP.WepSelectLetter	= "a"
 SWEP.IconFont			= "HL2MPTypeDeath"
 SWEP.IconLetter			= "/"
 
-killicon.AddFont( SWEP.ClassName, SWEP.IconFont, SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
+killicon.AddFont( SWEP.ClassName, 		SWEP.IconFont,	SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
+killicon.AddFont( "sent_grenade_ar2",	"7", 			SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
 
 /*---------------------------------------------------------
 	Checks the objects before any action is taken
