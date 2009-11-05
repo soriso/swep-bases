@@ -59,7 +59,7 @@ SWEP.Primary.Delay			= 0.75
 SWEP.Primary.DefaultClip	= 3					// Default number of bullets in a clip
 SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
 SWEP.Primary.Ammo			= "rpg_round"
-SWEP.Primary.AmmoType		= "rpg_missile"
+SWEP.Primary.AmmoType		= "sent_rpg_missile"
 
 SWEP.Secondary.Special1		= Sound( "Weapon_RPG.LaserOn" )
 SWEP.Secondary.Special2		= Sound( "Weapon_RPG.LaserOff" )
