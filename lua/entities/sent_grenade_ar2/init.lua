@@ -21,8 +21,8 @@ local	  sk_smg1_grenade_radius		= server_settings.Int( "sk_smg1_grenade_radius",
 function ENT:Initialize()
 
 	self:Precache( );
-	self.Entity:SetSolid( SOLID_VPHYSICS );
-	self.Entity:SetMoveType( MOVETYPE_FLYGRAVITY )
+	self.Entity:SetSolid( SOLID_BBOX );
+	self.Entity:SetMoveType( MOVETYPE_FLYGRAVITY );
 	self.Entity:SetMoveCollide( MOVECOLLIDE_FLY_BOUNCE );
 
 	// Hits everything but debris
