@@ -31,7 +31,7 @@ function ENT:Initialize()
 	self.Entity:SetCollisionBounds(Vector(-3, -3, -3), Vector(3, 3, 3));
 //	self.Entity:SetCollisionBounds(Vector(0, 0, 0), Vector(0, 0, 0));
 
-	self.Entity:SetNextThink( CurTime() + 0.1 );
+	self.Entity:NextThink( CurTime() + 0.1 );
 
 	if( self:GetOwner() && self:GetOwner():IsPlayer() ) then
 		self.m_flDamage = sk_plr_dmg_smg1_grenade:GetFloat();
@@ -68,7 +68,7 @@ function ENT:Think()
 
 	self:OnThink()
 
-	self.Entity:SetNextThink( CurTime() + 0.05 );
+	self.Entity:NextThink( CurTime() + 0.05 );
 
 	if (!self.m_bIsLive) then
 		// Go live after a short delay
