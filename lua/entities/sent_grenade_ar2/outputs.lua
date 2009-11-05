@@ -54,7 +54,7 @@ end
 
 function ENT:Touch( pOther )
 
-	Assert( pOther );
+	// Assert( pOther );
 	if ( pOther:GetSolid() == SOLID_NONE ) then
 		return;
 	end

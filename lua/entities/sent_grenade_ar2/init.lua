@@ -4,6 +4,8 @@ include( 'shared.lua' )
 include( 'outputs.lua' )
 
 
+MAX_AR2_NO_COLLIDE_TIME = 0.2
+
 AR2_GRENADE_MAX_DANGER_RADIUS	= 300
 
 // Moved to HL2_SharedGameRules because these are referenced by shared AmmoDef functions
@@ -18,11 +20,10 @@ local	  sk_smg1_grenade_radius		= server_settings.Int( "sk_smg1_grenade_radius",
 ---------------------------------------------------------*/
 function ENT:Initialize()
 
-	self.m_hSmokeTrail  = NULL;
-
 	self:Precache( );
 	self.Entity:SetSolid( SOLID_BBOX );
-	self.Entity:SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE );
+	self.Entity:SetMoveType( MOVETYPE_FLYGRAVITY )
+	self.Entity:SetMoveCollide( MOVECOLLIDE_FLY_BOUNCE );
 
 	// Hits everything but debris
 	self.Entity:SetCollisionGroup( COLLISION_GROUP_PROJECTILE );
@@ -34,12 +35,12 @@ function ENT:Initialize()
 	self.Entity:NextThink( CurTime() + 0.1 );
 
 	if( self:GetOwner() && self:GetOwner():IsPlayer() ) then
-		self.m_flDamage = sk_plr_dmg_smg1_grenade:GetFloat();
+		self.m_flDamage = sk_plr_dmg_smg1_grenade;
 	else
-		self.m_flDamage = sk_npc_dmg_smg1_grenade:GetFloat();
+		self.m_flDamage = sk_npc_dmg_smg1_grenade;
 	end
 
-	self.m_DmgRadius	= sk_smg1_grenade_radius:GetFloat();
+	self.m_DmgRadius	= sk_smg1_grenade_radius;
 	self.m_takedamage	= DAMAGE_YES;
 	self.m_bIsLive		= true;
 	self.m_iHealth		= 1;
@@ -138,7 +139,7 @@ function ENT:Detonate()
 
 	util.ScreenShake( self.Entity:GetPos(), 25.0, 150.0, 1.0, 750, SHAKE_START );
 
-	util.BlastDamage ( self.Entity, self:GetOwner(), self.m_DmgRadius, self.m_flDamage );
+	util.BlastDamage ( self.Entity, self:GetOwner(), self.Entity:GetPos(), self.m_DmgRadius, self.m_flDamage );
 
 	self.Entity:Remove();
 
