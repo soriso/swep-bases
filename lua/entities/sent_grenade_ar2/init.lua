@@ -21,14 +21,13 @@ local	  sk_smg1_grenade_radius		= server_settings.Int( "sk_smg1_grenade_radius",
 function ENT:Initialize()
 
 	self:Precache( );
-	self.Entity:SetSolid( SOLID_BBOX );
-	self.Entity:SetMoveType( MOVETYPE_FLYGRAVITY );
+	self.Entity:SetModel( "models/Items/AR2_Grenade.mdl");
+	self.Entity:PhysicsInit( SOLID_VPHYSICS );
 	self.Entity:SetMoveCollide( MOVECOLLIDE_FLY_BOUNCE );
 
 	// Hits everything but debris
 	self.Entity:SetCollisionGroup( COLLISION_GROUP_PROJECTILE );
 
-	self.Entity:SetModel( "models/Items/AR2_Grenade.mdl");
 	self.Entity:SetCollisionBounds(Vector(-3, -3, -3), Vector(3, 3, 3));
 //	self.Entity:SetCollisionBounds(Vector(0, 0, 0), Vector(0, 0, 0));
 
