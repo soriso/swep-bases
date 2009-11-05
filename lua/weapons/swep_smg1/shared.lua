@@ -223,8 +223,6 @@ if ( !CLIENT ) then
 	pGrenade:Spawn()
 	pGrenade:SetAngles( RandomAngle( -400, 400 ) );
 	//pGrenade:SetAngleVelocity( RandomAngle( -400, 400 ) );
-	pGrenade:SetMoveType( MOVETYPE_FLYGRAVITY );
-	pGrenade:SetMoveCollide( MOVECOLLIDE_FLY_BOUNCE );
 	pGrenade:SetOwner( self.Owner );
 end
 
