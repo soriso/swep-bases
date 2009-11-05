@@ -28,7 +28,7 @@ function ENT:Initialize()
 	// Hits everything but debris
 	self.Entity:SetCollisionGroup( COLLISION_GROUP_PROJECTILE );
 
-	self.Entity:SetModel( "models/Weapons/ar2_grenade.mdl");
+	self.Entity:SetModel( "models/Items/AR2_Grenade.mdl");
 	self.Entity:SetCollisionBounds(Vector(-3, -3, -3), Vector(3, 3, 3));
 //	self.Entity:SetCollisionBounds(Vector(0, 0, 0), Vector(0, 0, 0));
 
@@ -147,7 +147,7 @@ end
 
 function ENT:Precache()
 
-	util.PrecacheModel("models/Weapons/ar2_grenade.mdl");
+	util.PrecacheModel("models/Items/AR2_Grenade.mdl");
 
 end
 
