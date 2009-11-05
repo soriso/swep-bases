@@ -47,7 +47,7 @@ SWEP.Secondary.Delay		= 0.5
 SWEP.Secondary.DefaultClip	= -1				// Default number of bullets in a clip
 SWEP.Secondary.Automatic	= true				// Automatic/Semi Auto
 SWEP.Secondary.Ammo			= "SMG1_Grenade"
-SWEP.Secondary.AmmoType		= "grenade_ar2"
+SWEP.Secondary.AmmoType		= "sent_grenade_ar2"
 
 
 
