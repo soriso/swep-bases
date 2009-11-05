@@ -213,7 +213,7 @@ function ENT:DoExplosion()
 
 	// Explode
 	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), GetOwnerEntity(), GetDamage(), GetDamage() * 2,
-		SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE, 0.0f, this);
+		SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE, 0.0, this);
 
 end
 
@@ -227,11 +227,11 @@ function ENT:Explode()
 	// the missile flies off into the distance.
 	local forward;
 
-	GetVectors( &forward, NULL, NULL );
+	forward = self.Entity:GetForward();
 
 	local tr = {};
 	tr.startpos = self.Entity:GetPos();
-	tr.endpos = GetAbsOrigin() + forward * 16;
+	tr.endpos = self.Entity:GetPos() + forward * 16;
 	tr.mask = MASK_SHOT;
 	tr.filter = self;
 	tr.collision = COLLISION_GROUP_NONE;
@@ -292,8 +292,8 @@ function ENT:IgniteThink()
 
 	self.Entity:SetMoveType( MOVETYPE_FLY );
 	self.Entity:SetModel("models/weapons/w_missile.mdl");
-	self.Entity:SetCollisionBounds( this, vec3_origin, vec3_origin );
- 	self.Entity:RemoveSolidFlags( FSOLID_NOT_SOLID );
+	self.Entity:SetCollisionBounds( vec3_origin, vec3_origin );
+ 	self.Entity:SetSolid( SOLID_NONE );
 
 	//TODO: Play opening sound
 
@@ -301,7 +301,7 @@ function ENT:IgniteThink()
 
 	self.Entity:EmitSound( "Missile.Ignite" );
 
-	vecForward = AngleVectors( self.Entity:GetLocalAngles() );
+	vecForward = self.Entity:GetLocalAngles();
 	self.Entity:SetVelocity( vecForward * RPG_SPEED );
 
 	self.Think = self.SeekThink;
@@ -368,7 +368,7 @@ function ENT:ComputeActualDotPosition( pLaserDot, pActualDotPosition, pHomingSpe
 	// See if we should chase the line segment nearest us
 	if ( ( flMissileLength < flLaserLength ) || ( flTargetLength <= 512.0 ) ) then
 		pActualDotPosition = UTIL_PointOnLineNearestPoint( vLaserStart, pLaserDot:GetChasePosition(), GetAbsOrigin() );
-		pActualDotPosition = pActualDotPosition + ( vLaserDir * 256.0f );
+		pActualDotPosition = pActualDotPosition + ( vLaserDir * 256.0 );
 	else
 		// Otherwise chase the dot
 		pActualDotPosition = pLaserDot:GetChasePosition();
