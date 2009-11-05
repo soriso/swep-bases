@@ -101,7 +101,7 @@ end
 function ENT:PhysicsCollide( data, physobj )
 
 	self:Touch( data.HitEntity )
-	self.PhysicsCollide == function( ... ) return end
+	self.PhysicsCollide = function( ... ) return end
 
 end
 
