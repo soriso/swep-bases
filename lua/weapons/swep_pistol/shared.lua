@@ -246,7 +246,7 @@ end
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-function SWEP:UpdatePenaltyTime( void )
+function SWEP:UpdatePenaltyTime()
 
 	local pOwner = self.Owner;
 
