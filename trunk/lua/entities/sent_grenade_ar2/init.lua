@@ -82,7 +82,7 @@ function ENT:Think()
 	if (self.m_bIsLive) then
 		if (self.Entity:GetVelocity():Length() == 0.0 ||
 			self.Entity:GetGroundEntity() != NULL ) then
-			self:Detonate();
+			// self:Detonate();
 		end
 	end
 
