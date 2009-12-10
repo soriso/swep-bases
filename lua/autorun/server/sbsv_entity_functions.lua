@@ -6,9 +6,13 @@ if (!meta) then return end
 // This means you'll be able to call functions here straight from the physics object
 // You can even override already existing functions.
 
-function meta:SetAngleVelocity( velocity )
+if ( !meta.SetAngleVelocity ) then
 
-	self:AddAngleVelocity( -self:GetAngleVelocity() + velocity )
+	function meta:SetAngleVelocity( velocity )
+
+		self:AddAngleVelocity( -self:GetAngleVelocity() + velocity )
+
+	end
 
 end
 

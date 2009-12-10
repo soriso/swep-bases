@@ -1,70 +1,72 @@
 
 local meta = FindMetaTable( "Entity" )
 if (!meta) then return end
-if (meta.g_FireBullets && meta.FireMelee) then return end
+if (!meta.g_FireBullets) then meta.g_FireBullets = meta.FireBullets end
+if (!meta.FireMelee) then meta.FireMelee = meta.FireBullets end
 
-meta.g_FireBullets		= meta.FireBullets
-meta.FireMelee			= meta.FireBullets
+if ( !meta.FirePenetratingBullets ) then
 
-function meta:FirePenetratingBullets( attacker, trace, dmginfo )
+	function meta:FirePenetratingBullets( attacker, trace, dmginfo )
 
-	/*
-	// Don't go through metal
-	if ( trace.MatType == MAT_METAL	||
-		 trace.MatType == MAT_SAND ) then return end
-	*/
+		/*
+		// Don't go through metal
+		if ( trace.MatType == MAT_METAL	||
+			 trace.MatType == MAT_SAND ) then return end
+		*/
 
-	local Penetration	= self.Penetration	|| 1
+		local Penetration	= self.Penetration	|| 1
 
-	// Direction (and length) that we are gonna penetrate
-	local Dir			= trace.Normal * 16;
+		// Direction (and length) that we are gonna penetrate
+		local Dir			= trace.Normal * 16;
 
-	if ( trace.MatType == MAT_ALIENFLESH	||
-		 trace.MatType == MAT_DIRT			||
-		 trace.MatType == MAT_FLESH			||
-		 trace.MatType == MAT_WOOD ) then -- dirt == plaster, and wood should be easier to penetrate so increase the distance
-		Dir = trace.Normal * ( 16 * Penetration );
+		if ( trace.MatType == MAT_ALIENFLESH	||
+			 trace.MatType == MAT_DIRT			||
+			 trace.MatType == MAT_FLESH			||
+			 trace.MatType == MAT_WOOD ) then -- dirt == plaster, and wood should be easier to penetrate so increase the distance
+			Dir = trace.Normal * ( 16 * Penetration );
+		end
+
+		if ( !attacker:IsValid() ) then return end
+		if ( !dmginfo:IsBulletDamage() ) then return end
+
+		local t				= {}
+		t.start				= trace.HitPos + Dir
+		t.endpos			= trace.HitPos
+		t.filter			= self.Owner
+		t.mask				= MASK_SHOT
+
+		local tr			= util.TraceLine( t )
+
+		// Bullet didn't penetrate.
+		if ( tr.StartSolid			||
+			 tr.Fraction	>= 1.0	||
+			 trace.Fraction	<= 0.0 ) then return end
+
+		// Fire bullet from the exit point using the original tradjectory
+		local info		= {}
+		info.Src		= tr.HitPos
+		info.Attacker	= attacker
+		info.Dir		= trace.Normal
+		info.Spread		= vec3_origin
+		info.Num		= 1
+		info.Damage		= dmginfo:GetDamage()
+
+		info.Callback = function( attacker, trace, dmginfo )
+			return self:FirePenetratingBullets( attacker, trace, dmginfo )
+		end;
+
+		info.Tracer		= 0
+
+		self:FireBullets( info )
+
+		return {
+
+			damage	= true,
+			effects	= true
+
+		}
+
 	end
-
-	if ( !attacker:IsValid() ) then return end
-	if ( !dmginfo:IsBulletDamage() ) then return end
-
-	local t				= {}
-	t.start				= trace.HitPos + Dir
-	t.endpos			= trace.HitPos
-	t.filter			= self.Owner
-	t.mask				= MASK_SHOT
-
-	local tr			= util.TraceLine( t )
-
-	// Bullet didn't penetrate.
-	if ( tr.StartSolid			||
-		 tr.Fraction	>= 1.0	||
-		 trace.Fraction	<= 0.0 ) then return end
-
-	// Fire bullet from the exit point using the original tradjectory
-	local info		= {}
-	info.Src		= tr.HitPos
-	info.Attacker	= attacker
-	info.Dir		= trace.Normal
-	info.Spread		= vec3_origin
-	info.Num		= 1
-	info.Damage		= dmginfo:GetDamage()
-
-	info.Callback = function( attacker, trace, dmginfo )
-		return self:FirePenetratingBullets( attacker, trace, dmginfo )
-	end;
-
-	info.Tracer		= 0
-
-	self:FireBullets( info )
-
-	return {
-
-		damage	= true,
-		effects	= true
-
-	}
 
 end
 
