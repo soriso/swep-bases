@@ -1,10 +1,7 @@
 
-if (GARRYSMOD_PLUS) then return end
-
 local meta = FindMetaTable( "Player" )
 if (!meta) then return end
-
-meta.g_Give			= meta.Give
+if (!meta.g_Give) then meta.g_Give = meta.Give end
 
 local lua_weapons	= CreateConVar( "lua_weapons",	0, { FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED } )
 

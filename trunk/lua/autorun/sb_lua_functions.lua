@@ -3,7 +3,7 @@
 // The server only runs this file so it can send it to the client
 //
 
-if ( !GARRYSMOD_PLUS ) then AddCSLuaFile( "sb_lua_functions.lua" ) else return end
+if ( !SERVER ) then AddCSLuaFile( "sb_lua_functions.lua" ) else return end
 
 
 /*---------------------------------------------------------
