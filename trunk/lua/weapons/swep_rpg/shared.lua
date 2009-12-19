@@ -321,6 +321,11 @@ function SWEP:Think()
 		self:StopGuiding();
 	end
 
+	if ( !self.m_hMissile || !self.m_hMissile:IsValid() ) then
+		self:NotifyRocketDied()
+		self.Weapon:SetNetworkedEntity( "Missile", NULL );
+	end
+
 end
 
 //-----------------------------------------------------------------------------
@@ -412,7 +417,7 @@ end
 function SWEP:Holster( wep )
 
 	//Can't have an active missile out
-	if ( self.m_hMissile != NULL ) then
+	if ( self.Weapon:GetNetworkedEntity( "Missile" ) != NULL ) then
 		//return false;
 	end
 
