@@ -322,7 +322,7 @@ function SWEP:Think()
 	end
 
 	if ( !self.m_bInitialStateUpdate ) then
-		if ( !self.m_hMissile && !self.m_hMissile:IsValid() ) then
+		if ( !self.m_hMissile || !self.m_hMissile:IsValid() ) then
 			self:NotifyRocketDied()
 		end
 	end
