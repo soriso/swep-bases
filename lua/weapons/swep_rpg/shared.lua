@@ -252,7 +252,11 @@ end
    Name: SWEP:Reload( )
    Desc: Reload is being pressed
 ---------------------------------------------------------*/
-function SWEP:Reload()
+function SWEP:Reload( m_bInReload )
+
+	if (!m_bInReload) then
+		return;
+	end
 
 	local pOwner = self.Owner;
 
@@ -315,6 +319,12 @@ function SWEP:Think()
 
 	if ( pPlayer:GetAmmoCount(self.Primary.Ammo) <= 0 && self.m_hMissile == NULL ) then
 		self:StopGuiding();
+	end
+
+	if ( !self.m_bInitialStateUpdate ) then
+		if ( !self.m_hMissile && !self.m_hMissile:IsValid() ) then
+			self:NotifyRocketDied()
+		end
 	end
 
 end
@@ -408,8 +418,10 @@ end
 function SWEP:Holster( wep )
 
 	//Can't have an active missile out
-	if ( self.Weapon:GetNetworkedEntity( "Missile" ) != NULL ) then
-		//return false;
+	if ( self.Weapon && self.Weapon:IsValid() ) then
+		if ( self.Weapon:GetNetworkedEntity( "Missile" ) != NULL ) then
+			//return false;
+		end
 	end
 
 	self:StopGuiding();
@@ -447,7 +459,9 @@ function SWEP:StopGuiding()
 
 if ( !CLIENT ) then
 
-	self.Weapon:EmitSound( self.Secondary.Special2 );
+	if ( self.Weapon && self.Weapon:IsValid() ) then
+		self.Weapon:EmitSound( self.Secondary.Special2 );
+	end
 
 	// Kill the dot completely
 	if ( self.m_hLaserDot != NULL ) then
@@ -564,13 +578,14 @@ end
 //-----------------------------------------------------------------------------
 function SWEP:NotifyRocketDied()
 
+	self.Weapon:SetNetworkedEntity( "Missile", NULL );
 	self.m_hMissile = NULL;
 
 	if ( self.Weapon:GetActivity() == ACT_VM_RELOAD ) then
 		return;
 	end
 
-	self:Reload();
+	self:Reload( true );
 
 end
 
