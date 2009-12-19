@@ -47,6 +47,7 @@ RPG_LASER_BEAM_LENGTH	= 128
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
 
+SWEP.Primary.Reload			= Sound( "common/null.wav" )
 SWEP.Primary.Sound			= Sound( "Weapon_RPG.Single" )
 SWEP.Primary.SoundNPC		= Sound( "Weapon_RPG.NPC_Single" )
 SWEP.Primary.Empty			= Sound( "Weapon_SMG1.Empty" )
