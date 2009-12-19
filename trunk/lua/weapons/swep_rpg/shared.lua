@@ -252,7 +252,11 @@ end
    Name: SWEP:Reload( )
    Desc: Reload is being pressed
 ---------------------------------------------------------*/
-function SWEP:Reload()
+function SWEP:Reload( m_bInReload )
+
+	if (!m_bInReload) then
+		return;
+	end
 
 	local pOwner = self.Owner;
 
@@ -408,7 +412,7 @@ end
 function SWEP:Holster( wep )
 
 	//Can't have an active missile out
-	if ( self.Weapon:GetNetworkedEntity( "Missile" ) != NULL ) then
+	if ( self.m_hMissile != NULL ) then
 		//return false;
 	end
 
@@ -447,7 +451,9 @@ function SWEP:StopGuiding()
 
 if ( !CLIENT ) then
 
-	self.Weapon:EmitSound( self.Secondary.Special2 );
+	if ( self.Weapon && self.Weapon:IsValid() ) then
+		self.Weapon:EmitSound( self.Secondary.Special2 );
+	end
 
 	// Kill the dot completely
 	if ( self.m_hLaserDot != NULL ) then
@@ -570,7 +576,7 @@ function SWEP:NotifyRocketDied()
 		return;
 	end
 
-	self:Reload();
+	self:Reload( true );
 
 end
 
