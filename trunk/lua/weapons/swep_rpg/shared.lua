@@ -85,9 +85,12 @@ function SWEP:Initialize()
 		self:SetNPCFireRate( self.Primary.Delay )
 	end
 
-	if ( VERSION >= 72 ) then
-		self:DTVar( "Entity", NULL, "Missile" );
-	end
+end
+
+
+function SWEP:SetupDataTables()
+
+	self:DTVar( "Entity", 0, "Missile" );
 
 end
 
