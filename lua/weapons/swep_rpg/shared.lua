@@ -348,12 +348,12 @@ function SWEP:Think()
 
 	if ( self.m_bInReload && self.m_flSequenceDuration <= CurTime() ) then
 		self.m_bInReload			= false;
+		self.m_bNeedReload			= false;
 		self.m_flSequenceDuration	= CurTime();
 	end
 
 	if ( !self.m_bInitialStateUpdate && self.m_bNeedReload ) then
 		if ( !self.m_hMissile || !self.m_hMissile:IsValid() ) then
-			self.m_bNeedReload = false;
 			self:NotifyRocketDied()
 		end
 	end
