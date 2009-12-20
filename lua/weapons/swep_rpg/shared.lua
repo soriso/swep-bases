@@ -85,6 +85,10 @@ function SWEP:Initialize()
 		self:SetNPCFireRate( self.Primary.Delay )
 	end
 
+	if ( VERSION >= 72 ) then
+		self:DTVar( "Entity", NULL, "Missile" );
+	end
+
 end
 
 
@@ -136,7 +140,11 @@ function SWEP:PrimaryAttack()
 	end
 
 	// Can't have an active missile out
-	if ( self.Weapon:GetNetworkedEntity( "Missile" ) != NULL ) then
+	if ( VERSION >= 72 ) then
+		if ( self.dt.Missile != NULL ) then
+			return;
+		end
+	elseif ( self.Weapon:GetNetworkedEntity( "Missile" ) != NULL ) then
 		return;
 	end
 
@@ -190,7 +198,11 @@ if ( !CLIENT ) then
 
 	pMissile.Damage = self.Primary.Damage;
 
-	self.Weapon:SetNetworkedEntity( "Missile", pMissile );
+	if ( VERSION >= 72 ) then
+		self.dt.Missile = pMissile
+	else
+		self.Weapon:SetNetworkedEntity( "Missile", pMissile );
+	end
 	self.m_hMissile = pMissile;
 end
 
@@ -431,7 +443,11 @@ function SWEP:Holster( wep )
 
 	//Can't have an active missile out
 	if ( self.Weapon && self.Weapon:IsValid() ) then
-		if ( self.Weapon:GetNetworkedEntity( "Missile" ) != NULL ) then
+		if ( VERSION >= 72 ) then
+			if ( self.dt.Missile != NULL ) then
+				//return false;
+			end
+		elseif ( self.Weapon:GetNetworkedEntity( "Missile" ) != NULL ) then
 			//return false;
 		end
 	end
@@ -590,7 +606,11 @@ end
 //-----------------------------------------------------------------------------
 function SWEP:NotifyRocketDied()
 
-	self.Weapon:SetNetworkedEntity( "Missile", NULL );
+	if ( VERSION >= 72 ) then
+		self.dt.Missile = NULL;
+	else
+		self.Weapon:SetNetworkedEntity( "Missile", NULL );
+	end
 	self.m_hMissile = NULL;
 
 	if ( self.Weapon:GetActivity() == ACT_VM_RELOAD || self.m_bInReload ) then
