@@ -297,6 +297,9 @@ function SWEP:Reload( m_bInReload )
 	self.Weapon:SendWeaponAnim( ACT_VM_RELOAD );
 	self.m_flSequenceDuration = CurTime() + self.Weapon:SequenceDuration();
 
+	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay );
+
 	return true;
 
 end
