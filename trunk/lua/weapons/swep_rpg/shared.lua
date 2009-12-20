@@ -23,6 +23,7 @@ SWEP.m_bFiresUnderwater	= false
 SWEP.m_bInitialStateUpdate= false;
 SWEP.m_bHideGuiding = false;
 SWEP.m_bGuiding = false;
+SWEP.m_flSequenceDuration = CurTime();
 SWEP.m_hLaserDot = NULL;
 SWEP.m_hMissile = NULL;
 
@@ -140,7 +141,7 @@ function SWEP:PrimaryAttack()
 	end
 
 	// Can't be reloading
-	if ( self.Weapon:GetActivity() == ACT_VM_RELOAD ) then
+	if ( self.Weapon:GetActivity() == ACT_VM_RELOAD || self.m_bInReload ) then
 		return;
 	end
 
@@ -260,6 +261,8 @@ function SWEP:Reload( m_bInReload )
 		return;
 	end
 
+	self.m_bInReload = true;
+
 	local pOwner = self.Owner;
 
 	if ( pOwner == NULL ) then
@@ -273,6 +276,7 @@ function SWEP:Reload( m_bInReload )
 	self.Weapon:EmitSound( self.Primary.Reload );
 
 	self.Weapon:SendWeaponAnim( ACT_VM_RELOAD );
+	self.m_flSequenceDuration = CurTime() + self.Weapon:SequenceDuration();
 
 	return true;
 
@@ -321,6 +325,11 @@ function SWEP:Think()
 
 	if ( pPlayer:GetAmmoCount(self.Primary.Ammo) <= 0 && self.m_hMissile == NULL ) then
 		self:StopGuiding();
+	end
+
+	if ( self.m_bInReload && self.m_flSequenceDuration <= CurTime() ) then
+		self.m_bInReload			= false;
+		self.m_flSequenceDuration	= CurTime();
 	end
 
 	if ( !self.m_bInitialStateUpdate && self.m_bNeedReload ) then
@@ -429,7 +438,7 @@ function SWEP:Holster( wep )
 
 	self:StopGuiding();
 
-	self.BaseClass:Holster( wep )
+	return self.BaseClass:Holster( wep )
 
 end
 
@@ -584,7 +593,7 @@ function SWEP:NotifyRocketDied()
 	self.Weapon:SetNetworkedEntity( "Missile", NULL );
 	self.m_hMissile = NULL;
 
-	if ( self.Weapon:GetActivity() == ACT_VM_RELOAD ) then
+	if ( self.Weapon:GetActivity() == ACT_VM_RELOAD || self.m_bInReload ) then
 		return;
 	end
 
