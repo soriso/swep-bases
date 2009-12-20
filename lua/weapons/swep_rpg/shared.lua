@@ -128,6 +128,10 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
+	if (self.m_bNeedReload) then
+		return;
+	end
+
 	if ( self:Ammo1() <= 0 ) then
 		self.Weapon:EmitSound( self.Primary.Empty );
 		self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
