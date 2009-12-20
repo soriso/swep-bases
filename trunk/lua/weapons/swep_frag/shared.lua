@@ -412,8 +412,8 @@ if ( !CLIENT ) then
 	local	vecEye = pPlayer:EyePos();
 	local	vForward, vRight;
 
-	vForward = pPlayer:GetAimVector();
-	vRight = pPlayer:GetAimVector();
+	vForward = pPlayer:GetForward();
+	vRight = pPlayer:GetRight();
 	local vecSrc = vecEye + vForward * 18.0 + vRight * 8.0;
 	self:CheckThrowPosition( pPlayer, vecEye, vecSrc );
 //	vForward.x = vForward.x + 0.1;
@@ -469,8 +469,8 @@ if ( !CLIENT ) then
 	local	vecEye = pPlayer:EyePos();
 	local	vForward, vRight;
 
-	vForward = pPlayer:GetAimVector();
-	vRight = pPlayer:GetAimVector();
+	vForward = pPlayer:GetForward();
+	vRight = pPlayer:GetRight();
 	local vecSrc = vecEye + vForward * 18.0 + vRight * 8.0 + Vector( 0, 0, -8 );
 	self:CheckThrowPosition( pPlayer, vecEye, vecSrc );
 
