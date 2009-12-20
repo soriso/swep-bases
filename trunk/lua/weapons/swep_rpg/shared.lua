@@ -59,7 +59,7 @@ SWEP.Primary.Cone			= vec3_origin
 SWEP.Primary.ClipSize		= -1				// Size of a clip
 SWEP.Primary.Delay			= 0.75
 SWEP.Primary.DefaultClip	= 3					// Default number of bullets in a clip
-SWEP.Primary.Automatic		= true				// Automatic/Semi Auto
+SWEP.Primary.Automatic		= false				// Automatic/Semi Auto
 SWEP.Primary.Ammo			= "rpg_round"
 SWEP.Primary.AmmoType		= "rpg_missile"
 
