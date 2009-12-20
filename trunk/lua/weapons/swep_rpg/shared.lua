@@ -204,6 +204,8 @@ end
 	// player "shoot" animation
 	pPlayer:SetAnimation( PLAYER_ATTACK1 );
 
+	self.m_bNeedReload = true;
+
 end
 
 //-----------------------------------------------------------------------------
@@ -321,8 +323,9 @@ function SWEP:Think()
 		self:StopGuiding();
 	end
 
-	if ( !self.m_bInitialStateUpdate ) then
+	if ( !self.m_bInitialStateUpdate && self.m_bNeedReload ) then
 		if ( !self.m_hMissile || !self.m_hMissile:IsValid() ) then
+			self.m_bNeedReload = false;
 			self:NotifyRocketDied()
 		end
 	end
