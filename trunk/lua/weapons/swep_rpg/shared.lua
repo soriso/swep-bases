@@ -455,10 +455,16 @@ function SWEP:Holster( wep )
 	if ( self.Weapon && self.Weapon:IsValid() ) then
 		if ( VERSION >= 72 ) then
 			if ( self.dt.Missile != NULL ) then
-				//return false;
+				if ( !CLIENT ) then
+					self.Owner:DrawViewModel( true );
+				end
+				return false;
 			end
 		elseif ( self.Weapon:GetNetworkedEntity( "Missile" ) != NULL ) then
-			//return false;
+			if ( !CLIENT ) then
+				self.Owner:DrawViewModel( true );
+			end
+			return false;
 		end
 	end
 
