@@ -1,8 +1,8 @@
 
 local meta = FindMetaTable( "Entity" )
 if (!meta) then return end
-if (!meta.g_FireBullets) then meta.g_FireBullets = meta.FireBullets end
-if (!meta.FireMelee) then meta.FireMelee = meta.FireBullets end
+
+local FireBullets = meta.FireBullets
 
 if ( !meta.FirePenetratingBullets ) then
 
@@ -93,7 +93,13 @@ function util.ImpactTrace( traceHit, pPlayer )
 	info.Damage			= 0;
 	info.Force			= 0;
 	info.Tracer			= 0;
+	info.Callback		= function( attacker, tr, dmginfo )
+		return {
+			damage		= false,
+			effects		= true
+		}
+	end;
 
-	return pPlayer:g_FireBullets( info );
+	return FireBullets( pPlayer, info );
 
 end
