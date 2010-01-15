@@ -24,3 +24,11 @@ SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
 
 SWEP.Primary.AmmoType		= "sent_grenade_frag"
+
+function SWEP:CanPrimaryAttack()
+	return true
+end
+
+function SWEP:CanSecondaryAttack()
+	return true
+end

@@ -128,6 +128,9 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
+	// Make sure we can shoot first
+	if ( !self:CanPrimaryAttack() ) then return end
+
 	if (self.m_bNeedReload) then
 		return;
 	end
@@ -663,6 +666,24 @@ function SWEP:GetWeaponAttachment( attachmentId, outVector, dir /*= NULL*/ )
 	end
 
 end
+
+/*---------------------------------------------------------
+   Name: SWEP:CanPrimaryAttack( )
+   Desc: Helper function for checking for no ammo
+---------------------------------------------------------*/
+function SWEP:CanPrimaryAttack()
+	return true
+end
+
+
+/*---------------------------------------------------------
+   Name: SWEP:CanSecondaryAttack( )
+   Desc: Helper function for checking for no ammo
+---------------------------------------------------------*/
+function SWEP:CanSecondaryAttack()
+	return false
+end
+
 
 /*---------------------------------------------------------
    Name: SetDeploySpeed

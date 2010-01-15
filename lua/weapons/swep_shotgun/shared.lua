@@ -104,6 +104,9 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
+	// Make sure we can shoot first
+	if ( !self:CanPrimaryAttack() ) then return end
+
 	if (self.m_bNeedPump) then
 		return;
 	end
@@ -187,6 +190,9 @@ function SWEP:SecondaryAttack()
 	if (!pOwner) then
 		return;
 	end
+
+	// Make sure we can shoot first
+	if ( !self:CanSecondaryAttack() ) then return end
 
 	if (self.m_bNeedPump) then
 		return;
@@ -577,6 +583,24 @@ end
    Desc: A convenience function to shoot bullets
 ---------------------------------------------------------*/
 function SWEP:ShootCallback( attacker, trace, dmginfo )
+end
+
+
+/*---------------------------------------------------------
+   Name: SWEP:CanPrimaryAttack( )
+   Desc: Helper function for checking for no ammo
+---------------------------------------------------------*/
+function SWEP:CanPrimaryAttack()
+	return true
+end
+
+
+/*---------------------------------------------------------
+   Name: SWEP:CanSecondaryAttack( )
+   Desc: Helper function for checking for no ammo
+---------------------------------------------------------*/
+function SWEP:CanSecondaryAttack()
+	return true
 end
 
 

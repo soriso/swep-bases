@@ -97,6 +97,24 @@ end
 
 
 /*---------------------------------------------------------
+   Name: SWEP:CanPrimaryAttack( )
+   Desc: Helper function for checking for no ammo
+---------------------------------------------------------*/
+function SWEP:CanPrimaryAttack()
+	return false
+end
+
+
+/*---------------------------------------------------------
+   Name: SWEP:CanSecondaryAttack( )
+   Desc: Helper function for checking for no ammo
+---------------------------------------------------------*/
+function SWEP:CanSecondaryAttack()
+	return false
+end
+
+
+/*---------------------------------------------------------
    Name: SetDeploySpeed
    Desc: Sets the weapon deploy speed.
 		 This value needs to match on client and server.
