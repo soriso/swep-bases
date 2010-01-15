@@ -25,6 +25,9 @@ SWEP.AdminSpawnable		= false
 
 SWEP.Primary.AmmoType		= "sent_grenade_frag"
 
+function SWEP:PreThink()
+end
+
 function SWEP:CanPrimaryAttack()
 	return true
 end

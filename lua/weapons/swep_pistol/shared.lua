@@ -267,6 +267,14 @@ end
 
 
 /*---------------------------------------------------------
+   Name: SWEP:PreThink( )
+   Desc: Called before every frame
+---------------------------------------------------------*/
+function SWEP:PreThink()
+end
+
+
+/*---------------------------------------------------------
    Name: SWEP:Think( )
    Desc: Called every frame
 ---------------------------------------------------------*/
@@ -285,6 +293,8 @@ function SWEP:Think()
 	if ( pOwner == NULL ) then
 		return;
 	end
+
+	self:PreThink();
 
 	//Allow a refire as fast as the player can click
 	if ( ( ( !pOwner:KeyDown( IN_ATTACK ) ) && ( self.m_flSoonestPrimaryAttack < CurTime() ) ) ) then

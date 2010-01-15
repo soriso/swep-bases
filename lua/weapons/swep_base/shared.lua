@@ -44,6 +44,9 @@ SWEP.Secondary.DefaultClip	= -1								// Default number of bullets in a clip
 SWEP.Secondary.Automatic	= false								// Automatic/Semi Auto
 SWEP.Secondary.Ammo			= "None"							// Type of ammunition
 
+function SWEP:PreThink()
+end
+
 function SWEP:ShootBullet( damage, num_bullets, aimcone )
 end
 
