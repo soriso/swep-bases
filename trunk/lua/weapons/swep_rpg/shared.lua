@@ -309,6 +309,14 @@ end
 
 
 /*---------------------------------------------------------
+   Name: SWEP:PreThink( )
+   Desc: Called before every frame
+---------------------------------------------------------*/
+function SWEP:PreThink()
+end
+
+
+/*---------------------------------------------------------
    Name: SWEP:Think( )
    Desc: Called every frame
 ---------------------------------------------------------*/
@@ -319,6 +327,8 @@ function SWEP:Think()
 	if ( !pPlayer ) then
 		return;
 	end
+
+	self:PreThink();
 
 	if ( pPlayer:WaterLevel() >= 3 ) then
 		self.m_bIsUnderwater = true;

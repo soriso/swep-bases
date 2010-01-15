@@ -451,6 +451,14 @@ function SWEP:Pump()
 end
 
 /*---------------------------------------------------------
+   Name: SWEP:PreThink( )
+   Desc: Called before every frame
+---------------------------------------------------------*/
+function SWEP:PreThink()
+end
+
+
+/*---------------------------------------------------------
    Name: SWEP:Think( )
    Desc: Called every frame
 ---------------------------------------------------------*/
@@ -460,6 +468,8 @@ function SWEP:Think()
 	if (!pOwner) then
 		return;
 	end
+
+	self:PreThink();
 
 	if ( self.m_bNeedPump && ( pOwner:KeyDown( IN_RELOAD ) ) ) then
 		self.m_bDelayedReload = true;

@@ -276,10 +276,20 @@ end
 
 
 /*---------------------------------------------------------
+   Name: SWEP:PreThink( )
+   Desc: Called before every frame
+---------------------------------------------------------*/
+function SWEP:PreThink()
+end
+
+
+/*---------------------------------------------------------
    Name: SWEP:Think( )
    Desc: Called every frame
 ---------------------------------------------------------*/
 function SWEP:Think()
+
+	self:PreThink();
 
 	if ((self.fThrewGrenade && CurTime() > self.Primary.Delay)) then
 		self.fThrewGrenade = false;
