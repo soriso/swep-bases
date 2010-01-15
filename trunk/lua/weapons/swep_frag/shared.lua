@@ -149,6 +149,9 @@ end
 ---------------------------------------------------------*/
 function SWEP:PrimaryAttack()
 
+	// Make sure we can shoot first
+	if ( !self:CanPrimaryAttack() ) then return end
+
 	if ( self.m_bRedraw ) then
 		return;
 	end
@@ -190,6 +193,9 @@ end
    Desc: +attack2 has been pressed
 ---------------------------------------------------------*/
 function SWEP:SecondaryAttack()
+
+	// Make sure we can shoot first
+	if ( !self:CanSecondaryAttack() ) then return end
 
 	if ( self.m_bRedraw ) then
 		return;
@@ -569,6 +575,24 @@ end
 	self.m_bRedraw = true;
 
 end
+
+/*---------------------------------------------------------
+   Name: SWEP:CanPrimaryAttack( )
+   Desc: Helper function for checking for no ammo
+---------------------------------------------------------*/
+function SWEP:CanPrimaryAttack()
+	return true
+end
+
+
+/*---------------------------------------------------------
+   Name: SWEP:CanSecondaryAttack( )
+   Desc: Helper function for checking for no ammo
+---------------------------------------------------------*/
+function SWEP:CanSecondaryAttack()
+	return true
+end
+
 
 /*---------------------------------------------------------
    Name: SetDeploySpeed

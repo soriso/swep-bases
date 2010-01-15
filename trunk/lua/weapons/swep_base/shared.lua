@@ -46,3 +46,11 @@ SWEP.Secondary.Ammo			= "None"							// Type of ammunition
 
 function SWEP:ShootBullet( damage, num_bullets, aimcone )
 end
+
+function SWEP:CanPrimaryAttack()
+	return true
+end
+
+function SWEP:CanSecondaryAttack()
+	return true
+end

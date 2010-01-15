@@ -79,6 +79,9 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
+	// Make sure we can shoot first
+	if ( !self:CanPrimaryAttack() ) then return end
+
 	if ( self.Weapon:Clip1() <= 0 && self.Primary.ClipSize > -1 ) then
 		if ( self:Ammo1() > 0 ) then
 			self.Weapon:EmitSound( self.Primary.Empty );
@@ -195,6 +198,9 @@ function SWEP:SecondaryAttack()
 	if ( pPlayer == NULL ) then
 		return;
 	end
+
+	// Make sure we can shoot first
+	if ( !self:CanSecondaryAttack() ) then return end
 
 	//Must have ammo
 	if ( ( pPlayer:GetAmmoCount( self.Secondary.Ammo ) <= 0 ) || ( ( pPlayer:WaterLevel() == 3 ) && !self.m_bFiresUnderwater ) ) then
@@ -376,6 +382,24 @@ end
    Desc: A convenience function to shoot bullets
 ---------------------------------------------------------*/
 function SWEP:ShootCallback( attacker, trace, dmginfo )
+end
+
+
+/*---------------------------------------------------------
+   Name: SWEP:CanPrimaryAttack( )
+   Desc: Helper function for checking for no ammo
+---------------------------------------------------------*/
+function SWEP:CanPrimaryAttack()
+	return true
+end
+
+
+/*---------------------------------------------------------
+   Name: SWEP:CanSecondaryAttack( )
+   Desc: Helper function for checking for no ammo
+---------------------------------------------------------*/
+function SWEP:CanSecondaryAttack()
+	return true
 end
 
 

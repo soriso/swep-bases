@@ -79,6 +79,9 @@ function SWEP:PrimaryAttack()
 		return;
 	end
 
+	// Make sure we can swing first
+	if ( !self:CanPrimaryAttack() ) then return end
+
 	local vecSrc		= pPlayer:GetShootPos();
 	local vecDirection	= pPlayer:GetAimVector();
 
@@ -299,6 +302,24 @@ end
    Desc: A convenience function to trace impacts
 ---------------------------------------------------------*/
 function SWEP:Swing( traceHit, pPlayer )
+end
+
+
+/*---------------------------------------------------------
+   Name: SWEP:CanPrimaryAttack( )
+   Desc: Helper function for checking for no ammo
+---------------------------------------------------------*/
+function SWEP:CanPrimaryAttack()
+	return true
+end
+
+
+/*---------------------------------------------------------
+   Name: SWEP:CanSecondaryAttack( )
+   Desc: Helper function for checking for no ammo
+---------------------------------------------------------*/
+function SWEP:CanSecondaryAttack()
+	return false
 end
 
 
