@@ -55,7 +55,6 @@ end
    Desc: +attack1 has been pressed
 ---------------------------------------------------------*/
 function SWEP:PrimaryAttack()
-	return false
 end
 
 
@@ -64,7 +63,6 @@ end
    Desc: +attack2 has been pressed
 ---------------------------------------------------------*/
 function SWEP:SecondaryAttack()
-	return false
 end
 
 /*---------------------------------------------------------
@@ -82,13 +80,17 @@ end
 ---------------------------------------------------------*/
 function SWEP:Deploy()
 
+	local pPlayer = self.Owner;
+
+	if ( !pPlayer ) then
+		return;
+	end
+
 	self.Weapon:SendWeaponAnim( ACT_VM_DRAW )
 	self:SetDeploySpeed( self.Weapon:SequenceDuration() )
 
 	if ( !CLIENT ) then
-		if ( self.Owner != NULL ) then
-			self.Owner:EquipSuit()
-		end
+		pPlayer:EquipSuit()
 	end
 
 	return true
