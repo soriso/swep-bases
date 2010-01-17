@@ -241,7 +241,7 @@ end
 //-----------------------------------------------------------------------------
 function SWEP:DecrementAmmo( pOwner )
 
-	pOwner:RemoveAmmo( 1, self.Primary.Ammo );
+	pOwner:RemoveAmmo( self.Primary.NumAmmo, self.Primary.Ammo );
 
 end
 

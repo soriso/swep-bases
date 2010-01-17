@@ -238,7 +238,7 @@ end
 function SWEP:DecrementAmmo( pOwner )
 
 	// Take away our primary ammo type
-	pOwner:RemoveAmmo( 1, self.Primary.Ammo );
+	pOwner:RemoveAmmo( self.Primary.NumAmmo, self.Primary.Ammo );
 
 end
 
