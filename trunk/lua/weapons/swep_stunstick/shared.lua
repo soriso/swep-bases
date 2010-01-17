@@ -34,6 +34,7 @@ STUNSTICK_GLOW_MATERIAL_NOZ	= "sprites/light_glow02_add_noz"
 
 SWEP.Primary.Sound			= Sound( "Weapon_StunStick.Melee_Miss" )
 SWEP.Primary.Hit			= Sound( "Weapon_StunStick.Melee_Hit" )
+SWEP.Primary.Range			= 50
 SWEP.Primary.Damage			= 40.0
 SWEP.Primary.DamageType		= DMG_CLUB
 SWEP.Primary.Force			= 0.5
@@ -87,7 +88,7 @@ function SWEP:PrimaryAttack()
 
 	local trace			= {}
 		trace.start		= vecSrc
-		trace.endpos	= vecSrc + ( vecDirection * STUNSTICK_RANGE )
+		trace.endpos	= vecSrc + ( vecDirection * self.Primary.Range )
 		trace.filter	= pPlayer
 
 	local traceHit		= util.TraceLine( trace )
