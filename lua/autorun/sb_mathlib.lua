@@ -35,6 +35,20 @@ function VectorNegate(a)
 end
 
 
+function VectorMAInline( start, scale, direction, dest )
+	dest = dest || vec3_origin
+	dest.x=start.x+direction.x*scale;
+	dest.y=start.y+direction.y*scale;
+	dest.z=start.z+direction.z*scale;
+
+	return dest
+end
+
+function VectorMA( start, scale, direction, dest )
+	return VectorMAInline(start, scale, direction, dest);
+end
+
+
 
 // MATH_BASE_H
 
