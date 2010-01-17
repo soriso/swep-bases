@@ -28,6 +28,7 @@ CROWBAR_REFIRE	= 0.4
 
 SWEP.Primary.Sound			= Sound( "Weapon_Crowbar.Single" )
 SWEP.Primary.Hit			= Sound( "Weapon_Crowbar.Melee_Hit" )
+SWEP.Primary.Range			= 50
 SWEP.Primary.Damage			= 25.0
 SWEP.Primary.DamageType		= DMG_CLUB
 SWEP.Primary.Force			= 0.75
