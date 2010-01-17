@@ -28,7 +28,7 @@ CROWBAR_REFIRE	= 0.4
 
 SWEP.Primary.Sound			= Sound( "Weapon_Crowbar.Single" )
 SWEP.Primary.Hit			= Sound( "Weapon_Crowbar.Melee_Hit" )
-SWEP.Primary.Range			= 50
+SWEP.Primary.Range			= CROWBAR_RANGE
 SWEP.Primary.Damage			= 25.0
 SWEP.Primary.DamageType		= DMG_CLUB
 SWEP.Primary.Force			= 0.75
@@ -96,7 +96,7 @@ function SWEP:PrimaryAttack()
 		pPlayer:SetAnimation( PLAYER_ATTACK1 );
 
 		self.Weapon:SetNextPrimaryFire( CurTime() + self:GetFireRate() );
-		self.Weapon:SetNextSecondaryFire( CurTime() + self:GetFireRate() );
+		self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 
 		self:Hit( traceHit, pPlayer );
 
@@ -111,7 +111,7 @@ function SWEP:PrimaryAttack()
 	pPlayer:SetAnimation( PLAYER_ATTACK1 );
 
 	self.Weapon:SetNextPrimaryFire( CurTime() + self:GetFireRate() );
-	self.Weapon:SetNextSecondaryFire( CurTime() + self:GetFireRate() );
+	self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 
 	self:Swing( traceHit, pPlayer );
 
@@ -256,7 +256,7 @@ end
 end
 
 function SWEP:GetRange()
-	return	CROWBAR_RANGE;
+	return	self.Primary.Range;
 end
 
 function SWEP:GetFireRate()
