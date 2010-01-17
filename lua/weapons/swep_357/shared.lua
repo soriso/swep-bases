@@ -105,7 +105,7 @@ function SWEP:PrimaryAttack()
 	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
 	self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay );
 
-	self:TakePrimaryAmmo( 1 );
+	self:TakePrimaryAmmo( self.Primary.NumAmmo );
 
 	self:ShootBullet( self.Primary.Damage, self.Primary.NumShots, self.Primary.Cone );
 
