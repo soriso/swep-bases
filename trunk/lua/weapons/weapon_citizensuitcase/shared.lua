@@ -9,8 +9,9 @@ SWEP.Instructions	= ""
 
 SWEP.ViewModelFOV	= 54
 SWEP.ViewModelFlip	= false
-SWEP.ViewModel		= "models/weapons/V_hands.mdl"
-SWEP.WorldModel		= ""
+SWEP.ViewModel		= ""
+SWEP.WorldModel		= "models/weapons/w_suitcase_passenger.mdl"
+SWEP.AnimPrefix		= "smg2"
 SWEP.HoldType		= "normal"
 
 // Note: This is how it should have worked. The base weapon would set the category
@@ -79,18 +80,8 @@ end
 ---------------------------------------------------------*/
 function SWEP:Deploy()
 
-	local pPlayer = self.Owner;
-
-	if ( !pPlayer ) then
-		return;
-	end
-
 	self.Weapon:SendWeaponAnim( ACT_VM_DRAW )
 	self:SetDeploySpeed( self.Weapon:SequenceDuration() )
-
-	if ( !CLIENT ) then
-		pPlayer:EquipSuit()
-	end
 
 	return true
 
