@@ -10,7 +10,7 @@ local ents = {
 local function EntityTakeWeaponDamage( ent, inflictor, attacker, amount, dmginfo )
 
 	local pClass 	= inflictor:GetClass()
-	local pOwner 	= inflictor:GetOwner();
+	local pOwner 	= inflictor:GetOwner()
 
 	if (!inflictor:IsValid()) then return end
 

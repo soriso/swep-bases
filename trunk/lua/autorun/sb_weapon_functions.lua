@@ -17,8 +17,9 @@ HL2_WEAPONS = {
 
 local meta = FindMetaTable( "Weapon" )
 if (!meta) then return end
-if (!meta.g_SetNextPrimaryFire) then meta.g_SetNextPrimaryFire = meta.SetNextPrimaryFire end
-if (!meta.g_SetNextSecondaryFire) then meta.g_SetNextSecondaryFire = meta.SetNextSecondaryFire end
+
+local SetNextPrimaryFire = meta.SetNextPrimaryFire
+local SetNextSecondaryFire = meta.SetNextSecondaryFire
 
 // In this file we're adding functions to the weapon meta table.
 // This means you'll be able to call functions here straight from the weapon object
@@ -28,7 +29,7 @@ function meta:SetNextPrimaryFire( timestamp )
 
 	timestamp = timestamp - CurTime()
 	timestamp = timestamp / GetConVarNumber( "phys_timescale" )
-	self:g_SetNextPrimaryFire( CurTime() + timestamp )
+	SetNextPrimaryFire( self, CurTime() + timestamp )
 
 end
 
@@ -36,7 +37,7 @@ function meta:SetNextSecondaryFire( timestamp )
 
 	timestamp = timestamp - CurTime()
 	timestamp = timestamp / GetConVarNumber( "phys_timescale" )
-	self:g_SetNextSecondaryFire( CurTime() + timestamp )
+	SetNextSecondaryFire( self, CurTime() + timestamp )
 
 end
 
