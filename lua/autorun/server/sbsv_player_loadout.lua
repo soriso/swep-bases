@@ -1,21 +1,24 @@
 
 local meta = FindMetaTable( "Player" )
 if (!meta) then return end
-if (!meta.g_Give) then meta.g_Give = meta.Give end
 
 local lua_weapons	= CreateConVar( "lua_weapons",	0, { FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED } )
 
+local Give = meta.Give
+
 function meta:Give( item )
 
-	if ( !lua_weapons:GetBool() ) then return self:g_Give( item ) end
+	if ( lua_weapons:GetBool() ) then
 
-	if ( table.HasValue( HL2_WEAPONS, item:lower() ) ) then
+		if ( table.HasValue( HL2_WEAPONS, item:lower() ) ) then
 
-		return self:g_Give( string.Replace( item, "weapon_", "swep_" ) )
+			return Give( self, string.Replace( item, "weapon_", "swep_" ) )
+
+		end
 
 	end
 
-	return self:g_Give( item )
+	return Give( self, item )
 
 end
 
