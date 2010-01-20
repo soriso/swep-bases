@@ -2,9 +2,9 @@
 local meta = FindMetaTable( "Player" )
 if (!meta) then return end
 
-local lua_weapons	= CreateConVar( "lua_weapons",	0, { FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED } )
-
 local Give = meta.Give
+
+local lua_weapons	= CreateConVar( "lua_weapons",	0, { FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED } )
 
 function meta:Give( item )
 
