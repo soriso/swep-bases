@@ -133,7 +133,7 @@ function ENT:AccelerateThink()
 	// !!!UNDONE - make this work exactly the same as HL1 RPG, lest we have looping sound bugs again!
 	self.Entity:EmitSound( "Missile.Accelerate" );
 
-	// SetEffects( EF_LIGHT );
+	self:AddEffects( EF_LIGHT );
 
 	vecForward = AngleVectors( self.Entity:GetLocalAngles() );
 	self.Entity:SetVelocity( vecForward * RPG_SPEED );
@@ -230,7 +230,7 @@ function ENT:Explode()
 	forward = self.Entity:GetForward();
 
 	local tr = {};
-	tr.startpos = self.Entity:GetPos();
+	tr.start = self.Entity:GetPos();
 	tr.endpos = self.Entity:GetPos() + forward * 16;
 	tr.mask = MASK_SHOT;
 	tr.filter = self;

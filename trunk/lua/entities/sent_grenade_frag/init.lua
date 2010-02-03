@@ -108,7 +108,7 @@ function ENT:Detonate()
 
 	vecSpot = self.Entity:GetPos() + Vector ( 0 , 0 , 8 );
 	tr = {};
-	tr.startpos = vecSpot;
+	tr.start = vecSpot;
 	tr.endpos = vecSpot + Vector ( 0, 0, -32 );
 	tr.mask = MASK_SHOT_HULL;
 	tr.filter = self.Entity;
@@ -120,7 +120,7 @@ function ENT:Detonate()
 		// in which case nothing is going to be harmed by the grenade's explosion because all subsequent traces will startsolid.
 		// If this is the case, we do the downward trace again from the actual origin of the grenade. (sjb) 3/8/2007  (for ep2_outland_09)
 		tr = {};
-		tr.startpos = self.Entity:GetPos();
+		tr.start = self.Entity:GetPos();
 		tr.endpos = self.Entity:GetPos() + Vector( 0, 0, -32);
 		tr.mask = MASK_SHOT_HULL;
 		tr.filter = self.Entity;
