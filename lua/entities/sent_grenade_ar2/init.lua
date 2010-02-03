@@ -124,7 +124,7 @@ function ENT:Detonate()
 	vecForward = VectorNormalize(vecForward);
 	local		tr;
 	tr = {};
-	tr.startpos = self.Entity:GetPos();
+	tr.start = self.Entity:GetPos();
 	tr.endpos = self.Entity:GetPos() + 60*vecForward;
 	tr.mask = MASK_SHOT;
 	tr.filter = self;

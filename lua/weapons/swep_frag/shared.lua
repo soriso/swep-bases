@@ -388,7 +388,7 @@ function SWEP:CheckThrowPosition( pPlayer, vecEye, vecSrc )
 	local tr;
 
 	tr = {}
-	tr.startpos = vecEye
+	tr.start = vecEye
 	tr.endpos = vecSrc
 	tr.mins = -Vector(GRENADE_RADIUS+2,GRENADE_RADIUS+2,GRENADE_RADIUS+2)
 	tr.maxs = Vector(GRENADE_RADIUS+2,GRENADE_RADIUS+2,GRENADE_RADIUS+2)
@@ -400,6 +400,8 @@ function SWEP:CheckThrowPosition( pPlayer, vecEye, vecSrc )
 	if ( tr.Hit ) then
 		vecSrc = tr.endpos;
 	end
+
+	return vecSrc
 
 end
 
@@ -431,7 +433,7 @@ if ( !CLIENT ) then
 	vForward = pPlayer:GetForward();
 	vRight = pPlayer:GetRight();
 	local vecSrc = vecEye + vForward * 18.0 + vRight * 8.0;
-	self:CheckThrowPosition( pPlayer, vecEye, vecSrc );
+	vecSrc = self:CheckThrowPosition( pPlayer, vecEye, vecSrc );
 //	vForward.x = vForward.x + 0.1;
 //	vForward.y = vForward.y + 0.1;
 
@@ -488,7 +490,7 @@ if ( !CLIENT ) then
 	vForward = pPlayer:GetForward();
 	vRight = pPlayer:GetRight();
 	local vecSrc = vecEye + vForward * 18.0 + vRight * 8.0 + Vector( 0, 0, -8 );
-	self:CheckThrowPosition( pPlayer, vecEye, vecSrc );
+	vecSrc = self:CheckThrowPosition( pPlayer, vecEye, vecSrc );
 
 	local vecThrow;
 	vecThrow = pPlayer:GetVelocity();
@@ -539,7 +541,7 @@ if ( !CLIENT ) then
 	vecFacing = VectorNormalize( vecFacing );
 	local tr;
 	tr = {};
-	tr.startpos = vecSrc;
+	tr.start = vecSrc;
 	tr.endpos = vecSrc - Vector(0,0,16);
 	tr.mask = MASK_PLAYERSOLID;
 	tr.filter = pPlayer;
@@ -552,7 +554,7 @@ if ( !CLIENT ) then
 		vecFacing = CrossProduct( tr.HitNormal, tangent );
 	end
 	vecSrc = vecSrc + (vecFacing * 18.0);
-	self:CheckThrowPosition( pPlayer, pPlayer:GetPos(), vecSrc );
+	vecSrc = self:CheckThrowPosition( pPlayer, pPlayer:GetPos(), vecSrc );
 
 	local vecThrow;
 	vecThrow = pPlayer:GetVelocity();

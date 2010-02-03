@@ -31,8 +31,8 @@ end
 ---------------------------------------------------------*/
 function ENT:OnExplode( pTrace )
 
-	local Pos1 = Vector( self.Entity:GetPos().x, self.Entity:GetPos().y, pTrace.HitPos.z ) + pTrace.HitNormal
-	local Pos2 = Vector( self.Entity:GetPos().x, self.Entity:GetPos().y, pTrace.HitPos.z ) - pTrace.HitNormal
+	local Pos1 = pTrace.HitPos + pTrace.HitNormal
+	local Pos2 = pTrace.HitPos - pTrace.HitNormal
 
  	util.Decal( "Scorch", Pos1, Pos2 );
 

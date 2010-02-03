@@ -26,10 +26,10 @@ function ENT:OnExplode( pTrace )
 	if ((pTrace.Entity != GetWorldEntity()) || (pTrace.HitBox != 0)) then
 		// non-world needs smaller decals
 		if( pTrace.Entity && !pTrace.Entity:IsNPC() ) then
-			util.Decal( "SmallScorch", Vector( self.Entity:GetPos().x, self.Entity:GetPos().y, pTrace.HitPos.z ) + pTrace.HitNormal, Vector( self.Entity:GetPos().x, self.Entity:GetPos().y, pTrace.HitPos.z ) - pTrace.HitNormal );
+			util.Decal( "SmallScorch", pTrace.HitPos + pTrace.HitNormal, pTrace.HitPos - pTrace.HitNormal );
 		end
 	else
-		util.Decal( "Scorch", Vector( self.Entity:GetPos().x, self.Entity:GetPos().y, pTrace.HitPos.z ) + pTrace.HitNormal, Vector( self.Entity:GetPos().x, self.Entity:GetPos().y, pTrace.HitPos.z ) - pTrace.HitNormal );
+		util.Decal( "Scorch", pTrace.HitPos + pTrace.HitNormal, pTrace.HitPos - pTrace.HitNormal );
 	end
 
 end
@@ -54,7 +54,7 @@ end
 
 function ENT:Touch( pOther )
 
-	// Assert( pOther );
+	assert( pOther );
 	if ( pOther:GetSolid() == SOLID_NONE ) then
 		return;
 	end
