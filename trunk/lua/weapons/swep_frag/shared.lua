@@ -395,9 +395,9 @@ function SWEP:CheckThrowPosition( pPlayer, vecEye, vecSrc )
 	tr.mask = MASK_PLAYERSOLID
 	tr.filter = pPlayer
 	tr.collision = pPlayer:GetCollisionGroup()
-	tr = util.TraceHull( tr );
+	local trace = util.TraceHull( tr );
 
-	if ( tr.Hit ) then
+	if ( trace.Hit ) then
 		vecSrc = tr.endpos;
 	end
 
