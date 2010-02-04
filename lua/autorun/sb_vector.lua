@@ -48,9 +48,15 @@ function VectorMultiply( a, b, c )
 	if ( !a ) then return end;
 	if ( !b ) then return end;
 	local c = c || vec3_origin
-	c.x = a.x * b.x;
-	c.y = a.y * b.y;
-	c.z = a.z * b.z;
+	if ( type( b ) == "number" ) then
+		c.x = a.x * b;
+		c.y = a.y * b;
+		c.z = a.z * b;
+	elseif ( ( type( b ) == "Vector" ) ) then
+		c.x = a.x * b.x;
+		c.y = a.y * b.y;
+		c.z = a.z * b.z;
+	end
 	return c
 end
 
