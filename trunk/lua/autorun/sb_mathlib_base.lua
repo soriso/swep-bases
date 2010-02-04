@@ -460,3 +460,5 @@ function Parabolic_Spline(
 
 	return output;
 end
+
+s_bMathlibInitialized = true;
