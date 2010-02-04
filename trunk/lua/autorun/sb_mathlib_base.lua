@@ -400,7 +400,7 @@ function BSpline(
 	output = VectorAdd( c, output, output );
 
 	// matrix row 4
-	// p1 and p3 scaled by 1.0f, so done below
+	// p1 and p3 scaled by 1.0, so done below
 	a = VectorScale( p1, oneOver6, a );
 	b = VectorScale( p2, 4.0 * oneOver6, b );
 	c = VectorScale( p3, oneOver6, c );
