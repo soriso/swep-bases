@@ -26,8 +26,10 @@ SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
 
 SWEP.Primary.Reload			= Sound( "Weapon_SMG1.Reload" )
+SWEP.Primary.ReloadNPC		= Sound( "Weapon_SMG1.NPC_Reload" )
 SWEP.Primary.Empty			= Sound( "Weapon_SMG1.Empty" )
 SWEP.Primary.Sound			= Sound( "Weapon_SMG1.Single" )
+SWEP.Primary.SoundNPC		= Sound( "Weapon_SMG1.NPC_Single" )
 SWEP.Primary.Damage			= 12
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.NumAmmo		= SWEP.Primary.NumShots
@@ -114,7 +116,11 @@ function SWEP:PrimaryAttack()
 	local fireRate = self.Primary.Delay;
 
 	// MUST call sound before removing a round from the clip of a CHLMachineGun
-	self.Weapon:EmitSound(self.Primary.Sound);
+	if ( !pPlayer:IsNPC() ) then
+		self.Weapon:EmitSound(self.Primary.Sound);
+	else
+		self.Weapon:EmitSound(self.Primary.SoundNPC);
+	end
 	self.Weapon:SetNextPrimaryFire( CurTime() + fireRate );
 	iBulletsToFire = iBulletsToFire + self.Primary.NumShots;
 
@@ -266,7 +272,11 @@ function SWEP:Reload()
 		// a grenade.
 		self.Weapon:SetNextSecondaryFire( CurTime() + fCacheTime );
 
-		self.Weapon:EmitSound( self.Primary.Reload );
+		if ( !self.Owner:IsNPC() ) then
+			self.Weapon:EmitSound( self.Primary.Reload );
+		else
+			self.Weapon:EmitSound( self.Primary.ReloadNPC );
+		end
 
 	end
 
