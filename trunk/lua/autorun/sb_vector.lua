@@ -25,8 +25,8 @@ function meta:__unm( vec )
 end
 
 function VectorAdd( a, b, c )
-	if ( !IsValid(a) ) then return end;
-	if ( !IsValid(b) ) then return end;
+	if ( !a ) then return end;
+	if ( !b ) then return end;
 	local c = c || vec3_origin
 	c.x = a.x + b.x;
 	c.y = a.y + b.y;
@@ -35,8 +35,8 @@ function VectorAdd( a, b, c )
 end
 
 function VectorSubtract( a, b, c )
-	if ( !IsValid(a) ) then return end;
-	if ( !IsValid(b) ) then return end;
+	if ( !a ) then return end;
+	if ( !b ) then return end;
 	local c = c || vec3_origin
 	c.x = a.x - b.x;
 	c.y = a.y - b.y;
@@ -45,8 +45,8 @@ function VectorSubtract( a, b, c )
 end
 
 function VectorMultiply( a, b, c )
-	if ( !IsValid(a) ) then return end;
-	if ( !IsValid(b) ) then return end;
+	if ( !a ) then return end;
+	if ( !b ) then return end;
 	local c = c || vec3_origin
 	c.x = a.x * b.x;
 	c.y = a.y * b.y;
