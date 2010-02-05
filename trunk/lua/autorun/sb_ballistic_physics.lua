@@ -71,6 +71,38 @@ if ( !meta.FirePenetratingBullets ) then
 
 end
 
+//-----------------------------------------------------------------------------
+// Purpose: Make a tracer effect
+//-----------------------------------------------------------------------------
+function util.Tracer( vecStart, vecEnd, iEntIndex, iAttachment, flVelocity, pCustomTracerName )
+
+	local data = EffectData();
+	data:SetStart( vecStart );
+	data:SetOrigin( vecEnd );
+	data:SetEntity( ents.GetByIndex( iEntIndex ) );
+	data:SetScale( flVelocity );
+
+	if ( iAttachment ) then
+		// Stomp the start, since it's not going to be used anyway
+		data:SetAttachment( iAttachment );
+	end
+
+	// Fire it off
+	if ( pCustomTracerName ) then
+		util.Effect( pCustomTracerName, data );
+	else
+		util.Effect( "Tracer", data );
+	end
+
+end
+
+
+//------------------------------------------------------------------------------
+// Purpose : Creates both an decal and any associated impact effects (such
+//			 as flecks) for the given iDamageType and the trace's end position
+// Input   :
+// Output  :
+//------------------------------------------------------------------------------
 function util.ImpactTrace( traceHit, pPlayer )
 
 	if ( traceHit.MatType == MAT_GRATE ) then
