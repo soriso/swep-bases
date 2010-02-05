@@ -81,6 +81,7 @@ function util.Tracer( vecStart, vecEnd, iEntIndex, iAttachment, flVelocity, pCus
 	data:SetOrigin( vecEnd );
 	data:SetEntity( ents.GetByIndex( iEntIndex ) );
 	data:SetScale( flVelocity );
+	data:SetRadius( 0.1 );
 
 	if ( iAttachment ) then
 		// Stomp the start, since it's not going to be used anyway
