@@ -52,6 +52,9 @@ end
 function SWEP:ShootBullet( damage, num_bullets, aimcone )
 end
 
+function SWEP:ShootCallback( attacker, trace, dmginfo )
+end
+
 function SWEP:CanPrimaryAttack()
 	return true
 end
