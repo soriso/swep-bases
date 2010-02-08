@@ -2,6 +2,9 @@
 
 if ( SERVER ) then
 
+	// resource.AddFile( "materials/VGUI/entities/.vmt" )
+	// resource.AddFile( "materials/VGUI/entities/.vtf" )
+
 	AddCSLuaFile( "shared.lua" )
 
 	SWEP.HoldType			= "pistol"
