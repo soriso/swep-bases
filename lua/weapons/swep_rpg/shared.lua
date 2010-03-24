@@ -623,6 +623,8 @@ if ( !CLIENT ) then
 	self.m_hLaserDot = ents.Create( "env_laserdot" );
 	self.m_hLaserDot:SetPos( self.Weapon:GetPos() );
 	self.m_hLaserDot:SetOwner( self.Owner );
+	// BUGBUG: Setting a model for the env_laserdot makes it visible for some reason.
+	self.m_hLaserDot:SetModel( "models/error.mdl" );
 	self.m_hLaserDot:Spawn();
 
 	self:UpdateLaserPosition();
