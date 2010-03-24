@@ -556,7 +556,7 @@ end
 function SWEP:UpdateLaserPosition( vecMuzzlePos, vecEndPos )
 
 if ( !CLIENT ) then
-	if ( vecMuzzlePos == vec3_origin || vecEndPos == vec3_origin ) then
+	if ( vecMuzzlePos == nil || vecEndPos == nil ) then
 		local pPlayer = self.Owner;
 		if ( !pPlayer ) then
 			return;
@@ -576,7 +576,7 @@ if ( !CLIENT ) then
 	tr.start = vecMuzzlePos
 	tr.endpos = vecEndPos
 	tr.mask = MASK_SHOT
-	tr.owner = self.Owner
+	tr.filter = self.Owner
 	tr.collision = COLLISION_GROUP_NONE
 	tr = util.TraceLine( tr );
 
