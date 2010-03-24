@@ -196,7 +196,7 @@ if ( !CLIENT ) then
 	local	tr;
 	local vecEye = pOwner:EyePos();
 	tr = {}
-	tr.startpos = vecEye
+	tr.start = vecEye
 	tr.endpos = vecEye + vForward * 128
 	tr.mask = MASK_SHOT
 	tr.filter = self.Weapon
@@ -573,7 +573,7 @@ if ( !CLIENT ) then
 
 	// Trace out for the endpoint
 	tr = {}
-	tr.startpos = vecMuzzlePos
+	tr.start = vecMuzzlePos
 	tr.endpos = vecEndPos
 	tr.mask = MASK_SHOT
 	tr.owner = self.Owner
