@@ -8,7 +8,7 @@ HL2_WEAPONS = {
 	"weapon_crowbar",
 	"weapon_frag",
 	"weapon_pistol",
-	// "weapon_rpg",
+	"weapon_rpg",
 	"weapon_shotgun",
 	"weapon_smg1",
 	"weapon_stunstick"
