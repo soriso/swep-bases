@@ -92,14 +92,12 @@ function SWEP:PrimaryAttack()
 		self.Weapon:EmitSound( self.Primary.Hit );
 
 		self.Weapon:SendWeaponAnim( ACT_VM_HITCENTER );
-		pPlayer:LagCompensation( true );
 		pPlayer:SetAnimation( PLAYER_ATTACK1 );
 
 		self.Weapon:SetNextPrimaryFire( CurTime() + self:GetFireRate() );
 		self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 
 		self:Hit( traceHit, pPlayer );
-		pPlayer:LagCompensation( false );
 
 		return
 
