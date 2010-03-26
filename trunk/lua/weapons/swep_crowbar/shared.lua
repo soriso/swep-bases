@@ -99,6 +99,7 @@ function SWEP:PrimaryAttack()
 		self.Weapon:SetNextSecondaryFire( CurTime() + self.Weapon:SequenceDuration() );
 
 		self:Hit( traceHit, pPlayer );
+		pPlayer:LagCompensation( false );
 
 		return
 
@@ -107,7 +108,6 @@ function SWEP:PrimaryAttack()
 	self.Weapon:EmitSound( self.Primary.Sound );
 
 	self.Weapon:SendWeaponAnim( ACT_VM_MISSCENTER );
-	pPlayer:LagCompensation( false );
 	pPlayer:SetAnimation( PLAYER_ATTACK1 );
 
 	self.Weapon:SetNextPrimaryFire( CurTime() + self:GetFireRate() );
