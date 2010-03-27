@@ -1,6 +1,7 @@
 
 // This is mainly for the benefit of Lua programmers, developers, and beta testers.
-SWEP_BASES = true
+SWEP_BASES			= true
+SWEP_BASES_AUTHOR	= "Andrew McWatters"
 
 include( "sb_lua_functions.lua" )
 
