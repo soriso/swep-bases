@@ -60,11 +60,12 @@ SWEP.Secondary.AmmoType		= "sent_grenade_ar2"
 function SWEP:Initialize()
 
 	if ( SERVER ) then
-		self:SetWeaponHoldType( self.HoldType )
 		self:SetNPCMinBurst( 2 )
 		self:SetNPCMaxBurst( 5 )
 		self:SetNPCFireRate( self.Primary.Delay )
 	end
+
+	self:SetWeaponHoldType( self.HoldType )
 
 end
 

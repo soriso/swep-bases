@@ -82,11 +82,12 @@ end
 function SWEP:Initialize()
 
 	if ( SERVER ) then
-		self:SetWeaponHoldType( self.HoldType )
 		self:SetNPCMinBurst( 1 )
 		self:SetNPCMaxBurst( 3 )
 		self:SetNPCFireRate( self.Primary.Delay )
 	end
+
+	self:SetWeaponHoldType( self.HoldType )
 
 end
 
