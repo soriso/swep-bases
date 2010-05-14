@@ -7,8 +7,6 @@ if ( SERVER ) then
 
 	AddCSLuaFile( "shared.lua" )
 
-	SWEP.HoldType			= "pistol"
-
 end
 
 if ( CLIENT ) then
@@ -23,6 +21,7 @@ if ( CLIENT ) then
 end
 
 
+SWEP.HoldType			= "pistol"								// Animation of the owner
 SWEP.Base				= "swep_357"							// Derived base weapon
 SWEP.Category			= "Other"								// Catagory of weapon
 SWEP.m_bFiresUnderwater	= false									// If weapon can fire underwater

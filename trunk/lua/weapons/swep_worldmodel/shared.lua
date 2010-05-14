@@ -7,8 +7,6 @@ if ( SERVER ) then
 
 	AddCSLuaFile( "shared.lua" )
 
-	SWEP.HoldType			= "pistol"
-
 	function SWEP:OnDrop()
 
 		if ( ValidEntity( self.Weapon ) ) then
@@ -59,6 +57,7 @@ if ( CLIENT ) then
 end
 
 
+SWEP.HoldType			= "pistol"
 SWEP.Base				= "swep_357"
 
 SWEP.Spawnable			= false
