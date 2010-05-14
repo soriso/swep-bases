@@ -4,8 +4,6 @@ if ( SERVER ) then
 
 	AddCSLuaFile( "shared.lua" )
 
-	SWEP.HoldType			= "grenade"
-
 end
 
 if ( CLIENT ) then
@@ -19,6 +17,7 @@ if ( CLIENT ) then
 end
 
 
+SWEP.HoldType			= "grenade"
 SWEP.Base				= "swep_frag"
 SWEP.Category			= "Other"
 
