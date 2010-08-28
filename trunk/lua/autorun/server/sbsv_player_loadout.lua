@@ -24,23 +24,25 @@ end
 
 local function PlayerCanPickupWeapon( player, entity )
 
-	if ( !lua_weapons:GetBool() ) then return end
+	if ( lua_weapons:GetBool() ) then
 
-	if ( table.HasValue( HL2_WEAPONS, entity:GetClass():lower() ) ) then
+		if ( table.HasValue( HL2_WEAPONS, entity:GetClass():lower() ) ) then
 
-		local Data	= {}
-		Data.Model	= entity:GetModel()
-		Data.Pos	= entity:GetPos()
-		Data.Angle	= entity:GetAngles()
+			local Data	= {}
+			Data.Model	= entity:GetModel()
+			Data.Pos	= entity:GetPos()
+			Data.Angle	= entity:GetAngles()
 
-		entity:Remove()
+			entity:Remove()
 
-		local wep = ents.Create( string.Replace( entity:GetClass(), "weapon_", "swep_" ) )
-		duplicator.DoGeneric( wep, Data )
-		wep:Spawn()
+			local wep = ents.Create( string.Replace( entity:GetClass(), "weapon_", "swep_" ) )
+			duplicator.DoGeneric( wep, Data )
+			wep:Spawn()
 
-		return false
+			return false
 
+		end
+		
 	end
 
 end

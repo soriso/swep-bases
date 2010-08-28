@@ -1,7 +1,7 @@
 
 local meta = FindMetaTable( "Entity" )
 if (!meta) then return end
-if (!meta.gFireBullets) then meta.gFireBullets = meta.FireBullets end
+if (!meta.m_fnFireBullets) then meta.m_fnFireBullets = meta.FireBullets end
 
 local FireBullets = meta.FireBullets
 
