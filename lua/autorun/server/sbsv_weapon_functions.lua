@@ -12,22 +12,24 @@ local function EntityTakeWeaponDamage( ent, inflictor, attacker, amount, dmginfo
 	local pClass 	= inflictor:GetClass()
 	local pOwner 	= inflictor:GetOwner()
 
-	if (!inflictor:IsValid()) then return end
+	if (inflictor:IsValid()) then
 
-	if (table.HasValue( ents, pClass )) then
+		if (table.HasValue( ents, pClass )) then
 
-		if (inflictor.m_iDamage) then
+			if (inflictor.m_iDamage) then
 
-			dmginfo:SetDamage( inflictor.m_iDamage )
+				dmginfo:SetDamage( inflictor.m_iDamage )
+
+			end
+
+			if (pOwner && pOwner:IsValid()) then
+
+				dmginfo:SetAttacker( pOwner )
+
+			end
 
 		end
-
-		if (pOwner && pOwner:IsValid()) then
-
-			dmginfo:SetAttacker( pOwner )
-
-		end
-
+		
 	end
 
 end
