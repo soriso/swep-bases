@@ -448,7 +448,7 @@ if ( !CLIENT ) then
 	pGrenade:Fire( "SetTimer", GRENADE_TIMER );
 	pGrenade:Spawn()
 	pGrenade:GetPhysicsObject():SetVelocity( vecThrow );
-	pGrenade:GetPhysicsObject():AddAngleVelocity( Angle(600,math.random(-1200,1200),0) );
+	pGrenade:GetPhysicsObject():AddAngleVelocity( Vector(600,math.random(-1200,1200),0) );
 
 	if ( pGrenade ) then
 		if ( pPlayer && !pPlayer:Alive() ) then
@@ -503,7 +503,7 @@ if ( !CLIENT ) then
 	pGrenade:Fire( "SetTimer", GRENADE_TIMER );
 	pGrenade:Spawn()
 	pGrenade:GetPhysicsObject():SetVelocity( vecThrow );
-	pGrenade:GetPhysicsObject():AddAngleVelocity( Angle(200,math.random(-600,600),0) );
+	pGrenade:GetPhysicsObject():AddAngleVelocity( Vector(200,math.random(-600,600),0) );
 
 	if ( pGrenade ) then
 		pGrenade.m_flDamage = self.Primary.Damage;

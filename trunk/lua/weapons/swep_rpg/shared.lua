@@ -585,7 +585,7 @@ if ( !CLIENT ) then
 	if ( self.m_hLaserDot != NULL ) then
 		local	laserPos = tr.HitPos;
 		self.m_hLaserDot:SetPos( laserPos );
-		self.m_hLaserDot:SetAngles( self.Owner:GetAimVector() + ( tr.HitNormal * 1.0 ) );
+		self.m_hLaserDot:SetAngles( ( self.Owner:GetAimVector() + ( tr.HitNormal * 1.0 ) ):Angle() );
 
 		if ( tr.Entity ) then
 			local pHit = tr.Entity;
