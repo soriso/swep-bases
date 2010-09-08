@@ -152,7 +152,7 @@ function SWEP:DoMachineGunKick( pPlayer, dampEasy, maxVerticleKickAngle, fireDur
 	local	KICK_MIN_Y			= 0.2	//Degrees
 	local	KICK_MIN_Z			= 0.1	//Degrees
 
-	local vecScratch = Vector( 0, 0, 0 );
+	local vecScratch = Angle( 0, 0, 0 );
 
 	//Find how far into our accuracy degradation we are
 	local duration;
@@ -167,18 +167,18 @@ function SWEP:DoMachineGunKick( pPlayer, dampEasy, maxVerticleKickAngle, fireDur
 	pPlayer:ViewPunchReset( 10 );
 
 	//Apply this to the view angles as well
-	vecScratch.x = -( KICK_MIN_X + ( maxVerticleKickAngle * kickPerc ) );
-	vecScratch.y = -( KICK_MIN_Y + ( maxVerticleKickAngle * kickPerc ) ) / 3;
-	vecScratch.z = KICK_MIN_Z + ( maxVerticleKickAngle * kickPerc ) / 8;
+	vecScratch.pitch = -( KICK_MIN_X + ( maxVerticleKickAngle * kickPerc ) );
+	vecScratch.yaw = -( KICK_MIN_Y + ( maxVerticleKickAngle * kickPerc ) ) / 3;
+	vecScratch.roll = KICK_MIN_Z + ( maxVerticleKickAngle * kickPerc ) / 8;
 
 	//Wibble left and right
 	if ( math.random( -1, 1 ) >= 0 ) then
-		vecScratch.y = vecScratch.y * -1;
+		vecScratch.yaw = vecScratch.yaw * -1;
 	end
 
 	//Wobble up and down
 	if ( math.random( -1, 1 ) >= 0 ) then
-		vecScratch.z = vecScratch.z * -1;
+		vecScratch.roll = vecScratch.roll * -1;
 	end
 
 	//Clip this to our desired min/max
@@ -265,7 +265,7 @@ end
 
 //	pOwner:SnapEyeAngles( angles );
 
-	pOwner:ViewPunch( Vector( -math.random( 8, 12 ), math.random( 1, 2 ), 0 ) );
+	pOwner:ViewPunch( Angle( -math.random( 8, 12 ), math.random( 1, 2 ), 0 ) );
 
 	// Decrease ammo
 	pOwner:RemoveAmmo( 1, self.Secondary.Ammo );
