@@ -272,6 +272,10 @@ end
 //-----------------------------------------------------------------------------
 function SWEP:StartReload()
 
+	if ( !IsFirstTimePredicted() ) then
+		return;
+	end
+
 	if ( self.m_bNeedPump ) then
 		return false;
 	end
@@ -297,7 +301,7 @@ function SWEP:StartReload()
 		return false;
 	end
 
-	if ( IsFirstTimePredicted() ) then
+	if ( !IsFirstTimePredicted() ) then
 		self.Weapon:SendWeaponAnim( ACT_SHOTGUN_RELOAD_START );
 	end
 
@@ -320,6 +324,10 @@ end
 // Output :
 //-----------------------------------------------------------------------------
 function SWEP:Reload( m_bInReload )
+
+	if ( !IsFirstTimePredicted() ) then
+		return;
+	end
 
 	if (!m_bInReload) then
 		return;
